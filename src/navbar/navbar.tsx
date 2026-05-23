@@ -92,7 +92,7 @@ export function Navbar() {
             to="/archive"
             className="hidden items-center gap-1.5 rounded-md bg-[#6366f1] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#5558ea] sm:flex"
           >
-            <span>Start Archiving Now</span>
+            <span>Start Archiving Today!</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <div className="md:hidden">

@@ -38,7 +38,7 @@ export function StartArchiving() {
     <div className="relative">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-5xl">Start Archiving</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-5xl">Start Archiving Today!</h1>
           <div className="mx-auto mt-4 h-[1.5px] w-48 bg-[#6366f1]/40" />
         </div>
 
