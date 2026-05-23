@@ -1,0 +1,53 @@
+{
+  "name": "vod-archive-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src/ --fix",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.100.11",
+    "can-autoplay": "^3.0.2",
+    "date-fns": "^4.2.1",
+    "framer-motion": "^12.39.0",
+    "hls.js": "^1.6.16",
+    "humanize-duration": "^3.33.2",
+    "lucide-react": "^1.16.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.15.1",
+    "react-youtube": "^10.1.0",
+    "simplebar-react": "^3.3.2",
+    "tinyduration": "^3.4.1",
+    "twemoji": "^14.0.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "eslint": "^10.4.0",
+    "eslint-plugin-import-x": "^4.16.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react-compiler": "^19.1.0-rc.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "sharp": "^0.34.5",
+    "svgo": "^4.0.1",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.59.4",
+    "vite": "^8.0.13",
+    "vite-plugin-compression2": "^2.5.3",
+    "vite-plugin-image-optimizer": "^2.0.3"
+  }
+}
