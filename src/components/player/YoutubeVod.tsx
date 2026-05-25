@@ -23,8 +23,8 @@ export interface YoutubeVodProps {
 export default function YoutubeVod(props: YoutubeVodProps) {
   const { type, logo = '', twitchId, origin } = props;
   const location = useLocation();
-  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>();
-  const channel = tenant || '';
+  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>() as { vodId: string; tenant: string };
+  const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
   const [youtube, setYoutube] = useState<VODUpload[] | undefined>(undefined);
@@ -99,7 +99,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
     const partQuery = search.get('part');
     let tmpPart = partQuery !== null ? parseInt(partQuery) : 1;
     if (timestamp === 0) {
-      const savedPosition = getResumePosition(vodId);
+      const savedPosition = getResumePosition(vodId, 'vod_', tenant);
       if (savedPosition !== null && savedPosition > 0) {
         console.info(`Resuming Playback from ${savedPosition}`);
         timestamp = savedPosition;
@@ -136,7 +136,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
     switch (playerState) {
       case 0:
         if (part.part === youtube.length) {
-          clearResumePosition(vodId, 'vod_');
+          clearResumePosition(vodId, 'vod_', tenant);
         }
         break;
       case 2:
@@ -149,7 +149,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
               currentTime += video.duration ?? 0;
             }
           }
-          saveResumePosition(vodId, currentTime, 'vod_');
+          saveResumePosition(vodId, currentTime, 'vod_', tenant);
         }
         break;
       default:
@@ -196,6 +196,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
               setPlayerState={setPlayerState}
               origin={origin}
               isPortrait={isPortrait}
+              tenant={tenant}
             />
           </div>
           {!isPortrait && tenantData && (

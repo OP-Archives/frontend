@@ -20,8 +20,8 @@ export interface GamesProps {
 export default function Games(props: GamesProps) {
   const { logo = '', twitchId } = props;
   const location = useLocation();
-  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>();
-  const channel = tenant || '';
+  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>() as { vodId: string; tenant: string };
+  const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
   const [games, setGames] = useState<GameEntry[] | undefined>(undefined);
@@ -96,7 +96,7 @@ export default function Games(props: GamesProps) {
     let savedTimestamp = 0;
     const selectedGameIndex = index === -1 ? 0 : index;
     const selectedGameId = vod.games[selectedGameIndex].id;
-    const savedPosition = getResumePosition(selectedGameId, 'game_');
+    const savedPosition = getResumePosition(selectedGameId, 'game_', tenant);
     if (savedPosition !== null) {
       savedTimestamp = savedPosition;
     }
@@ -112,13 +112,13 @@ export default function Games(props: GamesProps) {
 
     switch (playerState) {
       case 0:
-        clearResumePosition(currentGame!.id, 'game_');
+        clearResumePosition(currentGame!.id, 'game_', tenant);
         break;
       case 2:
         const ytP = playerRef.current as { getCurrentTime?(): number } | null | undefined;
         const currentTime = ytP?.getCurrentTime?.() ?? 0;
         if (currentTime > 0) {
-          saveResumePosition(currentGame!.id, currentTime, 'game_');
+          saveResumePosition(currentGame!.id, currentTime, 'game_', tenant);
         }
         break;
       default:
@@ -137,7 +137,7 @@ export default function Games(props: GamesProps) {
   const handlePartChange = (evt: ChangeEvent<HTMLSelectElement>) => {
     const tmpPart = parseInt(evt.target.value) + 1;
     const selectedGameId = games![tmpPart - 1].id;
-    const savedPosition = getResumePosition(selectedGameId, 'game_');
+    const savedPosition = getResumePosition(selectedGameId, 'game_', tenant);
     let savedTimestamp = 0;
     if (savedPosition !== null) {
       savedTimestamp = savedPosition;
@@ -183,6 +183,7 @@ export default function Games(props: GamesProps) {
               vod={vod}
               setPlayerState={setPlayerState}
               isPortrait={isPortrait}
+              tenant={tenant}
             />
           </div>
           {!isPortrait && tenantData && (

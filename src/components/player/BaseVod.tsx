@@ -33,6 +33,7 @@ export interface BaseVodProps {
   cdnBase?: string;
   logo?: string;
   isPortrait?: boolean;
+  tenant: string;
 }
 
 export default function BaseVod(props: BaseVodProps) {
@@ -53,6 +54,7 @@ export default function BaseVod(props: BaseVodProps) {
     games,
     cdnBase,
     isPortrait,
+    tenant,
   } = props;
   const part = partValue ?? null;
   const [theatreMode, setTheatreMode] = useState(false);
@@ -91,7 +93,7 @@ export default function BaseVod(props: BaseVodProps) {
       const currentGame = games?.[part!.part - 1];
       const saveId = currentGame ? currentGame.id : vod.id;
       const prefix = currentGame ? 'game_' : 'vod_';
-      saveResumePosition(String(saveId), currentTime, prefix);
+      saveResumePosition(String(saveId), currentTime, prefix, tenant);
 
       lastSaveRef.current = now;
     }
@@ -163,6 +165,7 @@ export default function BaseVod(props: BaseVodProps) {
               theatreMode={theatreMode}
               setTheatreMode={setTheatreMode}
               copyTimestamp={copyTimestamp}
+              tenant={tenant}
             />
           ) : games ? (
             <YoutubePlayer
@@ -176,6 +179,7 @@ export default function BaseVod(props: BaseVodProps) {
               theatreMode={theatreMode}
               setTheatreMode={setTheatreMode}
               copyTimestamp={copyTimestamp}
+              tenant={tenant}
             />
           ) : (
             <CustomPlayer

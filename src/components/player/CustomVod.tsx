@@ -22,8 +22,8 @@ export interface CustomVodProps {
 export default function CustomVod(props: CustomVodProps) {
   const { logo = '', cdnBase, twitchId } = props;
   const location = useLocation();
-  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>();
-  const channel = tenant || '';
+  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>() as { vodId: string; tenant: string };
+  const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
   const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
@@ -95,7 +95,7 @@ export default function CustomVod(props: CustomVodProps) {
     if (timestampValue > 0) {
       setTimestamp(timestampValue);
     } else {
-      const savedPosition = getResumePosition(vodId);
+      const savedPosition = getResumePosition(vodId, 'vod_', tenant);
       if (savedPosition !== null && savedPosition > 0) {
         console.info(`Resuming Playback from ${savedPosition}`);
         setTimestamp(savedPosition);
@@ -108,11 +108,11 @@ export default function CustomVod(props: CustomVodProps) {
 
     switch (playerState) {
       case 0:
-        clearResumePosition(vodId, 'vod_');
+        clearResumePosition(vodId, 'vod_', tenant);
         break;
       case 2:
         const currentTime = playerRef.current.currentTime;
-        if (currentTime !== null && currentTime > 0) saveResumePosition(vodId, currentTime, 'vod_');
+        if (currentTime !== null && currentTime > 0) saveResumePosition(vodId, currentTime, 'vod_', tenant);
         break;
       default:
         break;
@@ -145,6 +145,7 @@ export default function CustomVod(props: CustomVodProps) {
               cdnBase={cdnBase}
               type={props.type}
               isPortrait={isPortrait}
+              tenant={tenant}
             />
           </div>
           {!isPortrait && tenantData && (
