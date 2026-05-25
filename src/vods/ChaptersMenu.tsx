@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDropdown } from '@/hooks/useDropdown';
+import { useTypedParams } from '@/hooks/useTypedParams';
 import type { VodData, ChapterItem } from '@/types';
 import { toHHMMSS, toHMS, getImage } from '@/utils/helpers';
 
@@ -16,7 +17,7 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
   const chaptersArray = vod.chapters || EMPTY_CHAPTERS;
   const visibleChapters = expanded ? chaptersArray : chaptersArray.slice(0, 15);
   const navigate = useNavigate();
-  const { tenant: tenantParam } = useParams<{ tenant: string }>() as { tenant: string };
+  const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
 
   const DEFAULT_VOD =
     vod.vod_uploads.length > 0

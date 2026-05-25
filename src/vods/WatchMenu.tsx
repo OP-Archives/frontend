@@ -1,7 +1,8 @@
 import { Play, Film, FilePlay } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { YouTubeIcon } from '@/assets/icons';
 import { useDropdown } from '@/hooks/useDropdown';
+import { useTypedParams } from '@/hooks/useTypedParams';
 import type { VodData } from '@/types';
 
 interface WatchMenuProps {
@@ -13,7 +14,7 @@ export default function WatchMenu({ vod, cdnEnabled }: WatchMenuProps) {
   const { position, isOpen, close, toggle } = useDropdown();
   const navigate = useNavigate();
 
-  const { tenant: tenantParam } = useParams<{ tenant: string }>() as { tenant: string };
+  const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
   const isRecent = Date.now() - new Date(vod.created_at).getTime() <= 14 * 24 * 60 * 60 * 1000;
   const hasVodUploads = vod.vod_uploads.length > 0;
 

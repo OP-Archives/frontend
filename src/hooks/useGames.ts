@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { PaginatedMeta, GameData } from '@/types';
-import { listGames, getGamesLibrary } from '@/utils/archive-client';
+import { archiveClient } from '@/utils/archive-client';
 
 export interface GamesQueryParams {
   limit: number;
@@ -18,11 +18,25 @@ export interface GamesListData {
   meta: PaginatedMeta | null;
 }
 
+function toRecord(params: GamesQueryParams): Record<string, string> {
+  const record: Record<string, string> = {
+    limit: String(params.limit),
+    page: String(params.page),
+  };
+  if (params.sort) record.sort = params.sort;
+  if (params.order) record.order = params.order;
+  if (params.game_id) record.game_id = params.game_id;
+  if (params.from) record.from = params.from;
+  if (params.to) record.to = params.to;
+  if (params.game_name) record.game_name = params.game_name;
+  return record;
+}
+
 export function useGames(slug: string, params: GamesQueryParams) {
   return useQuery<GamesListData>({
     queryKey: ['games', slug, params],
     queryFn: ({ signal }) =>
-      listGames(slug, { ...params, signal }).then((r) => ({
+      archiveClient.games.list(slug, toRecord(params), { signal }).then((r) => ({
         data: r.data,
         meta: r.meta as unknown as PaginatedMeta,
       })),
@@ -38,7 +52,7 @@ export function prefetchNextPageGames(
   queryClient.prefetchQuery({
     queryKey: ['games', params.slug, params],
     queryFn: ({ signal }) =>
-      listGames(params.slug, { ...params, signal }).then((r) => ({
+      archiveClient.games.list(params.slug, toRecord(params), { signal }).then((r) => ({
         data: r.data,
         meta: r.meta as unknown as PaginatedMeta,
       })),
@@ -73,8 +87,8 @@ function libraryParamsToRecord(params: GamesLibraryParams): Record<string, strin
 export function useGamesLibrary(slug: string, params: GamesLibraryParams) {
   return useQuery<GamesLibraryData>({
     queryKey: ['games-library', slug, params],
-    queryFn: ({ signal }) =>
-      getGamesLibrary(slug, { ...libraryParamsToRecord(params), signal }).then((r) => ({
+    queryFn: () =>
+      archiveClient.games.library(slug, libraryParamsToRecord(params)).then((r) => ({
         data: r.data,
         meta: r.meta as unknown as PaginatedMeta,
       })),
@@ -89,8 +103,8 @@ export function prefetchNextPageGamesLibrary(
 ) {
   queryClient.prefetchQuery({
     queryKey: ['games-library', params.slug, params],
-    queryFn: ({ signal }) =>
-      getGamesLibrary(params.slug, { ...libraryParamsToRecord(params), signal }).then((r) => ({
+    queryFn: () =>
+      archiveClient.games.library(params.slug, libraryParamsToRecord(params)).then((r) => ({
         data: r.data,
         meta: r.meta as unknown as PaginatedMeta,
       })),

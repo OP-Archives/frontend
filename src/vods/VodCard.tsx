@@ -1,9 +1,10 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ChaptersMenu from './ChaptersMenu';
 import WatchMenu from './WatchMenu';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useTenantContext } from '@/contexts/TenantContext';
+import { useTypedParams } from '@/hooks/useTypedParams';
 import type { VodData } from '@/types';
 import { toHHMMSS } from '@/utils/helpers';
 
@@ -24,7 +25,7 @@ const getThumbnail = (vod: VodData) => {
 };
 
 export default function VodCard({ vod, priority }: { vod: VodData; priority?: boolean }) {
-  const { tenant: tenantParam } = useParams<{ tenant: string }>() as { tenant: string };
+  const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
   const { cdnEnabled } = useTenantContext();
   const DEFAULT_VOD = getVodLink(vod, tenantParam);
   const DEFAULT_THUMBNAIL = getThumbnail(vod);

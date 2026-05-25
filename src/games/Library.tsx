@@ -1,6 +1,6 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
-import { useState, useEffect, startTransition } from 'react';
+import { useState, useEffect, useMemo, startTransition } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useDebouncedSetter } from '@/hooks/debounceHelper';
@@ -65,13 +65,16 @@ export function Library() {
 
   const searchParamKey = isChaptersMode ? 'chapter_name' : 'game_name';
 
-  const queryKeyParams = {
-    page,
-    limit,
-    ...(searchTerm.length > 0 ? { [searchParamKey]: searchTerm } : {}),
-    sort: apiSort as 'recent' | 'game_name' | 'count',
-    order: apiOrder as 'asc' | 'desc',
-  };
+  const queryKeyParams = useMemo(
+    () => ({
+      page,
+      limit,
+      ...(searchTerm.length > 0 ? { [searchParamKey]: searchTerm } : {}),
+      sort: apiSort as 'recent' | 'game_name' | 'count',
+      order: apiOrder as 'asc' | 'desc',
+    }),
+    [page, limit, searchTerm, searchParamKey, apiSort, apiOrder]
+  );
 
   const chaptersResult = useChapters(tenant!, queryKeyParams);
   const gamesResult = useGamesLibrary(tenant!, queryKeyParams);

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { PaginatedMeta, LibraryChapterItem } from '@/types';
-import { getChaptersLibrary } from '@/utils/archive-client';
+import { archiveClient } from '@/utils/archive-client';
 
 export interface ChaptersParams {
   page: number;
@@ -32,7 +32,7 @@ export function useChapters(slug: string, params: ChaptersParams) {
   return useQuery<ChaptersLibraryData>({
     queryKey: ['chapters', slug, params],
     queryFn: ({ signal }) =>
-      getChaptersLibrary(slug, { ...chaptersParamsToRecord(params), signal }).then((r) => ({
+      archiveClient.chapters.library(slug, chaptersParamsToRecord(params), { signal }).then((r) => ({
         data: r.data,
         meta: r.meta as unknown as PaginatedMeta,
       })),
@@ -48,7 +48,7 @@ export function prefetchNextPageChapters(
   queryClient.prefetchQuery({
     queryKey: ['chapters', params.slug, params],
     queryFn: ({ signal }) =>
-      getChaptersLibrary(params.slug, { ...chaptersParamsToRecord(params), signal }).then((r) => ({
+      archiveClient.chapters.library(params.slug, chaptersParamsToRecord(params), { signal }).then((r) => ({
         data: r.data,
         meta: r.meta as unknown as PaginatedMeta,
       })),

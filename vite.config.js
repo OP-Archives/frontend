@@ -25,7 +25,7 @@ export default defineConfig({
       },
     }),
     ViteImageOptimizer({
-      test: /\.(jpe?g|png|gif|tiff|webp|svg)$/i,
+      test: /\.(jpe?g|png|gif|tiff|webp)$/i,
       jpg: { quality: 80 },
       jpeg: { quality: 80 },
       png: { quality: 80 },
