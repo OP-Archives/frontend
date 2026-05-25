@@ -80,14 +80,12 @@ export function TenantProfileCard({ tenantData, centered = true }: { tenantData:
 
           <div className={`flex flex-col ${centered ? 'items-center' : 'items-start'}`}>
             {/* Name */}
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-2xl font-bold text-[#f0f0f5]">{tenantData.display_name}</h1>
-              <span
-                className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${tenantData.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-[#1e1e26] text-[#6b7280]'}`}
-              >
-                {tenantData.status === 'active' ? 'Active' : 'Inactive'}
-              </span>
-            </div>
+            <h1 className="text-2xl font-bold text-[#f0f0f5]">{tenantData.display_name}</h1>
+            <span
+              className={`mt-1 inline-flex rounded px-2 py-0.5 text-xs font-medium ${tenantData.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-[#1e1e26] text-[#6b7280]'}`}
+            >
+              {tenantData.status === 'active' ? 'Active' : 'Inactive'}
+            </span>
 
             {/* Social Links */}
             {socials.length > 0 && (

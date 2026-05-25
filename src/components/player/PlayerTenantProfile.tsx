@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import {
   TwitchIcon,
   YouTubeIcon,
@@ -36,6 +37,7 @@ const platformColors: Record<string, string> = {
 };
 
 export function PlayerTenantProfile({ tenantData }: { tenantData: Tenant }) {
+  const navigate = useNavigate();
   if (!tenantData) return null;
   const socials = tenantData.social_media || [];
 
@@ -59,14 +61,12 @@ export function PlayerTenantProfile({ tenantData }: { tenantData: Tenant }) {
 
         <div className="flex flex-col items-start">
           {/* Name */}
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-2xl font-bold text-[#f0f0f5]">{tenantData.display_name}</h1>
-            <span
-              className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${tenantData.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-[#1e1e26] text-[#6b7280]'}`}
-            >
-              {tenantData.status === 'active' ? 'Active' : 'Inactive'}
-            </span>
-          </div>
+          <button
+            onClick={() => navigate(`/${tenantData.id}`)}
+            className="cursor-pointer text-2xl font-bold text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
+          >
+            {tenantData.display_name}
+          </button>
 
           {/* Social Links */}
           {socials.length > 0 && (

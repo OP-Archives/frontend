@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Link, useParams, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
@@ -135,6 +135,7 @@ function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent
 }
 
 export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }: RecentItemsVodsProps) {
+  const { tenant } = useParams<{ tenant: string }>();
   const [offset, setOffset] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -165,7 +166,16 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
   return (
     <div>
       <div className="rounded-lg border border-[#222230] bg-[#16161e] p-4">
-        <h3 className="mb-2 text-sm font-semibold text-[#9ca3af] uppercase">Related VODs</h3>
+        <h3 className="mb-2 text-sm font-semibold text-[#9ca3af] uppercase">
+          Related VODs &mdash;{' '}
+          <Link
+            to={`/${tenant}`}
+            className="inline-flex items-center gap-1 text-[#6366f1] transition-colors hover:text-[#6366f1]/80"
+          >
+            View All
+            <ExternalLink size={12} />
+          </Link>
+        </h3>
         <div className="relative">
           {showLeft && (
             <button
