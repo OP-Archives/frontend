@@ -1,4 +1,4 @@
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import ChatHeader from './ChatHeader';
@@ -42,6 +42,8 @@ interface MemoizedCommentProps {
   showTimestamp: boolean;
   transformBadges: (_badges: Comment['user_badges'], _keyPrefix: string) => React.ReactElement;
   transformMessage: (_fragments: Comment['message'], _keyPrefix: string) => React.ReactNode | null;
+  fontFamily: string;
+  messageFontSize: number;
 }
 
 const MemoizedComment = memo(function MemoizedComment({
@@ -49,23 +51,26 @@ const MemoizedComment = memo(function MemoizedComment({
   showTimestamp,
   transformBadges,
   transformMessage,
+  fontFamily,
+  messageFontSize,
 }: MemoizedCommentProps) {
   return (
-    <div className="chat-message-optimize flex w-full transition-colors hover:border-l-2 hover:border-[#6366f1] hover:bg-white/5">
-      <div className="chat-msg-lineheight flex items-baseline px-1 pt-1">
-        {showTimestamp && (
-          <div className="mr-2 min-w-0 shrink-0">
-            <span className="align-middle text-xs text-[#9ca3af]">{toHHMMSS(comment.content_offset_seconds)}</span>
-          </div>
-        )}
-        <div className="min-w-0 flex-1 text-[14px] break-words">
-          {comment.user_badges && transformBadges(comment.user_badges, `comment-${comment.id}`)}
-          <span className="font-bold" style={{ color: adjustUsernameColor(comment.user_color) }}>
-            {comment.display_name}
-          </span>
-          <span className="text-[#f0f0f5]">: </span>
-          {transformMessage(comment.message, `comment-${comment.id}`)}
+    <div className="flex w-full shrink-0 items-baseline px-2 py-1 transition-colors hover:border-l-2 hover:border-[#6366f1] hover:bg-white/5">
+      {showTimestamp && (
+        <div className="mr-2 shrink-0 text-[#9ca3af] text-[var(--chat-font-size-timestamp)]">
+          {toHHMMSS(comment.content_offset_seconds)}
         </div>
+      )}
+      <div
+        className="min-w-0 flex-1 leading-6 break-words text-[#f0f0f5]"
+        style={{ fontFamily, fontSize: `${messageFontSize}px` }}
+      >
+        {comment.user_badges && transformBadges(comment.user_badges, `comment-${comment.id}`)}
+        <span className="font-bold" style={{ color: adjustUsernameColor(comment.user_color) }}>
+          {comment.display_name}
+        </span>
+        <span>: </span>
+        <span>{transformMessage(comment.message, `comment-${comment.id}`)}</span>
       </div>
     </div>
   );
@@ -85,6 +90,8 @@ interface ChatProps {
   playerState: PlayerState;
   setUserChatDelay: (_v: number) => void;
   twitchId?: number;
+  chatOnLeft: boolean;
+  setChatOnLeft: (_v: boolean) => void;
 }
 
 export default function Chat(props: ChatProps) {
@@ -102,6 +109,8 @@ export default function Chat(props: ChatProps) {
     playerState,
     setUserChatDelay,
     twitchId,
+    chatOnLeft,
+    setChatOnLeft,
   } = props;
 
   const [showChat, setShowChat] = useState(true);
@@ -116,6 +125,8 @@ export default function Chat(props: ChatProps) {
   const [showModal, setShowModal] = useState(false);
   const [chatWidth, setChatWidth] = useState<number | undefined>(undefined);
   const [filterRegex, setFilterRegex] = useState<RegExp | null>(null);
+  const [fontFamily, setFontFamily] = useState<string>('ui-sans-serif, system-ui, -apple-system, sans-serif');
+  const [messageFontSize, setMessageFontSize] = useState<number>(14);
   const filterRegexRef = useRef<RegExp | null>(null);
 
   useEffect(() => {
@@ -149,6 +160,41 @@ export default function Chat(props: ChatProps) {
 
     updateChatWidth();
   }, []);
+
+  useEffect(() => {
+    const savedSettings = safeLocalStorage.getItem('chatSettings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings) || {};
+        if (settings.fontFamily && typeof settings.fontFamily === 'string') {
+          setFontFamily(settings.fontFamily);
+          document.documentElement.style.setProperty('--chat-font-family', settings.fontFamily);
+        }
+        if (settings.messageFontSize && typeof settings.messageFontSize === 'number') {
+          setMessageFontSize(settings.messageFontSize);
+          document.documentElement.style.setProperty('--chat-font-size-message', `${settings.messageFontSize}px`);
+          document.documentElement.style.setProperty(
+            '--chat-font-size-timestamp',
+            `${Math.round(settings.messageFontSize * 0.857)}px`
+          );
+        }
+      } catch (e) {
+        console.error('Failed to parse font settings from localStorage', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--chat-font-family', fontFamily);
+  }, [fontFamily]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--chat-font-size-message', `${messageFontSize}px`);
+    document.documentElement.style.setProperty(
+      '--chat-font-size-timestamp',
+      `${Math.round(messageFontSize * 0.857)}px`
+    );
+  }, [messageFontSize]);
 
   useEffect(() => {
     const loadFilterRegex = () => {
@@ -998,6 +1044,7 @@ export default function Chat(props: ChatProps) {
             showChat={showChat}
             setShowChat={setShowChat}
             setShowModal={setShowModal}
+            chatOnLeft={chatOnLeft}
           />
           <hr className="border-t border-[#222230]" />
           <div
@@ -1013,6 +1060,8 @@ export default function Chat(props: ChatProps) {
                   showTimestamp={showTimestamp}
                   transformBadges={transformBadges}
                   transformMessage={transformMessage}
+                  fontFamily={fontFamily}
+                  messageFontSize={messageFontSize}
                 />
               ))}
               scrolling={scrolling}
@@ -1024,13 +1073,13 @@ export default function Chat(props: ChatProps) {
         </>
       )}
       {!isPortrait && !showChat && (
-        <div className="absolute top-2 right-2 z-50">
+        <div className={`absolute top-2 ${chatOnLeft ? 'left-2' : 'right-2'} z-50`}>
           <button
             onClick={() => setShowChat(!showChat)}
-            className="flex cursor-pointer items-center justify-center rounded-l-lg border border-r-0 border-[#222230] bg-[#16161e] p-1.5 text-white shadow-xl transition-all hover:bg-[#18181b] hover:text-gray-300"
+            className={`flex cursor-pointer items-center justify-center border border-[#222230] bg-[#16161e] p-1.5 text-white shadow-xl transition-all hover:bg-[#18181b] hover:text-gray-300 ${chatOnLeft ? 'rounded-r-lg border-l-0' : 'rounded-l-lg border-r-0'}`}
             title="Expand Chat"
           >
-            <ChevronLeft size={16} />
+            {chatOnLeft ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
       )}
@@ -1043,6 +1092,12 @@ export default function Chat(props: ChatProps) {
         setShowTimestamp={setShowTimestamp}
         chatWidth={chatWidth}
         setChatWidth={setChatWidth}
+        fontFamily={fontFamily}
+        setFontFamily={setFontFamily}
+        messageFontSize={messageFontSize}
+        setMessageFontSize={setMessageFontSize}
+        chatOnLeft={chatOnLeft}
+        setChatOnLeft={setChatOnLeft}
       />
     </div>
   );

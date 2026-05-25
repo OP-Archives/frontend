@@ -217,6 +217,9 @@ export interface ChatSettings {
   chatWidth?: number;
   showTimestamp?: boolean;
   filterWords?: string[];
+  fontFamily?: string;
+  messageFontSize?: number;
+  chatOnLeft?: boolean;
 }
 
 export interface PlayerSettings {

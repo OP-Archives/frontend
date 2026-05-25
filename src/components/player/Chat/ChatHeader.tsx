@@ -1,14 +1,15 @@
-import { ChevronRight, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 
 interface ChatHeaderProps {
   isPortrait: boolean;
   showChat: boolean;
   setShowChat: (_v: boolean) => void;
   setShowModal: (_v: boolean) => void;
+  chatOnLeft: boolean;
 }
 
 export default function ChatHeader(props: ChatHeaderProps) {
-  const { isPortrait, showChat, setShowChat, setShowModal } = props;
+  const { isPortrait, showChat, setShowChat, setShowModal, chatOnLeft } = props;
 
   return (
     <div className="flex flex-nowrap items-center justify-between p-1">
@@ -18,7 +19,7 @@ export default function ChatHeader(props: ChatHeaderProps) {
           className="text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
           title="Collapse"
         >
-          <ChevronRight size={20} />
+          {chatOnLeft ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
       )}
       <span className="flex-1 text-center text-sm font-medium text-[#f0f0f5]">Chat Replay</span>

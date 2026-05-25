@@ -13,6 +13,8 @@
   --color-chat-accent: #6366f1;
 
   --font-family-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-size-message: 14px;
+  --font-size-timestamp: 12px;
 
   --radius-lg: 8px;
   --radius-xl: 12px;
@@ -133,12 +135,4 @@ body {
   display: inline-block;
 }
 
-.chat-message-optimize {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 32px;
-  overflow-anchor: none;
-}
 
-.chat-msg-lineheight {
-  line-height: 20px;
-}

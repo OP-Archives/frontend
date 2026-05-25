@@ -7,6 +7,7 @@ import { RecentItemsVods } from '@/components/player/RecentItems';
 import { convertTimestamp } from '@/components/player/utils/helpers';
 import Loading from '@/components/player/utils/Loading';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/components/player/utils/positionStorage';
+import { safeLocalStorage } from '@/components/player/utils/safeLocalStorage';
 import { useTenantContext } from '@/contexts/TenantContext';
 import type { VOD, VODUpload, PartInfo, PlayerState } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
@@ -30,6 +31,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
   const [part, setPart] = useState<PartInfo | null>(null);
   const [delay, setDelay] = useState<number | undefined>(undefined);
   const [userChatDelay, setUserChatDelay] = useState(0);
+  const [chatOnLeft, setChatOnLeft] = useState(false);
   const [playerState, setPlayerState] = useState<PlayerState>(-1);
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPortrait, setIsPortrait] = useState(false);
@@ -40,6 +42,20 @@ export default function YoutubeVod(props: YoutubeVodProps) {
     const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
     mql.addEventListener('change', handler);
     return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  useEffect(() => {
+    const savedSettings = safeLocalStorage.getItem('chatSettings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings) || {};
+        if (settings.chatOnLeft !== undefined) {
+          setChatOnLeft(Boolean(settings.chatOnLeft));
+        }
+      } catch (e) {
+        console.error('Failed to parse chat settings from localStorage', e);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -158,7 +174,9 @@ export default function YoutubeVod(props: YoutubeVodProps) {
 
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col">
-      <div className={`flex flex-1 ${isPortrait ? 'flex-col' : 'flex-row'} min-h-0 min-w-0 overflow-hidden`}>
+      <div
+        className={`flex flex-1 ${isPortrait ? 'flex-col' : chatOnLeft ? 'flex-row-reverse' : 'flex-row'} min-h-0 min-w-0 overflow-hidden`}
+      >
         {/* Left Column - Scrollable */}
         <div
           className={`flex min-w-0 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isPortrait ? 'w-full flex-shrink-0' : 'flex-1'}`}
@@ -219,6 +237,8 @@ export default function YoutubeVod(props: YoutubeVodProps) {
           part={part}
           setPart={setPart}
           setUserChatDelay={setUserChatDelay}
+          chatOnLeft={chatOnLeft}
+          setChatOnLeft={setChatOnLeft}
           isYoutubeVod={true}
           playerState={playerState}
           twitchId={twitchId}
