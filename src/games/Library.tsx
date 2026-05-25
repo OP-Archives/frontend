@@ -121,7 +121,7 @@ export function Library() {
               debouncedSetSearchTerm(e.target.value);
             }}
             value={inputSearch}
-            className="w-44 rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 pr-8 text-sm text-[#f0f0f5] placeholder-[#9ca3af]"
+            className="h-9 w-44 rounded border border-[#222230] bg-[#16161e] px-3 pr-8 text-sm text-[#f0f0f5] placeholder-[#9ca3af]"
           />
           {inputSearch && (
             <button

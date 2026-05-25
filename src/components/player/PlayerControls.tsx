@@ -14,7 +14,6 @@ import {
   Check,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import SimpleBar from 'simplebar-react';
 import { formatTime } from '@/components/player/utils/helpers';
 
 const CONTROL_BAR_HEIGHT = 60;
@@ -457,7 +456,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
                   </>
                 )}
                 {showSpeedMenu && (
-                  <SimpleBar style={{ maxHeight: `${Math.min(250, menuMaxHeight - 40)}px` }}>
+                  <div style={{ maxHeight: `${Math.min(250, menuMaxHeight - 40)}px`, overflowY: 'auto' }}>
                     <div>
                       {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3].map((speed) => (
                         <button
@@ -471,7 +470,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
                         </button>
                       ))}
                     </div>
-                  </SimpleBar>
+                  </div>
                 )}
               </div>
             )}

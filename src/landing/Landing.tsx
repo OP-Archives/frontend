@@ -47,9 +47,7 @@ export function Landing() {
               <span className="mr-3 text-[#6366f1] md:mr-4">op</span>
               <span className="text-[#f0f0f5]">archive</span>
             </h1>
-            <p className="mt-3 text-sm text-[#9ca3af]">
-              A platform for watching your favorite streamers' archived VODs
-            </p>
+            <p className="mt-3 text-sm text-[#9ca3af]">Watch your favorite streamers' archived VODs</p>
             <div className="mx-auto mt-4 h-[1.5px] w-48 bg-[#6366f1]/40" />
           </div>
 

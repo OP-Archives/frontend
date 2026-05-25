@@ -408,27 +408,23 @@ export default function Player(props: PlayerProps) {
 
   return (
     <div className="h-full w-full">
-      {type === 'manual' && !source && (
-        <div className="flex h-full flex-col items-center justify-center rounded-lg bg-[#16161e]">
-          {fileError && (
-            <div className="mb-2 rounded-lg border border-red-700 bg-red-900/50 px-4 py-2 text-sm text-red-200">
-              {fileError}
+      <div ref={playerContainerRef} className="relative h-full w-full overflow-hidden outline-none">
+        {type === 'manual' && !source && (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#16161e]">
+            {fileError && (
+              <div className="mb-2 rounded-lg border border-red-700 bg-red-900/50 px-4 py-2 text-sm text-red-200">
+                {fileError}
+              </div>
+            )}
+            <div className="mt-4">
+              <label className="inline-block cursor-pointer rounded-lg bg-[#6366f1] px-4 py-2 text-white transition-colors hover:bg-[#818cf8]">
+                Select Video
+                <input type="file" hidden onChange={fileChange} accept="video/*,.mkv" />
+              </label>
             </div>
-          )}
-          <div className="mt-4">
-            <label className="inline-block cursor-pointer rounded-lg bg-[#6366f1] px-4 py-2 text-white transition-colors hover:bg-[#818cf8]">
-              Select Video
-              <input type="file" hidden onChange={fileChange} accept="video/*,.mkv" />
-            </label>
           </div>
-        </div>
-      )}
+        )}
 
-      <div
-        ref={playerContainerRef}
-        className="relative h-full w-full overflow-hidden outline-none"
-        style={{ visibility: !source ? ('hidden' as const) : ('visible' as const) }}
-      >
         <video
           ref={playerRef}
           playsInline
@@ -447,37 +443,42 @@ export default function Player(props: PlayerProps) {
           onClick={togglePlayPause}
           onDoubleClick={toggleFullscreen}
           className="h-full w-full cursor-pointer"
+          style={{ visibility: !source ? ('hidden' as const) : 'visible' }}
         />
 
-        <div
-          onClick={togglePlayPause}
-          onDoubleClick={toggleFullscreen}
-          className={`absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 transition-opacity duration-200 ${
-            isPlaying ? 'pointer-events-none opacity-0 delay-75' : 'opacity-100 delay-75'
-          }`}
-        >
-          <Play className="text-white drop-shadow-2xl" size={playIconSize} />
-        </div>
+        {source && (
+          <>
+            <div
+              onClick={togglePlayPause}
+              onDoubleClick={toggleFullscreen}
+              className={`absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 transition-opacity duration-200 ${
+                isPlaying ? 'pointer-events-none opacity-0 delay-75' : 'opacity-100 delay-75'
+              }`}
+            >
+              <Play className="text-white drop-shadow-2xl" size={playIconSize} />
+            </div>
 
-        <PlayerControls
-          isPlaying={isPlaying}
-          volume={volume}
-          isMuted={isMuted}
-          currentTime={currentTime}
-          duration={duration}
-          theatreMode={theatreMode}
-          isFullscreen={isFullscreen}
-          playbackSpeed={playbackSpeed}
-          onTogglePlayPause={togglePlayPause}
-          onVolumeChange={handleVolumeChange}
-          onSeekChange={handleSeekChange}
-          onToggleMute={toggleMute}
-          onToggleTheatreMode={toggleTheatreMode}
-          onToggleFullscreen={toggleFullscreen}
-          playerContainerRef={playerContainerRef}
-          onPlaybackSpeedChange={handlePlaybackSpeedChange}
-          onCopyTimestamp={copyTimestamp}
-        />
+            <PlayerControls
+              isPlaying={isPlaying}
+              volume={volume}
+              isMuted={isMuted}
+              currentTime={currentTime}
+              duration={duration}
+              theatreMode={theatreMode}
+              isFullscreen={isFullscreen}
+              playbackSpeed={playbackSpeed}
+              onTogglePlayPause={togglePlayPause}
+              onVolumeChange={handleVolumeChange}
+              onSeekChange={handleSeekChange}
+              onToggleMute={toggleMute}
+              onToggleTheatreMode={toggleTheatreMode}
+              onToggleFullscreen={toggleFullscreen}
+              playerContainerRef={playerContainerRef}
+              onPlaybackSpeedChange={handlePlaybackSpeedChange}
+              onCopyTimestamp={copyTimestamp}
+            />
+          </>
+        )}
       </div>
     </div>
   );

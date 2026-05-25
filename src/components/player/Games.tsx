@@ -1,9 +1,12 @@
 import { useEffect, useState, useRef, ChangeEvent } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import BaseVod from './BaseVod';
 import Chat from './Chat/Chat';
+import { PlayerTenantProfile } from '@/components/player/PlayerTenantProfile';
+import { RecentItemsGames } from '@/components/player/RecentItems';
 import Loading from '@/components/player/utils/Loading';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/components/player/utils/positionStorage';
+import { useTenantContext } from '@/contexts/TenantContext';
 import type { VOD, GameEntry, PartInfo, PlayerState } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
 
@@ -18,6 +21,7 @@ export default function Games(props: GamesProps) {
   const location = useLocation();
   const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>();
   const channel = tenant || '';
+  const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
   const [games, setGames] = useState<GameEntry[] | undefined>(undefined);
   const [part, setPart] = useState<PartInfo | null | undefined>(undefined);
@@ -25,6 +29,8 @@ export default function Games(props: GamesProps) {
   const [playerState, setPlayerState] = useState<PlayerState>(-1);
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPortrait, setIsPortrait] = useState(false);
+  const navigate = useNavigate();
+  const currentGameId = new URLSearchParams(location.search).get('game_id') || '';
 
   useEffect(() => {
     const mql = window.matchMedia('(orientation: portrait)');
@@ -105,6 +111,13 @@ export default function Games(props: GamesProps) {
     return;
   }, [playerState, games, playerRef, part]);
 
+  useEffect(() => {
+    if (!part || !games || typeof part.part !== 'number' || part.part < 1) return;
+    const currentGame = games[part.part - 1];
+    if (!currentGame) return;
+    navigate(`?game_id=${currentGame.id}`);
+  }, [part?.part, games]);
+
   const handlePartChange = (evt: ChangeEvent<HTMLSelectElement>) => {
     const tmpPart = parseInt(evt.target.value) + 1;
     const selectedGameId = games![tmpPart - 1].id;
@@ -128,24 +141,6 @@ export default function Games(props: GamesProps) {
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
         {logo && <img src={logo} alt="" className="h-auto max-w-[200px]" />}
         <p className="text-lg text-[#9ca3af]">No games found</p>
-        <div className="flex gap-2">
-          {vod.prev[0] && (
-            <a
-              href={`/games/${vod.prev[0].id}`}
-              className="flex items-center gap-1 text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
-            >
-              <span>Previous Game</span>
-            </a>
-          )}
-          {vod.next[0] && (
-            <a
-              href={`/games/${vod.next[0].id}`}
-              className="flex items-center gap-1 text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
-            >
-              <span>Next Game</span>
-            </a>
-          )}
-        </div>
       </div>
     );
   }
@@ -153,21 +148,46 @@ export default function Games(props: GamesProps) {
   return (
     <div className="h-full w-full">
       <div className={`flex ${isPortrait ? 'flex-col' : 'flex-row'} h-full w-full min-w-0 overflow-hidden`}>
-        <div className={`min-h-0 min-w-0 overflow-hidden ${isPortrait ? 'w-full flex-shrink-0' : 'h-full flex-1'}`}>
-          <BaseVod
-            {...props}
-            logo={logo}
-            handlePartChange={handlePartChange}
-            games={games}
-            playerRef={playerRef}
-            part={part}
-            setPart={setPart}
-            vod={vod}
-            setPlayerState={setPlayerState}
-            isPortrait={isPortrait}
-          />
+        {/* Left Column - Scrollable */}
+        <div
+          className={`flex min-w-0 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isPortrait ? 'w-full flex-shrink-0' : 'h-full flex-1'}`}
+        >
+          {/* BaseVod strictly set to 100% height of parent to fill the initial viewport */}
+          <div className="flex h-full w-full shrink-0 flex-col">
+            <BaseVod
+              {...props}
+              logo={logo}
+              handlePartChange={handlePartChange}
+              games={games}
+              playerRef={playerRef}
+              part={part}
+              setPart={setPart}
+              vod={vod}
+              setPlayerState={setPlayerState}
+              isPortrait={isPortrait}
+            />
+          </div>
+          {!isPortrait && tenantData && (
+            <>
+              <div className="w-full shrink-0">
+                <PlayerTenantProfile tenantData={tenantData} />
+              </div>
+              <RecentItemsGames
+                games={games}
+                currentGameId={currentGameId}
+                currentVodId={vodId!}
+                setPart={setPart}
+                prevVods={vod.prev}
+                nextVods={vod.next}
+                currentVod={vod}
+              />
+            </>
+          )}
         </div>
-        {isPortrait && <hr className="border-[#222230]" />}
+
+        {isPortrait && <hr className="shrink-0 border-[#222230]" />}
+        {!isPortrait && <div className="w-px shrink-0 bg-[#222230]" />}
+
         <Chat
           isPortrait={isPortrait}
           vodId={vodId!}

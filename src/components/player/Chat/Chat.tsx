@@ -989,7 +989,7 @@ export default function Chat(props: ChatProps) {
 
   return (
     <div
-      className={`${isPortrait ? 'flex-1' : 'h-full max-h-[calc(100vh-12rem)]'} relative flex min-h-0 min-w-0 flex-col`}
+      className={`${isPortrait ? 'w-full flex-1' : 'shrink-0 self-stretch'} relative flex min-h-0 min-w-0 flex-col bg-[#16161e]`}
     >
       {showChat && (
         <>
@@ -999,10 +999,10 @@ export default function Chat(props: ChatProps) {
             setShowChat={setShowChat}
             setShowModal={setShowModal}
           />
-          <hr className="border-[#222230]" />
+          <hr className="border-t border-[#222230]" />
           <div
-            className="h-full min-h-0 min-w-0 flex-1 overflow-hidden"
-            style={{ width: isPortrait ? '100%' : `${chatWidth}px` }}
+            className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+            style={{ width: isPortrait ? '100%' : `${chatWidth || 340}px` }}
           >
             <ChatMessages
               comments={comments}
@@ -1027,7 +1027,7 @@ export default function Chat(props: ChatProps) {
         <div className="absolute top-2 right-2 z-50">
           <button
             onClick={() => setShowChat(!showChat)}
-            className="flex cursor-pointer items-center justify-center rounded-l-lg border border-r-0 border-[#222230] bg-[#16161e] p-1.5 text-white shadow-xl transition-all hover:bg-[#16161e] hover:text-gray-300"
+            className="flex cursor-pointer items-center justify-center rounded-l-lg border border-r-0 border-[#222230] bg-[#16161e] p-1.5 text-white shadow-xl transition-all hover:bg-[#18181b] hover:text-gray-300"
             title="Expand Chat"
           >
             <ChevronLeft size={16} />

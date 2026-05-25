@@ -48,9 +48,7 @@ export default function VodCard({ vod, priority }: { vod: VodData; priority?: bo
                 decoding="async"
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">
-                No thumbnail
-              </div>
+              <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
             )}
           </Link>
           <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
@@ -92,9 +90,7 @@ export default function VodCard({ vod, priority }: { vod: VodData; priority?: bo
         <div className="min-w-0 flex-1">
           <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline">
             <CustomWidthTooltip title={vod.title}>
-              <span className="block max-w-full truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">
-                {vod.title}
-              </span>
+              <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">{vod.title}</span>
             </CustomWidthTooltip>
           </Link>
           <div className="mt-1 flex justify-center">

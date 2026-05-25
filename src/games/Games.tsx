@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, X } from 'lucide-react';
 import { useEffect, useState, startTransition } from 'react';
-import { useSearchParams, useParams } from 'react-router-dom';
+import { Link, useSearchParams, useParams } from 'react-router-dom';
 import type { GameData } from '@/types';
 import CustomWidthTooltip from '@/utils/CustomToolTip';
 import { toHHMMSS, getImage } from '@/utils/helpers';
@@ -233,9 +233,7 @@ export function Games() {
                     {game.thumbnail_url ? (
                       <img className="thumbnail h-full w-full object-cover" alt="" src={game.thumbnail_url} />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">
-                        No thumbnail
-                      </div>
+                      <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
                     )}
                   </a>
                   <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
@@ -259,26 +257,28 @@ export function Games() {
               </div>
               <div className="mt-1 mb-1 flex cursor-default items-start">
                 {game.chapter_image && (
-                  <img
-                    alt=""
-                    src={getImage(game.chapter_image, 40, 53)}
-                    width={40}
-                    height={53}
-                    className="pointer-events-none h-[53px] w-[40px] shrink-0 object-cover"
-                    loading="lazy"
-                  />
-                )}
-                <div className="mt-2 min-w-0 flex-1 pl-2">
-                  <div className="w-full min-w-0 p-0.5">
-                    <CustomWidthTooltip title={game.title}>
-                      <a
-                        href={`/${tenant}/games/${game.vod_id}?game_id=${game.id}`}
-                        className="block truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80"
-                      >
-                        {game.title}
-                      </a>
-                    </CustomWidthTooltip>
+                  <div className="mr-2 shrink-0">
+                    <img
+                      alt=""
+                      src={getImage(game.chapter_image, 40, 53)}
+                      width={40}
+                      height={53}
+                      className="pointer-events-none h-[53px] w-[40px] shrink-0 object-cover"
+                      loading="lazy"
+                    />
                   </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <Link
+                    to={`/${tenant}/games/${game.vod_id}?game_id=${game.id}`}
+                    className="inline-flex max-w-full min-w-0 no-underline"
+                  >
+                    <CustomWidthTooltip title={game.title}>
+                      <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">
+                        {game.title}
+                      </span>
+                    </CustomWidthTooltip>
+                  </Link>
                 </div>
               </div>
             </div>

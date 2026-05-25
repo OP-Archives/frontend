@@ -10,6 +10,7 @@ export interface VOD {
   is_live: boolean;
   started_at: string;
   updated_at: string;
+  thumbnail_url?: string | null;
   vod_uploads: VODUpload[];
   chapters: Chapter[];
   games: GameEntry[];
@@ -43,12 +44,23 @@ export interface GameEntry {
   start: string;
   duration: number;
   chapter_image?: string;
+  thumbnail_url?: string;
+  title?: string;
+  name?: string;
+  created_at?: string;
 }
 
 export interface VODNavigation {
   id: number;
   platform: string;
   platform_vod_id: string;
+  title?: string;
+  duration?: number;
+  created_at?: string;
+  thumbnail_url?: string | null;
+  chapters?: Chapter[];
+  games?: GameEntry[];
+  vod_uploads?: { thumbnail_url: string }[];
 }
 
 // Simplified types for list endpoints (xQc-site pattern)

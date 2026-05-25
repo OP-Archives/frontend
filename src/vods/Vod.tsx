@@ -1,4 +1,3 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import CustomVod from '@/components/player/CustomVod';
@@ -59,7 +58,7 @@ export function Vod() {
       case 'cdn':
         return <CustomVod type="cdn" cdnBase={cdnBaseUrl} />;
       case 'manual':
-        return <CustomVod />;
+        return <CustomVod type="manual" />;
       case 'games':
         return <Games />;
       default:
@@ -68,21 +67,8 @@ export function Vod() {
   };
 
   return (
-    <div className="mx-auto max-w-[1920px]">
-      <div className="relative">{renderPlayer()}</div>
-
-      {vod.prev?.[0] && vod.next?.[0] && (
-        <div className="flex items-center justify-between border-t border-[#222230] px-4 py-3">
-          <button className="flex items-center gap-2 text-[#9ca3af] transition-colors hover:text-[#f0f0f5]">
-            <ChevronLeft className="h-4 w-4" />
-            <span className="text-sm">Previous</span>
-          </button>
-          <button className="flex items-center gap-2 text-[#9ca3af] transition-colors hover:text-[#f0f0f5]">
-            <span className="text-sm">Next</span>
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      )}
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-[1920px] flex-1 flex-col">
+      <div className="relative flex h-full min-h-0 flex-1 flex-col">{renderPlayer()}</div>
     </div>
   );
 }

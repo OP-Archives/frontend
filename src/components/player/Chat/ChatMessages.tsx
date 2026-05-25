@@ -1,6 +1,4 @@
 import { Pause } from 'lucide-react';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
 import type { Comment } from '@/types';
 
 interface ChatMessagesProps {
@@ -29,19 +27,20 @@ export default function ChatMessages(props: ChatMessagesProps) {
 
   return (
     <>
-      <SimpleBar
-        scrollableNodeProps={{ ref: chatRef, onScroll: handleScroll }}
-        style={{ height: '100%', overflowX: 'hidden' }}
+      <div
+        ref={chatRef as React.Ref<HTMLDivElement>}
+        onScroll={handleScroll}
+        className="min-h-0 w-full flex-1 overflow-y-auto"
       >
-        <div className="flex flex-col justify-end p-0">
-          <div className="flex min-h-0 flex-wrap">{shownMessages}</div>
+        <div className="flex min-h-full flex-col justify-end p-0">
+          <div className="flex min-h-0 flex-col">{shownMessages}</div>
         </div>
-      </SimpleBar>
+      </div>
       {scrolling && (
         <div className="relative flex justify-center">
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-1 z-10 flex cursor-pointer items-center gap-1.5 rounded-full bg-[#16161e] px-4 py-2 text-xs text-[#9ca3af] shadow-md transition-all hover:bg-[#16161e] hover:text-[#f0f0f5]"
+            className="absolute bottom-1 z-10 flex cursor-pointer items-center gap-1.5 rounded-full bg-[#18181b] px-4 py-2 text-xs text-[#9ca3af] shadow-md transition-all hover:bg-[#18181b] hover:text-[#f0f0f5]"
           >
             <Pause size={18} />
             <span>Chat Paused</span>

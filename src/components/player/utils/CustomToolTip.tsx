@@ -42,7 +42,7 @@ export default function CustomWidthTooltip({
               maxWidth: 'calc(100vw - 2rem)',
             }}
           >
-            <div className="animate-[fadeIn_0.2s_ease-out] rounded-lg border border-gray-700 bg-white px-3 py-1.5 text-sm break-words whitespace-normal text-gray-900 shadow-lg">
+            <div className="animate-[fadeIn_0.2s_ease-out] rounded-lg border border-[#222230] bg-[#16161e] px-3 py-1.5 text-sm break-words whitespace-normal text-white shadow-lg">
               {title}
             </div>
           </div>,

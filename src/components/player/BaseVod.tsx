@@ -1,6 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState, useRef, ChangeEvent } from 'react';
-import { useLocation } from 'react-router-dom';
 import CustomPlayer from './CustomPlayer';
 import GamesMenu from './GamesMenu';
 import VodChapters from './VodChapters';
@@ -10,6 +8,12 @@ import { toHMS } from '@/components/player/utils/helpers';
 import { loadPlayerSettings, savePlayerSettings } from '@/components/player/utils/playerSettings';
 import { saveResumePosition } from '@/components/player/utils/positionStorage';
 import type { VOD, VODUpload, GameEntry, PartInfo, PlayerState, PlayerSettings, Chapter } from '@/types';
+
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 
 export interface BaseVodProps {
   origin?: string;
@@ -48,13 +52,9 @@ export default function BaseVod(props: BaseVodProps) {
     setPlayerState,
     games,
     cdnBase,
-    isPortrait,
   } = props;
   const part = partValue ?? null;
-  const location = useLocation();
-  const pathPrefix = location.pathname.split('/')[1];
   const [theatreMode, setTheatreMode] = useState(false);
-  const [collapseOpen, setCollapseOpen] = useState(true);
 
   const [chapter, setChapter] = useState<
     { name: string; image: string; start: number; duration: number; end: number } | null | undefined
@@ -62,11 +62,6 @@ export default function BaseVod(props: BaseVodProps) {
   const [currentTime, setCurrentTime] = useState<number | undefined>(undefined);
   const [playerSettings, setPlayerSettings] = useState<PlayerSettings>(() => loadPlayerSettings());
   const lastSaveRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (!vod) return;
-    setCollapseOpen(!theatreMode);
-  }, [theatreMode, vod]);
 
   useEffect(() => {
     if (!vod) return;
@@ -82,7 +77,7 @@ export default function BaseVod(props: BaseVodProps) {
 
     if (!games) {
       const currentChapter = vod.chapters.find(
-        (chapter: Chapter) => currentTime >= chapter.start && currentTime < chapter.start + chapter.end
+        (chapter: Chapter) => currentTime >= chapter.start && currentTime < chapter.end
       );
 
       if (currentChapter) {
@@ -140,60 +135,61 @@ export default function BaseVod(props: BaseVodProps) {
   if (!vod) return null;
 
   return (
-    <div
-      className={`relative flex min-h-0 w-full min-w-0 flex-col items-start overflow-hidden ${isPortrait ? 'h-auto' : 'h-full'}`}
-    >
-      <div className={`relative min-h-0 w-full ${isPortrait ? 'aspect-video flex-shrink-0' : 'h-full flex-1'}`}>
-        {isYoutubeVod ? (
-          <YoutubePlayer
-            playerRef={playerRef}
-            part={part}
-            youtube={youtube}
-            setCurrentTime={setCurrentTime}
-            setPart={setPart}
-            setPlayerState={setPlayerState}
-            origin={origin}
-            theatreMode={theatreMode}
-            setTheatreMode={setTheatreMode}
-            copyTimestamp={copyTimestamp}
-          />
-        ) : games ? (
-          <YoutubePlayer
-            playerRef={playerRef}
-            part={part}
-            games={games}
-            setPart={setPart}
-            setPlayerState={setPlayerState}
-            setCurrentTime={setCurrentTime}
-            origin={origin}
-            theatreMode={theatreMode}
-            setTheatreMode={setTheatreMode}
-            copyTimestamp={copyTimestamp}
-          />
-        ) : (
-          <CustomPlayer
-            playerRef={playerRef}
-            setCurrentTime={setCurrentTime}
-            setDelay={setDelay}
-            type={type}
-            vod={vod}
-            timestamp={timestamp}
-            setPlayerState={setPlayerState}
-            cdnBase={cdnBase}
-            defaultVolume={playerSettings.volume}
-            defaultMuted={playerSettings.muted}
-            onUpdateSettings={(settings) => setPlayerSettings(settings)}
-            theatreMode={theatreMode}
-            setTheatreMode={setTheatreMode}
-            copyTimestamp={copyTimestamp}
-          />
-        )}
+    <div className="relative flex h-full min-h-0 w-full min-w-0 flex-col items-center">
+      {/* Player container stretches to remaining available height natively. 
+        If Theatre Mode is toggled, it forces h-full to push the title/profile below the fold. 
+      */}
+      <div className={`relative w-full bg-black ${theatreMode ? 'h-full shrink-0' : 'min-h-0 flex-1'}`}>
+        <div className="absolute inset-0">
+          {isYoutubeVod ? (
+            <YoutubePlayer
+              playerRef={playerRef}
+              part={part}
+              youtube={youtube}
+              setCurrentTime={setCurrentTime}
+              setPart={setPart}
+              setPlayerState={setPlayerState}
+              origin={origin}
+              theatreMode={theatreMode}
+              setTheatreMode={setTheatreMode}
+              copyTimestamp={copyTimestamp}
+            />
+          ) : games ? (
+            <YoutubePlayer
+              playerRef={playerRef}
+              part={part}
+              games={games}
+              setPart={setPart}
+              setPlayerState={setPlayerState}
+              setCurrentTime={setCurrentTime}
+              origin={origin}
+              theatreMode={theatreMode}
+              setTheatreMode={setTheatreMode}
+              copyTimestamp={copyTimestamp}
+            />
+          ) : (
+            <CustomPlayer
+              playerRef={playerRef}
+              setCurrentTime={setCurrentTime}
+              setDelay={setDelay}
+              type={type}
+              vod={vod}
+              timestamp={timestamp}
+              setPlayerState={setPlayerState}
+              cdnBase={cdnBase}
+              defaultVolume={playerSettings.volume}
+              defaultMuted={playerSettings.muted}
+              onUpdateSettings={(settings) => setPlayerSettings(settings)}
+              theatreMode={theatreMode}
+              setTheatreMode={setTheatreMode}
+              copyTimestamp={copyTimestamp}
+            />
+          )}
+        </div>
       </div>
 
-      <div
-        className={`w-full transition-all duration-300 ease-in-out ${collapseOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}
-      >
-        <div className="flex items-center overflow-hidden rounded-b-lg bg-[#16161e] p-2 shadow-lg">
+      <div className="w-full shrink-0 border-t border-[#222230] bg-[#16161e] p-2 shadow-lg">
+        <div className="flex items-center overflow-hidden">
           {chapter && !games && (
             <VodChapters
               chapters={vod.chapters}
@@ -207,14 +203,17 @@ export default function BaseVod(props: BaseVodProps) {
           )}
           {games && part && <GamesMenu games={games} part={part} setPart={setPart!} />}
 
-          <div className="flex min-w-0 flex-1 items-center">
+          <div className="flex min-w-0 flex-1 flex-col">
             <CustomWidthTooltip title={vod.title}>
               <span className="block w-full truncate text-sm leading-none font-semibold">{vod.title}</span>
             </CustomWidthTooltip>
+            <span className="mt-1 block w-full truncate text-xs text-[#9ca3af]">
+              {DATE_FORMATTER.format(new Date(vod.created_at)).replace(',', '')}
+            </span>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <div className="flex gap-2">
-              {isYoutubeVod && (
+              {isYoutubeVod && youtube!.length > 1 && (
                 <select
                   value={part!.part - 1}
                   onChange={(e) => handlePartChange?.(e as unknown as ChangeEvent<HTMLSelectElement>)}
@@ -234,26 +233,6 @@ export default function BaseVod(props: BaseVodProps) {
                 </select>
               )}
             </div>
-            {vod.prev[0] && (
-              <CustomWidthTooltip title="Previous">
-                <a
-                  href={`/${pathPrefix}/${vod.prev[0].id}`}
-                  className="text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
-                >
-                  <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                </a>
-              </CustomWidthTooltip>
-            )}
-            {vod.next[0] && (
-              <CustomWidthTooltip title="Next">
-                <a
-                  href={`/${pathPrefix}/${vod.next[0].id}`}
-                  className="text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
-                >
-                  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                </a>
-              </CustomWidthTooltip>
-            )}
           </div>
         </div>
       </div>

@@ -2,7 +2,6 @@ import humanize from 'humanize-duration';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import SimpleBar from 'simplebar-react';
 import { getImage } from '@/components/player/utils/helpers';
 import type { GameEntry, PartInfo } from '@/types';
 
@@ -108,7 +107,7 @@ function GamesMenu({ games, part, setPart }: GamesMenuProps) {
       <button
         ref={buttonRef}
         onClick={handleClick}
-        className="flex text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
+        className="flex cursor-pointer text-[#f0f0f5] opacity-80 transition-all hover:text-[#6366f1] hover:opacity-100"
         title={currentGame?.game_name || ''}
       >
         <img
@@ -133,18 +132,19 @@ function GamesMenu({ games, part, setPart }: GamesMenuProps) {
               left: coords.left,
               width: 'max-content',
               minWidth: '200px',
-              maxWidth: 'calc(100vw - 32px)',
+              maxWidth: '200px',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <SimpleBar style={{ maxHeight: `${Math.min(400, coords.maxHeight)}px` }}>
+            <div style={{ maxHeight: `${Math.min(400, coords.maxHeight)}px`, overflowY: 'auto' }}>
               <div className="flex flex-col">
                 {games.map((game, index) => (
                   <button
+                    disabled={index === part!.part - 1}
                     onClick={() => handleGameClick(game, index)}
                     key={game.id}
-                    className={`flex w-full items-start gap-2 px-2 py-1.5 text-left transition-colors sm:px-3 sm:py-2 ${
-                      index === part!.part - 1 ? 'bg-[#16161e]' : 'hover:bg-[#16161e]'
+                    className={`flex w-full cursor-default items-start gap-2 px-2 py-1.5 text-left transition-colors sm:px-3 sm:py-2 ${
+                      index === part!.part - 1 ? 'bg-[#1e1e2a]' : 'hover:bg-[#222230]'
                     }`}
                   >
                     <div className="flex-shrink-0">
@@ -169,7 +169,7 @@ function GamesMenu({ games, part, setPart }: GamesMenuProps) {
                   </button>
                 ))}
               </div>
-            </SimpleBar>
+            </div>
           </div>,
           document.body
         )}

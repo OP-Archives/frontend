@@ -1,7 +1,6 @@
 import humanize from 'humanize-duration';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import SimpleBar from 'simplebar-react';
 import { toSeconds, getImage } from '@/components/player/utils/helpers';
 import type { Chapter, VODUpload, PartInfo } from '@/types';
 
@@ -131,7 +130,7 @@ function VodChapters({
       <button
         ref={buttonRef}
         onClick={handleClick}
-        className="flex text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
+        className="flex cursor-pointer text-[#f0f0f5] opacity-80 transition-all hover:text-[#6366f1] hover:opacity-100"
         title={chapter!.name}
       >
         <img
@@ -141,7 +140,7 @@ function VodChapters({
           height={53}
           decoding="async"
           loading="lazy"
-          className="block h-[40px] w-[30px] rounded-sm sm:h-[53px] sm:w-[40px]"
+          className="block h-[40px] w-[30px] rounded-sm transition-shadow hover:shadow-lg hover:shadow-[#6366f1]/30 sm:h-[53px] sm:w-[40px]"
         />
       </button>
 
@@ -156,18 +155,19 @@ function VodChapters({
               left: coords.left,
               width: 'max-content',
               minWidth: '200px',
-              maxWidth: 'calc(100vw - 32px)',
+              maxWidth: '200px',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <SimpleBar style={{ maxHeight: `${Math.min(400, coords.maxHeight)}px` }}>
+            <div style={{ maxHeight: `${Math.min(400, coords.maxHeight)}px`, overflowY: 'auto' }}>
               <div className="flex flex-col">
                 {chapters.map((data) => (
                   <button
+                    disabled={data.start === chapter!.start}
                     onClick={() => handleChapterClick(data)}
                     key={`${data.name}-${data.start}`}
-                    className={`flex w-full items-start gap-2 px-2 py-1.5 text-left transition-colors sm:px-3 sm:py-2 ${
-                      data.start === chapter!.start ? 'bg-[#16161e]' : 'hover:bg-[#16161e]'
+                    className={`flex w-full cursor-default items-start gap-2 px-2 py-1.5 text-left transition-colors sm:px-3 sm:py-2 ${
+                      data.start === chapter!.start ? 'bg-[#1e1e2a]' : 'hover:bg-[#222230]'
                     }`}
                   >
                     <div className="flex-shrink-0">
@@ -192,7 +192,7 @@ function VodChapters({
                   </button>
                 ))}
               </div>
-            </SimpleBar>
+            </div>
           </div>,
           document.body
         )}

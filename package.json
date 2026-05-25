@@ -22,7 +22,6 @@
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1",
     "react-youtube": "^10.1.0",
-    "simplebar-react": "^3.3.2",
     "tinyduration": "^3.4.1",
     "twemoji": "^14.0.2"
   },

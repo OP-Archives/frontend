@@ -22,8 +22,8 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#222230] bg-[#0a0a0f]/95 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+    <nav className="sticky top-0 z-50 border-b border-[#222230] bg-[#16161e] backdrop-blur-sm">
+      <div className="flex h-16 items-center justify-between px-4">
         <Link to="/" className="text-xl font-extrabold tracking-tight">
           <span className="mr-1 text-[#6366f1] drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">op</span>
           <span className="text-[#f0f0f5]">archive</span>
