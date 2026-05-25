@@ -135,4 +135,21 @@ body {
   display: inline-block;
 }
 
+/* Theatre mode overrides */
+body.theatre-mode nav {
+  display: none !important;
+}
+
+body.theatre-mode footer {
+  display: none !important;
+}
+
+body.theatre-mode #root > div {
+  padding-bottom: 0 !important;
+}
+
+body.theatre-mode .theatre-hide {
+  display: none !important;
+}
+
 

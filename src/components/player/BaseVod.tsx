@@ -52,6 +52,7 @@ export default function BaseVod(props: BaseVodProps) {
     setPlayerState,
     games,
     cdnBase,
+    isPortrait,
   } = props;
   const part = partValue ?? null;
   const [theatreMode, setTheatreMode] = useState(false);
@@ -96,6 +97,15 @@ export default function BaseVod(props: BaseVodProps) {
     }
   }, [currentTime, vod, playerRef, games, part]);
 
+  useEffect(() => {
+    if (theatreMode) {
+      document.body.classList.add('theatre-mode');
+    } else {
+      document.body.classList.remove('theatre-mode');
+    }
+    return () => document.body.classList.remove('theatre-mode');
+  }, [theatreMode]);
+
   const copyTimestamp = async (passedTime?: number) => {
     let timeToCopy = passedTime;
 
@@ -135,11 +145,11 @@ export default function BaseVod(props: BaseVodProps) {
   if (!vod) return null;
 
   return (
-    <div className="relative flex h-full min-h-0 w-full min-w-0 flex-col items-center">
+    <div className={`relative flex w-full min-w-0 flex-col items-center ${isPortrait ? '' : 'h-full min-h-0'}`}>
       {/* Player container stretches to remaining available height natively. 
         If Theatre Mode is toggled, it forces h-full to push the title/profile below the fold. 
       */}
-      <div className={`relative w-full bg-black ${theatreMode ? 'h-full shrink-0' : 'min-h-0 flex-1'}`}>
+      <div className={`relative w-full bg-black ${isPortrait ? 'aspect-video shrink-0' : 'min-h-0 flex-1'}`}>
         <div className="absolute inset-0">
           {isYoutubeVod ? (
             <YoutubePlayer
@@ -188,7 +198,7 @@ export default function BaseVod(props: BaseVodProps) {
         </div>
       </div>
 
-      <div className="w-full shrink-0 border-t border-[#222230] bg-[#16161e] p-2 shadow-lg">
+      <div className="theatre-hide w-full shrink-0 border-t border-[#222230] bg-[#16161e] p-2 shadow-lg">
         <div className="flex items-center overflow-hidden">
           {chapter && !games && (
             <VodChapters

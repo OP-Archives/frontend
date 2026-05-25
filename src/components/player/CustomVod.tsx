@@ -132,7 +132,7 @@ export default function CustomVod(props: CustomVodProps) {
           className={`flex min-w-0 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isPortrait ? 'w-full flex-shrink-0' : 'flex-1'}`}
         >
           {/* BaseVod strictly set to 100% height of parent to fill the initial viewport */}
-          <div className="flex h-full w-full shrink-0 flex-col">
+          <div className={`flex w-full shrink-0 flex-col ${isPortrait ? '' : 'h-full'}`}>
             <BaseVod
               {...props}
               logo={logo}
@@ -148,7 +148,7 @@ export default function CustomVod(props: CustomVodProps) {
             />
           </div>
           {!isPortrait && tenantData && (
-            <>
+            <div className="theatre-hide flex w-full flex-col">
               <div className="w-full shrink-0">
                 <PlayerTenantProfile tenantData={tenantData} />
               </div>
@@ -169,7 +169,7 @@ export default function CustomVod(props: CustomVodProps) {
                   }}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
 
