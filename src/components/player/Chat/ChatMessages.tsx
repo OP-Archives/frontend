@@ -1,4 +1,4 @@
-import { Pause } from 'lucide-react';
+import { Pause, Loader2 } from 'lucide-react';
 import type { Comment } from '@/types';
 
 interface ChatMessagesProps {
@@ -8,19 +8,25 @@ interface ChatMessagesProps {
   scrollToBottom: () => void;
   chatRef: React.MutableRefObject<HTMLElement | null>;
   handleScroll: () => void;
+  isLoading: boolean;
 }
 
 export default function ChatMessages(props: ChatMessagesProps) {
-  const { comments, shownMessages, scrolling, scrollToBottom, chatRef, handleScroll } = props;
+  const { comments, shownMessages, scrolling, scrollToBottom, chatRef, handleScroll, isLoading } = props;
 
   const commentsArray = Array.isArray(comments) ? comments : comments.current;
 
   if (commentsArray && commentsArray.length === 0) {
+    if (isLoading) {
+      return (
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-[#6366f1]" />
+        </div>
+      );
+    }
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center">
-          <div className="spinner mt-2" />
-        </div>
+        <p className="text-sm text-[#9ca3af]">No messages</p>
       </div>
     );
   }

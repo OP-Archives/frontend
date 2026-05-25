@@ -61,7 +61,6 @@ export default function YoutubeVod(props: YoutubeVodProps) {
   useEffect(() => {
     const abortController = new AbortController();
 
-    document.title = `${vodId} - ${channel}`;
     const fetchVod = async () => {
       try {
         const response = await archiveClient.vods.get(channel, vodId!, {

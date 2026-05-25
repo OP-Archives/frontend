@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { BlurredBackground } from '@/components/BlurredBackground';
 import { TenantContext } from '@/contexts/TenantContext';
@@ -23,6 +24,36 @@ function AnimatedRoutes() {
   const tenants = tenantsData?.data;
   const currentTenant = isTenantRoute ? location.pathname.split('/')[1] : '';
   const currentTenantData = tenants?.find((t: { id: string }) => t.id === currentTenant);
+
+  useEffect(() => {
+    const pathParts = location.pathname.split('/').filter(Boolean);
+    const tenantId = pathParts[0] || '';
+    const routeName = pathParts[1] || '';
+    const vodId = pathParts[2] || '';
+
+    const displayName = currentTenantData?.display_name || tenantId;
+
+    if (!tenantId) {
+      if (routeName === 'about') {
+        document.title = 'About';
+      } else {
+        document.title = 'op archive';
+      }
+    } else if (vodId) {
+      document.title = `${vodId} - ${displayName}`;
+    } else if (routeName) {
+      const pageLabels: Record<string, string> = {
+        vods: 'VODs',
+        games: 'Games',
+        library: 'Library',
+        cdn: 'CDN',
+        manual: 'Manual',
+      };
+      document.title = `${displayName} - ${pageLabels[routeName] || routeName.charAt(0).toUpperCase() + routeName.slice(1)}`;
+    } else {
+      document.title = displayName;
+    }
+  }, [location.pathname, currentTenantData]);
 
   const cdnEnabled = currentTenantData?.cdn?.enabled ?? false;
   const cdnBaseUrl = currentTenantData?.cdn?.baseUrl ?? '';

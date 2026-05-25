@@ -59,7 +59,6 @@ export default function Games(props: GamesProps) {
   useEffect(() => {
     const abortController = new AbortController();
 
-    document.title = `${vodId} - ${channel}`;
     const fetchVod = async () => {
       try {
         const response = await archiveClient.vods.get(channel, vodId!, {

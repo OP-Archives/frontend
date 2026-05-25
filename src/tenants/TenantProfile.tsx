@@ -62,11 +62,9 @@ export function TenantProfileCard({ tenantData, centered = true }: { tenantData:
   return (
     <div className={`flex w-full flex-col ${centered ? 'items-center text-center' : ''}`}>
       <div className="w-full rounded-lg p-6">
-        <div className={`flex ${centered ? 'flex-col' : 'flex-row'} items-center gap-4`}>
+        <div className={`flex ${centered ? 'flex-col' : 'flex-row'} items-center gap-2`}>
           {/* Avatar */}
-          <div
-            className={`${centered ? 'mb-4' : ''} h-20 w-20 shrink-0 overflow-hidden rounded-full bg-[#222230] ring-2 ring-[#222230]`}
-          >
+          <div className={`h-20 w-20 shrink-0 overflow-hidden rounded-full bg-[#222230] ring-2 ring-[#222230]`}>
             {tenantData.profile_image_url ? (
               <img
                 src={tenantData.profile_image_url}

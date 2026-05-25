@@ -237,6 +237,8 @@ export default function Chat(props: ChatProps) {
   const isAutoScrolling = useRef(false);
   const lastScrollTop = useRef(0);
   const scrollingRef = useRef(scrolling);
+  const [isLoading, setIsLoading] = useState(true);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -990,6 +992,12 @@ export default function Chat(props: ChatProps) {
           if (e.name !== 'AbortError') {
             console.error(e);
           }
+        })
+        .finally(() => {
+          if (!hasFetched.current) {
+            hasFetched.current = true;
+            setIsLoading(false);
+          }
         });
     };
 
@@ -1007,6 +1015,8 @@ export default function Chat(props: ChatProps) {
             comments.current = [];
             cursor.current = null;
             setShownMessages([]);
+            hasFetched.current = false;
+            setIsLoading(true);
             fetchComments(time);
             loopCbRef.current?.();
           }, 300);
@@ -1053,6 +1063,7 @@ export default function Chat(props: ChatProps) {
           >
             <ChatMessages
               comments={comments}
+              isLoading={isLoading}
               shownMessages={shownMessages.map((comment) => (
                 <MemoizedComment
                   key={comment.id}
