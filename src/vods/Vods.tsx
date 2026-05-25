@@ -3,13 +3,13 @@ import { ArrowLeft, X } from 'lucide-react';
 import { useEffect, useState, startTransition } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import VodCard from './VodCard';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useTenantContext } from '@/contexts/TenantContext';
+import { useDebouncedSetter } from '@/hooks/debounceHelper';
+import { useGames } from '@/hooks/useGames';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useVods, prefetchNextPageVods } from '@/hooks/useVods';
 import type { VodData } from '@/types';
-import { useDebouncedSetter } from '@/utils/debounceHelper';
-import { PaginationControls } from '@/utils/PaginationControls';
-import { useGames } from '@/utils/useGames';
-import { useMediaQuery } from '@/utils/useMediaQuery';
-import { useVods, prefetchNextPageVods } from '@/utils/useVods';
 
 const FILTERS = ['Default', 'Date', 'Title', 'Game'];
 const PLATFORMS = ['All', 'Twitch', 'Kick'];

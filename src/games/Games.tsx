@@ -2,12 +2,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, X } from 'lucide-react';
 import { useEffect, useState, startTransition } from 'react';
 import { Link, useSearchParams, useParams } from 'react-router-dom';
+import CustomWidthTooltip from '@/components/ui/CustomToolTip';
+import { PaginationControls } from '@/components/ui/PaginationControls';
+import { useGames, prefetchNextPageGames } from '@/hooks/useGames';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { GameData } from '@/types';
-import CustomWidthTooltip from '@/utils/CustomToolTip';
 import { toHHMMSS, getImage } from '@/utils/helpers';
-import { PaginationControls } from '@/utils/PaginationControls';
-import { useGames, prefetchNextPageGames } from '@/utils/useGames';
-import { useMediaQuery } from '@/utils/useMediaQuery';
 
 const FILTERS = ['Default', 'Date', 'Game'];
 

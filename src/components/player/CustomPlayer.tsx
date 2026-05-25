@@ -4,9 +4,9 @@ import type { ErrorData } from 'hls.js';
 import { Play } from 'lucide-react';
 import { useRef, useEffect, useState, useCallback, ChangeEvent } from 'react';
 import PlayerControls from './PlayerControls';
-import { sleep } from '@/components/player/utils/helpers';
-import { loadPlayerSettings, savePlayerSettings } from '@/components/player/utils/playerSettings';
 import type { VOD, PlayerSource, PlayerState, PlayerSettings } from '@/types';
+import { sleep } from '@/utils/helpers';
+import { loadPlayerSettings, savePlayerSettings } from '@/utils/playerSettings';
 
 interface HlsConfig {
   enableWorker: boolean;

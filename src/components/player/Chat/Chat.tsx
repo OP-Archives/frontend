@@ -7,8 +7,6 @@ import ChatSettingsModal from './ChatSettingsModal';
 import MessageTooltip from './MessageTooltip';
 import { Twemoji, testEmoji } from './Twemoji';
 import { adjustUsernameColor } from './UsernameColor';
-import { toHHMMSS } from '@/components/player/utils/helpers';
-import { safeLocalStorage } from '@/components/player/utils/safeLocalStorage';
 import type {
   Comment,
   EmotesResponse,
@@ -26,6 +24,8 @@ import type {
   MessageFragment,
 } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
+import { toHHMMSS } from '@/utils/helpers';
+import { safeLocalStorage } from '@/utils/safeLocalStorage';
 
 const BASE_TWITCH_CDN = 'https://static-cdn.jtvnw.net';
 const BASE_FFZ_EMOTE_CDN = 'https://cdn.frankerfacez.com/emote';

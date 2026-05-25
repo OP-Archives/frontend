@@ -2,14 +2,14 @@ import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useState, useEffect, startTransition } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
+import { PaginationControls } from '@/components/ui/PaginationControls';
+import { useDebouncedSetter } from '@/hooks/debounceHelper';
+import { useChapters, prefetchNextPageChapters } from '@/hooks/useChapters';
+import { useGamesLibrary, prefetchNextPageGamesLibrary } from '@/hooks/useGames';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Card } from '@/tenants/Card';
 import type { LibraryGameItem, LibraryChapterItem } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
-import { useDebouncedSetter } from '@/utils/debounceHelper';
-import { PaginationControls } from '@/utils/PaginationControls';
-import { useChapters, prefetchNextPageChapters } from '@/utils/useChapters';
-import { useGamesLibrary, prefetchNextPageGamesLibrary } from '@/utils/useGames';
-import { useMediaQuery } from '@/utils/useMediaQuery';
 
 const SORTS = ['Recently Played', 'Most Played', 'Game Name'];
 

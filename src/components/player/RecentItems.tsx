@@ -2,9 +2,9 @@ import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Link, useParams, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
+import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import type { VODNavigation, GameEntry, VodData, VOD } from '@/types';
 import { PartInfo } from '@/types';
-import CustomWidthTooltip from '@/utils/CustomToolTip';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 import ChaptersMenu from '@/vods/ChaptersMenu';
 
@@ -16,8 +16,8 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
 
 interface RecentItemsVodsProps {
   currentId: number;
-  prev: VODNavigation[];
-  next: VODNavigation[];
+  prev: VODNavigation[] | undefined;
+  next: VODNavigation[] | undefined;
   currentVod?: VODNavigation | VOD;
   hasGames?: boolean;
 }
@@ -139,7 +139,7 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
   const [offset, setOffset] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const allItems = [...prev, ...(next || []), ...(currentVod ? [currentVod] : [])]
+  const allItems = [...(prev || []), ...(next || []), ...(currentVod ? [currentVod] : [])]
     .filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
     .filter((v) => !hasGames || (v.games?.length || 0) > 0)
     .sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());

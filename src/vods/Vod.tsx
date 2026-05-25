@@ -3,10 +3,10 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import CustomVod from '@/components/player/CustomVod';
 import Games from '@/components/player/Games';
 import YoutubeVod from '@/components/player/YoutubeVod';
+import { Loading } from '@/components/ui/Loading';
+import { NotFound } from '@/components/ui/NotFound';
 import { useTenantContext } from '@/contexts/TenantContext';
-import { Loading } from '@/utils/Loading';
-import { NotFound } from '@/utils/NotFound';
-import { useVod } from '@/utils/useVods';
+import { useVod } from '@/hooks/useVods';
 
 export function Vod() {
   const params = useParams<{ tenant: string; vodId: string }>();

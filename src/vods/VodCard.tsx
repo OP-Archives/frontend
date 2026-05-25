@@ -2,9 +2,9 @@ import { Link, useParams } from 'react-router-dom';
 import ChaptersMenu from './ChaptersMenu';
 import WatchMenu from './WatchMenu';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
+import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useTenantContext } from '@/contexts/TenantContext';
 import type { VodData } from '@/types';
-import CustomWidthTooltip from '@/utils/CustomToolTip';
 import { toHHMMSS } from '@/utils/helpers';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {

@@ -3,11 +3,11 @@ import CustomPlayer from './CustomPlayer';
 import GamesMenu from './GamesMenu';
 import VodChapters from './VodChapters';
 import YoutubePlayer from './YoutubePlayer';
-import CustomWidthTooltip from '@/components/player/utils/CustomToolTip';
-import { toHMS } from '@/components/player/utils/helpers';
-import { loadPlayerSettings, savePlayerSettings } from '@/components/player/utils/playerSettings';
-import { saveResumePosition } from '@/components/player/utils/positionStorage';
+import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import type { VOD, VODUpload, GameEntry, PartInfo, PlayerState, PlayerSettings, Chapter } from '@/types';
+import { toHMS } from '@/utils/helpers';
+import { loadPlayerSettings, savePlayerSettings } from '@/utils/playerSettings';
+import { saveResumePosition } from '@/utils/positionStorage';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',

@@ -2,8 +2,8 @@ import canAutoplay from 'can-autoplay';
 import { Copy, Maximize2, Minimize2, Check } from 'lucide-react';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Youtube from 'react-youtube';
-import { getResumePosition } from '@/components/player/utils/positionStorage';
 import type { VODUpload, GameEntry, PartInfo, PlayerState } from '@/types';
+import { getResumePosition } from '@/utils/positionStorage';
 
 interface YoutubePlayerProps {
   youtube?: VODUpload[];

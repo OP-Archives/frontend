@@ -1,7 +1,7 @@
 import { X, Plus, Trash2, Type, RotateCcw, AlertTriangle } from 'lucide-react';
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { useDebouncedCallback } from '@/components/player/utils/debounceHelper';
-import { safeLocalStorage } from '@/components/player/utils/safeLocalStorage';
+import { useDebouncedCallback } from '@/hooks/debounceHelper';
+import { safeLocalStorage } from '@/utils/safeLocalStorage';
 
 const FONT_OPTIONS = [
   { label: 'System Sans', value: 'ui-sans-serif, system-ui, -apple-system, sans-serif' },

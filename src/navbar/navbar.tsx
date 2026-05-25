@@ -1,9 +1,9 @@
 import { Search, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDebounce } from '@/hooks/debounceHelper';
+import { useTenants } from '@/hooks/useTenants';
 import { Drawer } from '@/navbar/drawer';
-import { useDebounce } from '@/utils/debounceHelper';
-import { useTenants } from '@/utils/useTenants';
 
 export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);

@@ -3,9 +3,9 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 //import heroImage from '@/assets/shigure-ui.gif';
 import { BlurredBackground } from '@/components/BlurredBackground';
-import { Loading } from '@/utils/Loading';
-import { PaginationControls } from '@/utils/PaginationControls';
-import { useTenants } from '@/utils/useTenants';
+import { Loading } from '@/components/ui/Loading';
+import { PaginationControls } from '@/components/ui/PaginationControls';
+import { useTenants } from '@/hooks/useTenants';
 
 const platformConfig: Record<string, { icon: typeof TwitchIcon; color: string }> = {
   twitch: { icon: TwitchIcon, color: '#9146FF' },

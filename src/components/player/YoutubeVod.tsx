@@ -4,14 +4,14 @@ import BaseVod from './BaseVod';
 import Chat from './Chat/Chat';
 import { PlayerTenantProfile } from '@/components/player/PlayerTenantProfile';
 import { RecentItemsVods } from '@/components/player/RecentItems';
-import { convertTimestamp } from '@/components/player/utils/helpers';
-import Loading from '@/components/player/utils/Loading';
-import { getResumePosition, saveResumePosition, clearResumePosition } from '@/components/player/utils/positionStorage';
-import { safeLocalStorage } from '@/components/player/utils/safeLocalStorage';
+import Loading from '@/components/ui/Loading';
+import { NotFound } from '@/components/ui/NotFound';
 import { useTenantContext } from '@/contexts/TenantContext';
 import type { VOD, VODUpload, PartInfo, PlayerState } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
-import { NotFound } from '@/utils/NotFound';
+import { convertTimestamp } from '@/utils/helpers';
+import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
+import { safeLocalStorage } from '@/utils/safeLocalStorage';
 
 export interface YoutubeVodProps {
   type?: string;

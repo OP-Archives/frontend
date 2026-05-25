@@ -4,12 +4,12 @@ import BaseVod from './BaseVod';
 import Chat from './Chat/Chat';
 import { PlayerTenantProfile } from '@/components/player/PlayerTenantProfile';
 import { RecentItemsGames } from '@/components/player/RecentItems';
-import Loading from '@/components/player/utils/Loading';
-import { getResumePosition, saveResumePosition, clearResumePosition } from '@/components/player/utils/positionStorage';
-import { safeLocalStorage } from '@/components/player/utils/safeLocalStorage';
+import Loading from '@/components/ui/Loading';
 import { useTenantContext } from '@/contexts/TenantContext';
 import type { VOD, GameEntry, PartInfo, PlayerState } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
+import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
+import { safeLocalStorage } from '@/utils/safeLocalStorage';
 
 export interface GamesProps {
   logo?: string;

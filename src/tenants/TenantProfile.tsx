@@ -11,10 +11,10 @@ import {
   InstagramIcon,
   SoundCloudIcon,
 } from '@/assets/icons';
+import { Loading } from '@/components/ui/Loading';
 import { Games } from '@/games/Games';
 import type { Tenant } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
-import { Loading } from '@/utils/Loading';
 import { Vods } from '@/vods/Vods';
 
 const platformIcons: Record<string, typeof TwitchIcon> = {

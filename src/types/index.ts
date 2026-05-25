@@ -1,8 +1,36 @@
 // VOD types
-export interface VOD {
+export interface VODNavigation {
+  id: number;
+  platform: string;
+  platform_vod_id: string;
+  title?: string;
+  duration?: number;
+  created_at?: string;
+  thumbnail_url?: string | null;
+  chapters?: Chapter[];
+  games?: GameEntry[];
+  vod_uploads?: { thumbnail_url: string }[];
+}
+
+// --- List item (used in paginated lists) ---
+export interface VodListItem {
+  id: number;
+  title: string;
+  created_at: string;
+  duration: number;
+  platform?: string;
+  is_live?: boolean;
+  thumbnail_url?: string;
+  chapters?: ChapterItem[];
+  vod_uploads: VodUploadSimple[];
+  games: GameItemSimple[];
+}
+
+// --- Detail view (full VOD with navigation, uploads, chapters, games) ---
+export interface VodDetail {
   id: number;
   platform_vod_id: string;
-  platform: 'twitch';
+  platform: string;
   title: string;
   duration: number;
   platform_stream_id: string;
@@ -14,9 +42,15 @@ export interface VOD {
   vod_uploads: VODUpload[];
   chapters: Chapter[];
   games: GameEntry[];
-  prev: VODNavigation[];
-  next: VODNavigation[];
+  prev?: VODNavigation[];
+  next?: VODNavigation[];
 }
+
+// Keep VodData as an alias for backward compatibility
+export type VodData = VodListItem;
+
+// Legacy alias for VodDetail (used in player components)
+export type VOD = VodDetail;
 
 export interface VODUpload {
   id: number;
@@ -50,19 +84,6 @@ export interface GameEntry {
   created_at?: string;
 }
 
-export interface VODNavigation {
-  id: number;
-  platform: string;
-  platform_vod_id: string;
-  title?: string;
-  duration?: number;
-  created_at?: string;
-  thumbnail_url?: string | null;
-  chapters?: Chapter[];
-  games?: GameEntry[];
-  vod_uploads?: { thumbnail_url: string }[];
-}
-
 // Simplified types for list endpoints (xQc-site pattern)
 export interface VodUploadSimple {
   thumbnail_url?: string;
@@ -79,19 +100,6 @@ export interface ChapterItem {
   start?: number;
   end?: number;
   duration?: number;
-}
-
-export interface VodData {
-  id: number;
-  title: string;
-  created_at: string;
-  duration: number;
-  platform?: string;
-  is_live?: boolean;
-  thumbnail_url?: string;
-  chapters?: ChapterItem[];
-  vod_uploads: VodUploadSimple[];
-  games: GameItemSimple[];
 }
 
 export interface GameData {
@@ -126,7 +134,6 @@ export interface FfzEmote {
   code?: string;
   name?: string;
   text: string;
-  [key: string]: unknown;
 }
 
 export interface BttvEmote {
@@ -208,7 +215,7 @@ export interface EmoteEntry {
   code: string;
   name?: string;
   provider: EmoteProvider;
-  [key: string]: unknown;
+  flags?: number;
 }
 
 export type PlayerSource = string | { src: string; type: string; objectUrl: string } | undefined;
@@ -271,24 +278,6 @@ export interface ChaptersResponse {
   meta: { total: number };
 }
 
-export interface Vod {
-  id: number;
-  platform_vod_id: string;
-  platform: string;
-  title: string;
-  duration: number;
-  platform_stream_id: string;
-  created_at: string;
-  is_live: boolean;
-  started_at: string;
-  updated_at: string;
-  vod_uploads: VODUpload[];
-  chapters: Chapter[];
-  games: GameEntry[];
-  prev?: Vod[];
-  next?: Vod[];
-}
-
 export interface Game {
   game_id: string;
   game_name: string;
@@ -311,7 +300,11 @@ export interface PaginatedResponse<T> {
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
-  meta?: Record<string, unknown>;
+}
+
+export interface PaginatedApiResponse<T> {
+  data: T[];
+  meta: PaginatedMeta;
 }
 
 export interface PaginatedTenantsResponse {

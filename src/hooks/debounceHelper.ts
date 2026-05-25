@@ -1,4 +1,4 @@
-import { useRef, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useRef, useEffect, useLayoutEffect, useState } from 'react';
 
 export const useDebouncedSetter = (setter: (_value: string) => void, delay: number) => {
   const timeoutRef = useRef<number | null>(null);
@@ -33,4 +33,25 @@ export function useDebounce(value: string, options: { debounceMs?: number } = {}
   }, [value, debounceMs]);
 
   return debouncedValue;
+}
+
+export function useDebouncedCallback(callback: (..._args: unknown[]) => void, delay: number) {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const callbackRef = useRef(callback);
+
+  useLayoutEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  return useCallback(
+    (...args: unknown[]) => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => {
+        callbackRef.current(...args);
+      }, delay);
+    },
+    [delay]
+  );
 }

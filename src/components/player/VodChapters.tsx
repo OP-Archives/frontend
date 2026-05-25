@@ -1,8 +1,8 @@
 import humanize from 'humanize-duration';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { toSeconds, getImage } from '@/components/player/utils/helpers';
 import type { Chapter, VODUpload, PartInfo } from '@/types';
+import { toSeconds, getImage } from '@/utils/helpers';
 
 interface VodChaptersProps {
   chapters: Chapter[];

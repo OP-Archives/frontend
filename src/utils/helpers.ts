@@ -1,4 +1,46 @@
 import { format } from 'date-fns';
+import { parse } from 'tinyduration';
+
+export function convertTimestamp(timestamp: string): number {
+  try {
+    const duration = parse(`PT${timestamp.toUpperCase()}`);
+    return (duration?.hours || 0) * 60 * 60 + (duration?.minutes || 0) * 60 + (duration?.seconds || 0);
+  } catch {
+    return 0;
+  }
+}
+
+export function toSeconds(hms: string): number {
+  const p = hms.split(':');
+  let s = 0;
+  let m = 1;
+
+  while (p.length > 0) {
+    s += m * parseInt(p.pop()!, 10);
+    m *= 60;
+  }
+
+  return s;
+}
+
+export function formatTime(time: number | undefined): string {
+  const isTimeNaN = isNaN(time as number);
+  const hours = !isTimeNaN ? Math.floor((time as number) / 3600) : 0,
+    remainder = !isTimeNaN ? (time as number) % 3600 : 0,
+    minutes = !isTimeNaN ? Math.floor(remainder / 60) : 0,
+    seconds = !isTimeNaN ? Math.floor(remainder % 60) : 0;
+
+  let hh: string | undefined;
+  const mm = minutes.toString().padStart(2, '0');
+  const ss = seconds.toString().padStart(2, '0');
+  if (hours !== 0) hh = hours.toString().padStart(2, '0');
+
+  return `${hh ? `${hh}:` : ''}${mm}:${ss}`;
+}
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);

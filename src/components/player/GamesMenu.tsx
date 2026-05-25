@@ -2,8 +2,8 @@ import humanize from 'humanize-duration';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { getImage } from '@/components/player/utils/helpers';
 import type { GameEntry, PartInfo } from '@/types';
+import { getImage } from '@/utils/helpers';
 
 interface GamesMenuProps {
   games: GameEntry[];

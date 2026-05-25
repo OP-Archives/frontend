@@ -14,7 +14,7 @@ import {
   Check,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { formatTime } from '@/components/player/utils/helpers';
+import { formatTime } from '@/utils/helpers';
 
 const CONTROL_BAR_HEIGHT = 60;
 const AUTO_HIDE_DELAY = 3000;

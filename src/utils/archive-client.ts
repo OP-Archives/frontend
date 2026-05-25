@@ -1,22 +1,16 @@
 import type {
   Tenant,
   VodData,
-  Vod,
+  VodDetail,
   GameData,
   LibraryGameItem,
   LibraryChapterItem,
+  PaginatedApiResponse,
   ApiResponse,
-  PaginatedResponse,
   EmotesResponse,
   CommentsResponse,
   Badge,
 } from '@/types';
-
-const apiBase = (() => {
-  const base = import.meta.env.VITE_API_BASE;
-  if (!base) throw new Error('VITE_API_BASE environment variable is not set');
-  return base;
-})();
 
 interface FetchOptions extends RequestInit {
   headers?: Record<string, string>;
@@ -60,6 +54,12 @@ interface LibraryParams {
   limit?: number | string;
 }
 
+function getApiBase(): string {
+  const base = import.meta.env.VITE_API_BASE;
+  if (!base) throw new Error('VITE_API_BASE environment variable is not set');
+  return base;
+}
+
 const buildParams = (params: object) => {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -99,32 +99,32 @@ async function fetchJson<T>(url: string, options: FetchOptions = {}): Promise<T>
 export async function listVods(
   slug: string,
   params: ListParams & { signal?: AbortSignal } = {}
-): Promise<ApiResponse<VodData[]>> {
-  const url = `${apiBase}/${slug}/vods?${buildParams(params)}`;
+): Promise<PaginatedApiResponse<VodData>> {
+  const url = `${getApiBase()}/${slug}/vods?${buildParams(params)}`;
   return fetchJson(url, { signal: params.signal });
 }
 
 export async function listGames(
   slug: string,
   params: GameListParams & { signal?: AbortSignal } = {}
-): Promise<ApiResponse<GameData[]>> {
-  const url = `${apiBase}/${slug}/games?${buildParams(params)}`;
+): Promise<PaginatedApiResponse<GameData>> {
+  const url = `${getApiBase()}/${slug}/games?${buildParams(params)}`;
   return fetchJson(url, { signal: params.signal });
 }
 
 export async function getGamesLibrary(
   slug: string,
   params: LibraryParams & { signal?: AbortSignal } = {}
-): Promise<ApiResponse<LibraryGameItem[]>> {
-  const url = `${apiBase}/${slug}/games/library?${buildParams(params)}`;
+): Promise<PaginatedApiResponse<LibraryGameItem>> {
+  const url = `${getApiBase()}/${slug}/games/library?${buildParams(params)}`;
   return fetchJson(url, { signal: params.signal });
 }
 
 export async function getChaptersLibrary(
   slug: string,
   params: LibraryParams & { signal?: AbortSignal } = {}
-): Promise<ApiResponse<LibraryChapterItem[]>> {
-  const url = `${apiBase}/${slug}/chapters/library?${buildParams(params)}`;
+): Promise<PaginatedApiResponse<LibraryChapterItem>> {
+  const url = `${getApiBase()}/${slug}/chapters/library?${buildParams(params)}`;
   return fetchJson(url, { signal: params.signal });
 }
 
@@ -132,48 +132,48 @@ export const archiveClient = {
   tenants: {
     list: (params?: Record<string, string>) => {
       const query = new URLSearchParams(params).toString();
-      return fetchJson<PaginatedResponse<Tenant>>(`${apiBase}/tenants${query ? `?${query}` : ''}`);
+      return fetchJson<PaginatedApiResponse<Tenant>>(`${getApiBase()}/tenants${query ? `?${query}` : ''}`);
     },
-    get: (slug: string) => fetchJson<ApiResponse<Tenant>>(`${apiBase}/tenants/${slug}`),
+    get: (slug: string) => fetchJson<ApiResponse<Tenant>>(`${getApiBase()}/tenants/${slug}`),
   },
   vods: {
     list: (slug: string, params?: Record<string, string>) => {
       const query = new URLSearchParams(params).toString();
-      return fetchJson<PaginatedResponse<VodData>>(`${apiBase}/${slug}/vods${query ? `?${query}` : ''}`);
+      return fetchJson<PaginatedApiResponse<VodData>>(`${getApiBase()}/${slug}/vods${query ? `?${query}` : ''}`);
     },
     get: (slug: string, vodId: string, options?: { signal?: AbortSignal }) =>
-      fetchJson<ApiResponse<Vod>>(`${apiBase}/${slug}/vods/${vodId}`, options || {}),
+      fetchJson<ApiResponse<VodDetail>>(`${getApiBase()}/${slug}/vods/${vodId}`, options || {}),
     emotes: (slug: string, vodId: string, options?: { signal?: AbortSignal }) =>
-      fetchJson<ApiResponse<EmotesResponse>>(`${apiBase}/${slug}/vods/${vodId}/emotes`, options || {}),
+      fetchJson<ApiResponse<EmotesResponse>>(`${getApiBase()}/${slug}/vods/${vodId}/emotes`, options || {}),
     comments: (slug: string, vodId: string, params?: Record<string, string>) => {
       const query = new URLSearchParams(params || {}).toString();
       return fetchJson<ApiResponse<CommentsResponse>>(
-        `${apiBase}/${slug}/vods/${vodId}/comments${query ? `?${query}` : ''}`
+        `${getApiBase()}/${slug}/vods/${vodId}/comments${query ? `?${query}` : ''}`
       );
     },
   },
   games: {
     list: (slug: string, params?: Record<string, string>) => {
       const query = new URLSearchParams(params).toString();
-      return fetchJson<PaginatedResponse<GameData>>(`${apiBase}/${slug}/games${query ? `?${query}` : ''}`);
+      return fetchJson<PaginatedApiResponse<GameData>>(`${getApiBase()}/${slug}/games${query ? `?${query}` : ''}`);
     },
     library: (slug: string, params?: Record<string, string>) => {
       const query = new URLSearchParams(params).toString();
-      return fetchJson<PaginatedResponse<LibraryGameItem>>(
-        `${apiBase}/${slug}/games/library${query ? `?${query}` : ''}`
+      return fetchJson<PaginatedApiResponse<LibraryGameItem>>(
+        `${getApiBase()}/${slug}/games/library${query ? `?${query}` : ''}`
       );
     },
   },
   chapters: {
     library: (slug: string, params?: Record<string, string>) => {
       const query = new URLSearchParams(params).toString();
-      return fetchJson<PaginatedResponse<LibraryChapterItem>>(
-        `${apiBase}/${slug}/chapters/library${query ? `?${query}` : ''}`
+      return fetchJson<PaginatedApiResponse<LibraryChapterItem>>(
+        `${getApiBase()}/${slug}/chapters/library${query ? `?${query}` : ''}`
       );
     },
   },
   badges: {
     twitch: (slug: string) =>
-      fetchJson<ApiResponse<{ channel: Badge[]; global: Badge[] }>>(`${apiBase}/${slug}/badges/twitch`),
+      fetchJson<ApiResponse<{ channel: Badge[]; global: Badge[] }>>(`${getApiBase()}/${slug}/badges/twitch`),
   },
 };
