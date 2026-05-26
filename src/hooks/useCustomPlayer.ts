@@ -22,15 +22,23 @@ export interface UseCustomPlayerReturn {
   setSource: React.Dispatch<React.SetStateAction<PlayerSource>>;
   fileError: string | undefined;
   isPlaying: boolean;
+  setIsPlaying: (v: boolean) => void;
   volume: number;
+  setVolume: (v: number) => void;
   isMuted: boolean;
+  setIsMuted: (v: boolean) => void;
   currentTime: number;
+  setCurrentTime: (v: number) => void;
   duration: number;
+  setDuration: (v: number) => void;
   isFullscreen: boolean;
+  setIsFullscreen: (v: boolean) => void;
   playbackSpeed: number;
+  setPlaybackSpeed: (v: number) => void;
   isTouchDevice: boolean;
   playIconSize: number;
   isBuffering: boolean;
+  setIsBuffering: (v: boolean) => void;
   toggleFullscreen: () => void;
   togglePiP: () => void;
   togglePlayPause: () => void;
@@ -100,8 +108,41 @@ export function useCustomPlayer({
   });
 
   return {
-    ...hlsPlayer,
-    ...playerState,
-    ...videoControls,
-  } as UseCustomPlayerReturn;
+    source: hlsPlayer.source,
+    setSource: hlsPlayer.setSource,
+    fileError: hlsPlayer.fileError,
+    isPlaying: playerState.isPlaying,
+    setIsPlaying: playerState.setIsPlaying,
+    volume: playerState.volume,
+    setVolume: playerState.setVolume,
+    isMuted: playerState.isMuted,
+    setIsMuted: playerState.setIsMuted,
+    currentTime: playerState.currentTime,
+    setCurrentTime: playerState.setCurrentTime,
+    duration: playerState.duration,
+    setDuration: playerState.setDuration,
+    isFullscreen: playerState.isFullscreen,
+    setIsFullscreen: playerState.setIsFullscreen,
+    playbackSpeed: playerState.playbackSpeed,
+    setPlaybackSpeed: playerState.setPlaybackSpeed,
+    isTouchDevice: playerState.isTouchDevice,
+    playIconSize: playerState.playIconSize,
+    isBuffering: playerState.isBuffering,
+    setIsBuffering: playerState.setIsBuffering,
+    toggleFullscreen: videoControls.toggleFullscreen,
+    togglePiP: videoControls.togglePiP,
+    togglePlayPause: videoControls.togglePlayPause,
+    toggleMute: videoControls.toggleMute,
+    handleVolumeChange: videoControls.handleVolumeChange,
+    handleSeekChange: videoControls.handleSeekChange,
+    handlePlaybackSpeedChange: videoControls.handlePlaybackSpeedChange,
+    handleError: videoControls.handleError,
+    timeUpdate: videoControls.timeUpdate,
+    handlePlay: videoControls.handlePlay,
+    handlePause: videoControls.handlePause,
+    handleEnded: videoControls.handleEnded,
+    handleWaiting: videoControls.handleWaiting,
+    handlePlaying: videoControls.handlePlaying,
+    handleLoadedMetadata: videoControls.handleLoadedMetadata,
+  };
 }

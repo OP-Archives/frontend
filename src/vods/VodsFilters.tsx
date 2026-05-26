@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, startTransition } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import FilterBar from '@/components/ui/FilterBar';
 import { useTenantContext } from '@/contexts/TenantContext';
+import { useListFilters } from '@/hooks/useListFilters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTypedParams } from '@/hooks/useTypedParams';
 import type { VodsQueryParams } from '@/hooks/useVods';
@@ -27,85 +27,45 @@ export interface VodsFiltersState {
 
 export function useVodsFilters() {
   const { tenant } = useTypedParams<{ tenant: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useMediaQuery('(max-width: 900px)');
-  const todayString = new Date().toISOString().split('T')[0];
 
-  const filter = searchParams.get('filter') || FILTERS[0];
-  const filterStartDate = searchParams.get('from') || '';
-  const filterEndDate = searchParams.get('to') || todayString;
-  const filterTitle = searchParams.get('title') || '';
-  const filterGame = searchParams.get('chapter') || '';
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const gameId = searchParams.get('game_id');
-  const platform = searchParams.get('platform') || PLATFORMS[0];
-  const limit = isMobile ? 10 : 20;
+  const {
+    state,
+    updateParams,
+    changeFilter,
+    handleClearSearch,
+    queryKeyParams: baseParams,
+  } = useListFilters({
+    filterOptions: FILTERS,
+    searchParamKey: { search: 'title', from: 'from', to: 'to' },
+    defaultFilter: 'Default',
+    isMobile: isMobile,
+  });
 
-  const memoizedDateRange = (() => {
-    if (filter !== 'Date' || !filterStartDate || !filterEndDate) return null;
-    try {
-      return {
-        from: new Date(filterStartDate).toISOString(),
-        to: new Date(filterEndDate).toISOString(),
-      };
-    } catch {
-      return null;
-    }
-  })();
+  const [inputGame, setInputGame] = useState(state.inputSearch);
+  const [platformState, setPlatformState] = useState(PLATFORMS[0]);
 
-  const [inputTitle, setInputTitle] = useState(filterTitle);
-  const [inputGame, setInputGame] = useState(filterGame);
-  const [inputStartDate, setInputStartDate] = useState(filterStartDate);
-  const [inputEndDate, setInputEndDate] = useState(filterEndDate);
-
-  useEffect(() => {
-    setInputTitle(filterTitle);
-  }, [filterTitle]);
-  useEffect(() => {
-    setInputGame(filterGame);
-  }, [filterGame]);
-  useEffect(() => {
-    setInputStartDate(filterStartDate);
-  }, [filterStartDate]);
-  useEffect(() => {
-    setInputEndDate(filterEndDate);
-  }, [filterEndDate]);
-
-  const updateUrlParams = (updates: Record<string, string | null>) => {
-    startTransition(() => {
-      setSearchParams(
-        (prev) => {
-          const nextParams = new URLSearchParams(prev);
-          for (const [key, val] of Object.entries(updates)) {
-            if (val) nextParams.set(key, val);
-            else nextParams.delete(key);
-          }
-          if (gameId) nextParams.set('game_id', gameId);
-          return nextParams;
-        },
-        { replace: true }
-      );
-    });
-  };
+  const filterTitle = state.inputSearch;
 
   const queryKeyParams: VodsQueryParams = useMemo(
     () => ({
-      limit,
-      page,
+      limit: baseParams.limit ?? 20,
+      page: baseParams.page ?? 1,
       sort: 'created_at',
       order: 'desc',
-      ...(gameId ? { game_id: gameId } : {}),
-      ...(platform !== PLATFORMS[0] ? { platform: platform.toLowerCase() } : {}),
-      ...(memoizedDateRange ? memoizedDateRange : {}),
-      ...(filter === 'Title' && filterTitle ? { title: filterTitle } : {}),
-      ...(filter === 'Game' && filterGame ? { chapter: filterGame } : {}),
+      ...(platformState !== PLATFORMS[0] ? { platform: platformState.toLowerCase() } : {}),
+      ...(state.filter === 'Title' && filterTitle ? { title: filterTitle } : {}),
+      ...(state.filter === 'Game' && inputGame ? { chapter: inputGame } : {}),
     }),
-    [limit, page, gameId, platform, memoizedDateRange, filter, filterTitle, filterGame]
+    [baseParams.limit, baseParams.page, platformState, state.filter, filterTitle, inputGame]
   );
 
+  const updateUrlParams = (updates: Record<string, string | null>) => {
+    updateParams(updates);
+  };
+
   const handleClearTitle = () => {
-    setInputTitle('');
-    updateUrlParams({ title: null, filter: 'Title', page: '1' });
+    handleClearSearch();
   };
 
   const handleClearGame = () => {
@@ -113,22 +73,8 @@ export function useVodsFilters() {
     updateUrlParams({ chapter: null, filter: 'Game', page: '1' });
   };
 
-  const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newFilter = e.target.value;
-    const updates: Record<string, string | null> = {
-      page: '1',
-      filter: newFilter === 'Default' ? null : newFilter,
-    };
-    if (newFilter !== 'Title') updates.title = null;
-    if (newFilter !== 'Game') updates.chapter = null;
-    if (newFilter !== 'Date') {
-      updates.from = null;
-      updates.to = null;
-    }
-    updateUrlParams(updates);
-  };
-
   const changePlatform = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPlatformState(e.target.value);
     updateUrlParams({
       platform: e.target.value === PLATFORMS[0] ? null : e.target.value,
       page: '1',
@@ -138,25 +84,18 @@ export function useVodsFilters() {
   const { tenant: tenantCtx } = useTenantContext();
   const enabledPlatforms = tenantCtx?.platforms.filter((p) => p.enabled).length ?? 0;
 
-  const state: VodsFiltersState = {
-    filter,
-    filterStartDate,
-    filterEndDate,
+  const vodsState: VodsFiltersState = {
+    ...state,
     filterTitle,
-    filterGame,
-    page,
-    gameId,
-    platform,
-    limit,
-    inputTitle,
+    filterGame: inputGame,
+    platform: platformState,
+    inputTitle: filterTitle,
     inputGame,
-    inputStartDate,
-    inputEndDate,
   };
 
   return {
     tenant,
-    state,
+    state: vodsState,
     updateUrlParams,
     changeFilter,
     changePlatform,

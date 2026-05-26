@@ -1,0 +1,4 @@
+export const SCROLL_TOLERANCE = 250;
+export const MAX_CHAT_MESSAGES = 200;
+export const CHAT_LOOP_INTERVAL_MS = 1000;
+export const CHAT_STATE_CHANGE_DELAY_MS = 300;

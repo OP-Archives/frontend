@@ -10,7 +10,7 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const isTenantRoute = location.pathname.split('/')[1] !== undefined && location.pathname.split('/')[1] !== '';
   const currentTenant = isTenantRoute ? location.pathname.split('/')[1] : '';
 
-  const { data: tenantRes } = useQuery({
+  const { data: tenantRes, isLoading } = useQuery({
     queryKey: ['tenant', currentTenant],
     queryFn: () => archiveClient.tenants.get(currentTenant),
     enabled: !!currentTenant,
@@ -24,7 +24,7 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const cdnBaseUrl = rawCdnUrl && !rawCdnUrl.startsWith('http') ? `https://${rawCdnUrl}` : rawCdnUrl;
 
   return (
-    <TenantContext.Provider value={{ tenant: currentTenantData ?? null, cdnEnabled, cdnBaseUrl }}>
+    <TenantContext.Provider value={{ tenant: currentTenantData ?? null, cdnEnabled, cdnBaseUrl, isLoading }}>
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}

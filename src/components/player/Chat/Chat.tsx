@@ -73,7 +73,7 @@ const MemoizedComment = memo(function MemoizedComment({
   );
 });
 
-interface ChatProps {
+export interface ChatProps {
   isPortrait: boolean;
   vodId: string;
   playerRef: React.RefObject<unknown>;

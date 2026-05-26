@@ -1,23 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
 import { useParams, useLocation } from 'react-router-dom';
 import { TenantContent } from './TenantContent';
 import { TenantProfileCard } from './TenantProfileCard';
 import { TenantTabs } from './TenantTabs';
 import { Loading } from '@/components/ui/Loading';
-import { archiveClient } from '@/utils/archive-client';
+import { useTenantContext } from '@/contexts/TenantContext';
 
 export function TenantProfile() {
   const { tenant } = useParams<{ tenant: string }>();
   const location = useLocation();
+  const { tenant: tenantData, isLoading } = useTenantContext();
 
-  const { data: tenantRes, isLoading } = useQuery({
-    queryKey: ['tenant', tenant],
-    queryFn: () => archiveClient.tenants.get(tenant!),
-    enabled: !!tenant,
-    retry: false,
-  });
-
-  const tenantData = tenantRes?.data;
   const hasContent = tenantData?.vods || tenantData?.games;
 
   const tabs = [
@@ -26,21 +18,10 @@ export function TenantProfile() {
     { label: 'Library', path: `/${tenant}/library`, visible: !!hasContent },
   ];
 
-  if (isLoading) {
+  if (isLoading || !tenantData) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Loading />
-      </div>
-    );
-  }
-
-  if (!tenantData) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#6366f1]">Not found</h2>
-          <p className="mt-2 text-[#9ca3af]">Streamer not found</p>
-        </div>
       </div>
     );
   }

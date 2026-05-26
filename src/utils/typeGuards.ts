@@ -15,7 +15,9 @@ export function isYoutubePlayer(player: unknown): player is YoutubePlayerApi {
 }
 
 export function isNativeVideo(player: unknown): player is HTMLVideoElement {
-  return typeof player === 'object' && player !== null && 'paused' in player && 'currentTime' in player;
+  if (typeof player !== 'object' || player === null) return false;
+  const el = player as Record<string, unknown>;
+  return 'paused' in el && 'currentTime' in el && 'play' in el && 'pause' in el && 'muted' in el && 'volume' in el;
 }
 
 export function hasGetCurrentTime(player: unknown): player is { getCurrentTime(): number } {

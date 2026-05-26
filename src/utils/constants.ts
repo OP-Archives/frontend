@@ -1,15 +1,17 @@
-export const SCROLL_TOLERANCE = 250;
-export const MAX_CHAT_MESSAGES = 200;
-export const CHAT_LOOP_INTERVAL_MS = 1000;
-export const CHAT_STATE_CHANGE_DELAY_MS = 300;
-export const API_TIMEOUT_MS = 8000;
-export const DEFAULT_CHAT_WIDTH_MOBILE = 250;
-export const DEFAULT_CHAT_WIDTH_TABLET = 300;
-export const DEFAULT_CHAT_WIDTH_DESKTOP = 340;
-export const BREAKPOINT_MOBILE = 600;
-export const BREAKPOINT_TABLET = 900;
-export const MAX_PLAY_ICON_SIZE = 96;
-export const MEDIUM_PLAY_ICON_SIZE = 64;
-export const SMALL_PLAY_ICON_SIZE = 48;
-export const BREAKPOINT_SMALL = 480;
-export const BREAKPOINT_MEDIUM = 768;
+export {
+  SCROLL_TOLERANCE,
+  MAX_CHAT_MESSAGES,
+  CHAT_LOOP_INTERVAL_MS,
+  CHAT_STATE_CHANGE_DELAY_MS,
+} from './constants/chat';
+export { API_TIMEOUT_MS } from './constants/api';
+export { DEFAULT_CHAT_WIDTH_MOBILE, DEFAULT_CHAT_WIDTH_TABLET, DEFAULT_CHAT_WIDTH_DESKTOP } from './constants/ui';
+export {
+  BREAKPOINT_MOBILE,
+  BREAKPOINT_TABLET,
+  BREAKPOINT_SMALL,
+  BREAKPOINT_MEDIUM,
+  MAX_PLAY_ICON_SIZE,
+  MEDIUM_PLAY_ICON_SIZE,
+  SMALL_PLAY_ICON_SIZE,
+} from './constants/player';

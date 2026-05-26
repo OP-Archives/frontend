@@ -3,6 +3,12 @@ import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import type { GameData } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 
+const GAME_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
 interface GamesGridProps {
   games: GameData[] | null;
   isLoading: boolean;
@@ -70,11 +76,7 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
                 <div className="pointer-events-none absolute inset-0">
                   <div className="absolute bottom-0 left-0">
                     <span className="bg-black/60 p-1.5 text-xs text-white">
-                      {new Intl.DateTimeFormat('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      }).format(new Date(game.created_at))}
+                      {GAME_DATE_FORMATTER.format(new Date(game.created_at))}
                     </span>
                   </div>
                 </div>

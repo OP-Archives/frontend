@@ -1,6 +1,6 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
-import { useState, useEffect, useMemo, startTransition } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useDebouncedSetter } from '@/hooks/debounceHelper';
@@ -41,19 +41,17 @@ export function Library() {
   }, [searchTerm]);
 
   const updateUrlParams = (updates: Record<string, string | null>) => {
-    startTransition(() => {
-      setSearchParams(
-        (prev) => {
-          const nextParams = new URLSearchParams(prev);
-          for (const [key, val] of Object.entries(updates)) {
-            if (val) nextParams.set(key, val);
-            else nextParams.delete(key);
-          }
-          return nextParams;
-        },
-        { replace: true }
-      );
-    });
+    setSearchParams(
+      (prev) => {
+        const nextParams = new URLSearchParams(prev);
+        for (const [key, val] of Object.entries(updates)) {
+          if (val) nextParams.set(key, val);
+          else nextParams.delete(key);
+        }
+        return nextParams;
+      },
+      { replace: true }
+    );
   };
 
   const debouncedSetSearchTerm = useDebouncedSetter((val: string) => {

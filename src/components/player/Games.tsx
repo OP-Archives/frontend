@@ -1,16 +1,15 @@
 import { useEffect, useState, useRef, ChangeEvent } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import BaseVod from './BaseVod';
-import Chat from './Chat/Chat';
-import { PlayerTenantProfile } from '@/components/player/PlayerTenantProfile';
+import { PlayerLayout } from '@/components/player/PlayerLayout';
 import { RecentItemsGames } from '@/components/player/RecentItems';
+import { usePlayerLayout } from '@/components/player/usePlayerLayout';
 import Loading from '@/components/ui/Loading';
 import { useTenantContext } from '@/contexts/TenantContext';
 import type { VodDetail, GameEntry, PartInfo, PlayerState } from '@/types';
 import { unwrap } from '@/utils/api';
 import { archiveClient } from '@/utils/archive-client';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
-import { safeLocalStorage } from '@/utils/safeLocalStorage';
 import { hasGetCurrentTime } from '@/utils/typeGuards';
 
 export interface GamesProps {
@@ -30,34 +29,12 @@ export default function Games(props: GamesProps) {
   const [games, setGames] = useState<GameEntry[] | undefined>(undefined);
   const [part, setPart] = useState<PartInfo | null | undefined>(undefined);
   const [userChatDelay, setUserChatDelay] = useState(0);
-  const [chatOnLeft, setChatOnLeft] = useState(false);
   const [playerState, setPlayerState] = useState<PlayerState>(-1);
   const playerRef = useRef<HTMLVideoElement | null>(null);
-  const [isPortrait, setIsPortrait] = useState(false);
   const navigate = useNavigate();
   const currentGameId = new URLSearchParams(location.search).get('game_id') || '';
 
-  useEffect(() => {
-    const mql = window.matchMedia('(orientation: portrait)');
-    setIsPortrait(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, []);
-
-  useEffect(() => {
-    const savedSettings = safeLocalStorage.getItem('chatSettings');
-    if (savedSettings) {
-      try {
-        const settings = JSON.parse(savedSettings) || {};
-        if (settings.chatOnLeft !== undefined) {
-          setChatOnLeft(Boolean(settings.chatOnLeft));
-        }
-      } catch (e) {
-        console.error('Failed to parse chat settings from localStorage', e);
-      }
-    }
-  }, []);
+  const { isPortrait, chatOnLeft, setChatOnLeft } = usePlayerLayout(vodId);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -164,66 +141,53 @@ export default function Games(props: GamesProps) {
   }
 
   return (
-    <div className="h-full w-full">
-      <div
-        className={`flex ${isPortrait ? 'flex-col' : chatOnLeft ? 'flex-row-reverse' : 'flex-row'} h-full w-full min-w-0 overflow-hidden`}
-      >
-        {/* Left Column - Scrollable */}
-        <div
-          className={`flex min-w-0 [scrollbar-width:none] flex-col overflow-x-hidden [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isPortrait ? 'w-full flex-shrink-0 overflow-y-visible' : 'h-full flex-1 overflow-y-auto'}`}
-        >
-          {/* BaseVod strictly set to 100% height of parent to fill the initial viewport */}
-          <div className={`flex w-full shrink-0 flex-col ${isPortrait ? '' : 'h-full'}`}>
-            <BaseVod
-              {...props}
-              logo={logo}
-              handlePartChange={handlePartChange}
-              games={games}
-              playerRef={playerRef}
-              part={part}
-              setPart={setPart}
-              vod={vod}
-              setPlayerState={setPlayerState}
-              isPortrait={isPortrait}
-              tenant={tenant}
-            />
-          </div>
-          {!isPortrait && tenantData && (
-            <div className="theatre-hide flex w-full flex-col">
-              <div className="w-full shrink-0">
-                <PlayerTenantProfile tenantData={tenantData} />
-              </div>
-              <RecentItemsGames
-                games={games}
-                currentGameId={currentGameId}
-                currentVodId={vodId!}
-                setPart={setPart}
-                prevVods={vod.prev}
-                nextVods={vod.next}
-                currentVod={vod}
-              />
-            </div>
-          )}
-        </div>
-
-        {isPortrait && <hr className="shrink-0 border-[#222230]" />}
-        {!isPortrait && <div className="w-px shrink-0 bg-[#222230]" />}
-
-        <Chat
-          isPortrait={isPortrait}
-          vodId={vodId!}
-          playerRef={playerRef}
-          userChatDelay={userChatDelay}
-          part={part ?? null}
-          setPart={setPart}
+    <PlayerLayout
+      isPortrait={isPortrait}
+      chatOnLeft={chatOnLeft}
+      setChatOnLeft={setChatOnLeft}
+      tenantData={tenantData}
+      playerElement={
+        <BaseVod
+          {...props}
+          logo={logo}
+          handlePartChange={handlePartChange}
           games={games}
-          setUserChatDelay={setUserChatDelay}
-          chatOnLeft={chatOnLeft}
-          setChatOnLeft={setChatOnLeft}
-          playerState={playerState}
-          twitchId={twitchId}
+          playerRef={playerRef}
+          part={part}
+          setPart={setPart}
+          vod={vod}
+          setPlayerState={setPlayerState}
+          isPortrait={isPortrait}
+          tenant={tenant}
         />
-      </div>
-    </div>
+      }
+      chatProps={{
+        isPortrait,
+        vodId: vodId!,
+        playerRef,
+        userChatDelay,
+        part: part ?? null,
+        setPart,
+        games,
+        setUserChatDelay,
+        playerState,
+        twitchId,
+        chatOnLeft,
+        setChatOnLeft,
+      }}
+      recentItems={
+        games && (
+          <RecentItemsGames
+            games={games}
+            currentGameId={currentGameId}
+            currentVodId={vodId!}
+            setPart={setPart}
+            prevVods={vod.prev}
+            nextVods={vod.next}
+            currentVod={vod}
+          />
+        )
+      }
+    />
   );
 }

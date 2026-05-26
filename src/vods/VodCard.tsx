@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import ChaptersMenu from './ChaptersMenu';
 import WatchMenu from './WatchMenu';
@@ -25,7 +26,7 @@ const getThumbnail = (vod: VodListItem) => {
   return vod.vod_uploads?.[0]?.thumbnail_url || vod.games?.[0]?.thumbnail_url || vod.thumbnail_url || '';
 };
 
-export default function VodCard({ vod, priority }: { vod: VodListItem; priority?: boolean }) {
+const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListItem; priority?: boolean }) {
   const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
   const { cdnEnabled } = useTenantContext();
   const DEFAULT_VOD = getVodLink(vod, tenantParam);
@@ -123,4 +124,6 @@ export default function VodCard({ vod, priority }: { vod: VodListItem; priority?
       </div>
     </div>
   );
-}
+});
+
+export default VodCard;

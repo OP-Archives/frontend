@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import CustomVod from '@/components/player/CustomVod';
 import Games from '@/components/player/Games';
@@ -28,6 +28,7 @@ export function Vod() {
 
   const { cdnBaseUrl } = useTenantContext();
   const { data: vod, isLoading, error } = useVod(tenant!, vodId!);
+  const [errorShown, setErrorShown] = useState(false);
 
   if (!tenant || !vodId) {
     return <NotFound />;
@@ -41,9 +42,17 @@ export function Vod() {
     );
   }
 
-  if (error) {
-    navigate(`/${tenant}`, { replace: true });
-    return null;
+  if (error && !errorShown) {
+    setErrorShown(true);
+    setTimeout(() => navigate(`/${tenant}`, { replace: true }), 2000);
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-500">Failed to load VOD</h2>
+          <p className="mt-2 text-[#9ca3af]">Redirecting...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!vod) {

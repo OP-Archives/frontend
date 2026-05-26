@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, startTransition } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useMemo } from 'react';
 import FilterBar from '@/components/ui/FilterBar';
 import type { GamesQueryParams } from '@/hooks/useGames';
+import { useListFilters } from '@/hooks/useListFilters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTypedParams } from '@/hooks/useTypedParams';
 
@@ -22,113 +22,51 @@ export interface GamesFiltersState {
 
 export function useGamesFilters() {
   const { tenant } = useTypedParams<{ tenant: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useMediaQuery('(max-width: 900px)');
-  const todayString = new Date().toISOString().split('T')[0];
 
-  const filter = searchParams.get('filter') || FILTERS[0];
-  const filterStartDate = searchParams.get('from') || '';
-  const filterEndDate = searchParams.get('to') || todayString;
-  const filterGame = searchParams.get('game') || '';
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const gameId = searchParams.get('game_id');
-  const limit = isMobile ? 10 : 20;
+  const {
+    state,
+    updateParams,
+    changeFilter,
+    handleClearSearch,
+    queryKeyParams: baseParams,
+  } = useListFilters({
+    filterOptions: FILTERS,
+    searchParamKey: { search: 'game', from: 'from', to: 'to' },
+    defaultFilter: 'Default',
+    isMobile,
+  });
 
-  const memoizedDateRange = (() => {
-    if (filter !== 'Date' || !filterStartDate || !filterEndDate) return null;
-    try {
-      return {
-        from: new Date(filterStartDate).toISOString(),
-        to: new Date(filterEndDate).toISOString(),
-      };
-    } catch {
-      return null;
-    }
-  })();
-
-  const [inputGame, setInputGame] = useState(filterGame);
-  const [inputStartDate, setInputStartDate] = useState(filterStartDate);
-  const [inputEndDate, setInputEndDate] = useState(filterEndDate);
-
-  useEffect(() => {
-    setInputGame(filterGame);
-  }, [filterGame]);
-  useEffect(() => {
-    setInputStartDate(filterStartDate);
-  }, [filterStartDate]);
-  useEffect(() => {
-    setInputEndDate(filterEndDate);
-  }, [filterEndDate]);
-
-  const updateUrlParams = (updates: Record<string, string | null>) => {
-    startTransition(() => {
-      setSearchParams(
-        (prev) => {
-          const nextParams = new URLSearchParams(prev);
-          for (const [key, val] of Object.entries(updates)) {
-            if (val) nextParams.set(key, val);
-            else nextParams.delete(key);
-          }
-          if (gameId) nextParams.set('game_id', gameId);
-          return nextParams;
-        },
-        { replace: true }
-      );
-    });
-  };
+  const filterGame = state.inputSearch;
 
   const queryKeyParams: GamesQueryParams = useMemo(
     () => ({
-      limit,
-      page,
-      sort: 'created_at',
-      order: 'desc',
-      ...(gameId ? { game_id: gameId } : {}),
-      ...(memoizedDateRange ? memoizedDateRange : {}),
-      ...(filter === 'Game' && filterGame ? { game_name: filterGame } : {}),
+      limit: baseParams.limit ?? 20,
+      page: baseParams.page ?? 1,
+      sort: 'created_at' as const,
+      order: 'desc' as const,
+      ...(state.filter === 'Game' && filterGame ? { game_name: filterGame } : {}),
     }),
-    [limit, page, gameId, memoizedDateRange, filter, filterGame]
+    [baseParams.limit, baseParams.page, state.filter, filterGame]
   );
 
-  const handleClearGame = () => {
-    setInputGame('');
-    updateUrlParams({ game: null, filter: 'Default', page: '1' });
+  const updateUrlParams = (updates: Record<string, string | null>) => {
+    updateParams(updates);
   };
 
-  const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newFilter = e.target.value;
-    const updates: Record<string, string | null> = {
-      page: '1',
-      filter: newFilter === 'Default' ? null : newFilter,
-    };
-    if (newFilter !== 'Game') updates.game = null;
-    if (newFilter !== 'Date') {
-      updates.from = null;
-      updates.to = null;
-    }
-    updateUrlParams(updates);
-  };
-
-  const state: GamesFiltersState = {
-    filter,
-    filterStartDate,
-    filterEndDate,
+  const gamesState: GamesFiltersState = {
+    ...state,
     filterGame,
-    page,
-    gameId,
-    limit,
-    inputGame,
-    inputStartDate,
-    inputEndDate,
+    inputGame: filterGame,
   };
 
   return {
     tenant,
-    state,
+    state: gamesState,
     updateUrlParams,
     changeFilter,
     queryKeyParams,
-    handleClearGame,
+    handleClearGame: handleClearSearch,
   };
 }
 
