@@ -32,7 +32,6 @@ export interface UseVideoControlsReturn {
   handleSeekChange: (_event: Event, newValue: number | number[]) => void;
   handlePlaybackSpeedChange: (speed: number) => void;
   handleError: (_e: React.SyntheticEvent<HTMLVideoElement>) => void;
-  toggleTheatreMode: () => void;
   timeUpdate: () => void;
   handlePlay: () => void;
   handlePause: () => void;
@@ -259,10 +258,6 @@ export function useVideoControls({
     }
   }, [playerRef]);
 
-  const toggleTheatreMode = useCallback(() => {
-    // This is handled by the parent component
-  }, []);
-
   return {
     toggleFullscreen,
     togglePiP,
@@ -272,7 +267,6 @@ export function useVideoControls({
     handleSeekChange,
     handlePlaybackSpeedChange,
     handleError,
-    toggleTheatreMode,
     timeUpdate,
     handlePlay,
     handlePause,

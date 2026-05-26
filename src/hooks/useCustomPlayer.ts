@@ -39,7 +39,6 @@ export interface UseCustomPlayerReturn {
   handleSeekChange: (_event: Event, newValue: number | number[]) => void;
   handlePlaybackSpeedChange: (speed: number) => void;
   handleError: (_e: React.SyntheticEvent<HTMLVideoElement>) => void;
-  toggleTheatreMode: () => void;
   timeUpdate: () => void;
   handlePlay: () => void;
   handlePause: () => void;
@@ -122,7 +121,6 @@ export function useCustomPlayer({
     handleSeekChange: videoControls.handleSeekChange,
     handlePlaybackSpeedChange: videoControls.handlePlaybackSpeedChange,
     handleError: videoControls.handleError,
-    toggleTheatreMode: videoControls.toggleTheatreMode,
     timeUpdate: videoControls.timeUpdate,
     handlePlay: videoControls.handlePlay,
     handlePause: videoControls.handlePause,

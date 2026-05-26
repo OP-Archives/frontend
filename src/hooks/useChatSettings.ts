@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDebouncedCallback } from '@/hooks/debounceHelper';
+import { DEFAULT_CHAT_WIDTH_MOBILE, DEFAULT_CHAT_WIDTH_TABLET, DEFAULT_CHAT_WIDTH_DESKTOP } from '@/utils/constants';
 import { safeLocalStorage } from '@/utils/safeLocalStorage';
 
 const DEFAULT_SETTINGS = {
@@ -11,6 +12,14 @@ const DEFAULT_SETTINGS = {
   chatOnLeft: false,
   userChatDelay: 0,
 };
+
+function getResponsiveDefaultWidth(): number | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const w = window.innerWidth;
+  if (w <= 600) return DEFAULT_CHAT_WIDTH_MOBILE;
+  if (w <= 900) return DEFAULT_CHAT_WIDTH_TABLET;
+  return DEFAULT_CHAT_WIDTH_DESKTOP;
+}
 
 export interface UseChatSettingsReturn {
   showTimestamp: boolean;
@@ -47,45 +56,55 @@ export function useChatSettings(): UseChatSettingsReturn {
 
   const loadSettings = useCallback(() => {
     const savedSettings = safeLocalStorage.getItem('chatSettings');
-    if (!savedSettings) return;
+    let hasSettings = false;
 
-    try {
-      const settings = JSON.parse(savedSettings);
+    if (savedSettings) {
+      hasSettings = true;
+      try {
+        const settings = JSON.parse(savedSettings);
 
-      if (settings.chatWidth !== undefined) {
-        setChatWidth(settings.chatWidth as number);
-      }
-      if (settings.showTimestamp !== undefined) {
-        setShowTimestamp(Boolean(settings.showTimestamp));
-      }
-      if (settings.fontFamily && typeof settings.fontFamily === 'string') {
-        setFontFamily(settings.fontFamily);
-        document.documentElement.style.setProperty('--chat-font-family', settings.fontFamily);
-      }
-      if (settings.messageFontSize && typeof settings.messageFontSize === 'number') {
-        setMessageFontSize(settings.messageFontSize);
-        document.documentElement.style.setProperty('--chat-font-size-message', `${settings.messageFontSize}px`);
-        document.documentElement.style.setProperty(
-          '--chat-font-size-timestamp',
-          `${Math.round(settings.messageFontSize * 0.857)}px`
-        );
-      }
-      if (settings.chatOnLeft !== undefined) {
-        setChatOnLeft(Boolean(settings.chatOnLeft));
-      }
-      if (settings.userChatDelay !== undefined) {
-        setUserChatDelay(Number(settings.userChatDelay));
-      }
+        if (settings.chatWidth !== undefined) {
+          setChatWidth(settings.chatWidth as number);
+        }
+        if (settings.showTimestamp !== undefined) {
+          setShowTimestamp(Boolean(settings.showTimestamp));
+        }
+        if (settings.fontFamily && typeof settings.fontFamily === 'string') {
+          setFontFamily(settings.fontFamily);
+          document.documentElement.style.setProperty('--chat-font-family', settings.fontFamily);
+        }
+        if (settings.messageFontSize && typeof settings.messageFontSize === 'number') {
+          setMessageFontSize(settings.messageFontSize);
+          document.documentElement.style.setProperty('--chat-font-size-message', `${settings.messageFontSize}px`);
+          document.documentElement.style.setProperty(
+            '--chat-font-size-timestamp',
+            `${Math.round(settings.messageFontSize * 0.857)}px`
+          );
+        }
+        if (settings.chatOnLeft !== undefined) {
+          setChatOnLeft(Boolean(settings.chatOnLeft));
+        }
+        if (settings.userChatDelay !== undefined) {
+          setUserChatDelay(Number(settings.userChatDelay));
+        }
 
-      const words = (settings.filterWords as string[]) || [];
-      if (words.length > 0) {
-        const escaped = words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-        setFilterRegex(new RegExp(`\\b(${escaped.join('|')})\\b`, 'gi'));
-      } else {
-        setFilterRegex(null);
+        const words = (settings.filterWords as string[]) || [];
+        if (words.length > 0) {
+          const escaped = words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+          setFilterRegex(new RegExp(`\\b(${escaped.join('|')})\\b`, 'gi'));
+        } else {
+          setFilterRegex(null);
+        }
+      } catch (e) {
+        console.error('Failed to parse chat settings from localStorage', e);
       }
-    } catch (e) {
-      console.error('Failed to parse chat settings from localStorage', e);
+    }
+
+    if (!hasSettings || savedSettings === null) {
+      const responsiveDefault = getResponsiveDefaultWidth();
+      if (responsiveDefault !== undefined) {
+        setChatWidth(responsiveDefault);
+      }
     }
   }, []);
 

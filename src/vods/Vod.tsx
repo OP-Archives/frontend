@@ -14,8 +14,7 @@ export function Vod() {
   const vodId = params.vodId;
   const location = useLocation();
   const navigate = useNavigate();
-  const pathParts = location.pathname.split('/');
-  const routeType = pathParts[pathParts.length - 2]; // vods, cdn, manual, games
+  const routeType = location.pathname.match(/\/(vods|cdn|manual|games)\//)?.[1] ?? 'vods';
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

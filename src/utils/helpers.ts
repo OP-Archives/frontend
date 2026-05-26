@@ -24,18 +24,14 @@ export function toSeconds(hms: string): number {
 }
 
 export function formatTime(time: number | undefined): string {
-  const isTimeNaN = isNaN(time as number);
-  const hours = !isTimeNaN ? Math.floor((time as number) / 3600) : 0,
-    remainder = !isTimeNaN ? (time as number) % 3600 : 0,
-    minutes = !isTimeNaN ? Math.floor(remainder / 60) : 0,
-    seconds = !isTimeNaN ? Math.floor(remainder % 60) : 0;
-
-  let hh: string | undefined;
+  if (time == null || isNaN(time)) return '00:00';
+  const hours = Math.floor(time / 3600);
+  const remainder = time % 3600;
+  const minutes = Math.floor(remainder / 60);
+  const seconds = Math.floor(remainder % 60);
   const mm = minutes.toString().padStart(2, '0');
   const ss = seconds.toString().padStart(2, '0');
-  if (hours !== 0) hh = hours.toString().padStart(2, '0');
-
-  return `${hh ? `${hh}:` : ''}${mm}:${ss}`;
+  return hours > 0 ? `${hours.toString().padStart(2, '0')}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
 export function sleep(ms: number): Promise<void> {

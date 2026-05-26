@@ -45,7 +45,10 @@ async function fetchJson<T>(url: string, options: FetchOptions = {}): Promise<T>
       signal,
       headers: { 'Content-Type': 'application/json', ...options.headers },
     });
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`API error ${res.status} ${res.statusText}: ${body.slice(0, 200)}`);
+    }
     return res.json() as Promise<T>;
   } finally {
     clearTimeout(timeoutId);

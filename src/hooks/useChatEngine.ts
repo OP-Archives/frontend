@@ -1,42 +1,44 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { Comment, MessageFragment } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
+import {
+  SCROLL_TOLERANCE,
+  MAX_CHAT_MESSAGES,
+  CHAT_LOOP_INTERVAL_MS,
+  CHAT_STATE_CHANGE_DELAY_MS,
+} from '@/utils/constants';
 
-const SCROLL_TOLERANCE = 250;
-
-interface UseChatMessagesOptions {
+interface UseChatEngineOptions {
   channel: string;
   vodId: string;
   playerRef: React.RefObject<unknown>;
   getCurrentTime: () => number;
   isPlaying: () => boolean;
   shouldFilterMessage: (message: string) => boolean;
+  playerState?: number;
+  onMessagesChange?: (messages: Comment[]) => void;
 }
 
-export interface UseChatMessagesReturn {
-  shownMessages: Comment[];
+interface UseChatEngineReturn {
+  messages: Comment[];
   scrolling: boolean;
   isLoading: boolean;
   setIsLoading: (v: boolean) => void;
   chatRef: React.RefObject<HTMLElement | null>;
-  commentsRef: React.RefObject<Comment[]>;
-  cursorRef: React.RefObject<string | null>;
   handleScroll: () => void;
   scrollToBottom: () => void;
-  startLoop: () => void;
-  stopLoop: () => void;
-  fetchComments: (offset?: number) => void;
 }
 
-export function useChatMessages({
+export function useChatEngine({
   channel,
   vodId,
   playerRef,
   getCurrentTime,
   isPlaying,
   shouldFilterMessage,
-}: UseChatMessagesOptions): UseChatMessagesReturn {
-  const [shownMessages, setShownMessages] = useState<Comment[]>([]);
+  playerState,
+}: UseChatEngineOptions): UseChatEngineReturn {
+  const [messages, setMessages] = useState<Comment[]>([]);
   const [scrolling, setScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,6 +46,7 @@ export function useChatMessages({
   const cursorRef = useRef<string | null>(null);
   const loopRef = useRef<number | null>(null);
   const loopCbRef = useRef<(() => void) | undefined>(undefined);
+  const playRef = useRef<number | null>(null);
   const chatRef = useRef<HTMLElement | null>(null);
   const stoppedAtIndexRef = useRef(0);
   const newMessagesRef = useRef<Comment[]>([]);
@@ -52,14 +55,65 @@ export function useChatMessages({
   const lastFetchedCursorRef = useRef<string | null>(null);
   const lastScrollHeightRef = useRef(0);
   const isAutoScrollingRef = useRef(false);
+  const isAtBottomRef = useRef(true);
   const lastScrollTopRef = useRef(0);
   const scrollingRef = useRef(scrolling);
   const hasFetchedRef = useRef(false);
-  const isAtBottomRef = useRef(true);
 
   useEffect(() => {
     scrollingRef.current = scrolling;
   }, [scrolling]);
+
+  const fetchWithRetry = useCallback(
+    async <T>(fetchFn: () => Promise<T>, retries = 3, delayMs = 1000): Promise<T | null> => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          return await fetchFn();
+        } catch (e) {
+          if (e instanceof DOMException && e.name === 'AbortError') throw e;
+          if (i === retries - 1) {
+            console.error('Chat fetch failed after retries:', e);
+            return null;
+          }
+          await new Promise((r) => setTimeout(r, delayMs * (i + 1)));
+        }
+      }
+      return null;
+    },
+    []
+  );
+
+  const fetchNextComments = useCallback(() => {
+    if (isFetchingNextRef.current) return;
+    if (cursorRef.current === lastFetchedCursorRef.current) return;
+
+    isFetchingNextRef.current = true;
+
+    if (paginationAbortRef.current) {
+      paginationAbortRef.current.abort();
+    }
+    paginationAbortRef.current = new AbortController();
+    lastFetchedCursorRef.current = cursorRef.current;
+
+    fetchWithRetry(
+      () =>
+        archiveClient.vods.comments(channel, vodId, { cursor: cursorRef.current ?? '' }).then((r) => {
+          if (!r.success) throw r;
+          return r.data;
+        }),
+      3,
+      1000
+    )
+      .then((data) => {
+        if (!data) return;
+        stoppedAtIndexRef.current = 0;
+        commentsRef.current = data.comments;
+        cursorRef.current = data.cursor;
+      })
+      .finally(() => {
+        isFetchingNextRef.current = false;
+      });
+  }, [channel, vodId, fetchWithRetry]);
 
   const buildComments = useCallback(() => {
     if (
@@ -78,7 +132,7 @@ export function useChatMessages({
       commentsRef.current[stoppedAtIndexRef.current - 1] &&
       commentsRef.current[stoppedAtIndexRef.current - 1].content_offset_seconds > time
     ) {
-      setShownMessages([]);
+      setMessages([]);
       stoppedAtIndexRef.current = 0;
     }
 
@@ -91,41 +145,6 @@ export function useChatMessages({
     }
 
     if (stoppedAtIndexRef.current === lastIndex && stoppedAtIndexRef.current !== 0) return;
-
-    const fetchNextComments = () => {
-      if (isFetchingNextRef.current) return;
-      if (cursorRef.current === lastFetchedCursorRef.current) return;
-
-      isFetchingNextRef.current = true;
-
-      if (paginationAbortRef.current) {
-        paginationAbortRef.current.abort();
-      }
-      paginationAbortRef.current = new AbortController();
-      lastFetchedCursorRef.current = cursorRef.current;
-
-      archiveClient.vods
-        .comments(channel, vodId, { cursor: cursorRef.current ?? '' })
-        .then((response) => {
-          if (!response.success) {
-            throw response;
-          }
-          return response.data;
-        })
-        .then((data) => {
-          stoppedAtIndexRef.current = 0;
-          commentsRef.current = data.comments;
-          cursorRef.current = data.cursor;
-        })
-        .catch((e) => {
-          if (e.name !== 'AbortError') {
-            console.error(e);
-          }
-        })
-        .finally(() => {
-          isFetchingNextRef.current = false;
-        });
-    };
 
     newMessagesRef.current = [];
     for (let i = stoppedAtIndexRef.current; i < lastIndex; i++) {
@@ -142,15 +161,15 @@ export function useChatMessages({
     }
 
     if (newMessagesRef.current.length > 0) {
-      setShownMessages((prevShownMessages) => {
-        const existingIds = new Set(prevShownMessages.map((msg) => msg.id));
+      setMessages((prevMessages) => {
+        const existingIds = new Set(prevMessages.map((msg) => msg.id));
 
         const uniqueNewMessages = newMessagesRef.current.filter((msg) => !existingIds.has(msg.id));
 
-        const concatMessages = prevShownMessages.concat(uniqueNewMessages);
+        const concatMessages = prevMessages.concat(uniqueNewMessages);
 
-        if (concatMessages.length > 200) {
-          concatMessages.splice(0, concatMessages.length - 200);
+        if (concatMessages.length > MAX_CHAT_MESSAGES) {
+          concatMessages.splice(0, concatMessages.length - MAX_CHAT_MESSAGES);
         }
         return concatMessages;
       });
@@ -158,7 +177,7 @@ export function useChatMessages({
       stoppedAtIndexRef.current = lastIndex;
       if (!isFetchingNextRef.current && commentsRef.current.length === lastIndex) fetchNextComments();
     }
-  }, [playerRef, getCurrentTime, isPlaying, shouldFilterMessage, channel, vodId]);
+  }, [playerRef, getCurrentTime, isPlaying, shouldFilterMessage, fetchNextComments]);
 
   const scrollToBottom = useCallback(() => {
     if (!chatRef.current) return;
@@ -222,7 +241,7 @@ export function useChatMessages({
   const startLoop = useCallback(() => {
     if (loopRef.current !== null) clearInterval(loopRef.current);
     buildComments();
-    loopRef.current = setInterval(buildComments, 1000);
+    loopRef.current = setInterval(buildComments, CHAT_LOOP_INTERVAL_MS);
     return () => {
       if (loopRef.current !== null) {
         clearInterval(loopRef.current);
@@ -236,32 +255,30 @@ export function useChatMessages({
   }, []);
 
   const fetchComments = useCallback(
-    (offset: number = 0) => {
-      archiveClient.vods
-        .comments(channel, vodId, { content_offset_seconds: String(Math.floor(offset)) })
-        .then((response) => {
-          if (!response.success) {
-            throw response;
-          }
-          return response.data;
-        })
-        .then((data) => {
-          commentsRef.current = data.comments;
-          cursorRef.current = data.cursor;
-        })
-        .catch((e) => {
-          if (e.name !== 'AbortError') {
-            console.error(e);
-          }
-        })
-        .finally(() => {
-          if (!hasFetchedRef.current) {
-            hasFetchedRef.current = true;
-            setIsLoading(false);
-          }
-        });
+    async (offset: number = 0) => {
+      const data = await fetchWithRetry(
+        () =>
+          archiveClient.vods
+            .comments(channel, vodId, { content_offset_seconds: String(Math.floor(offset)) })
+            .then((r) => {
+              if (!r.success) throw r;
+              return r.data;
+            }),
+        3,
+        1000
+      );
+
+      if (data) {
+        commentsRef.current = data.comments;
+        cursorRef.current = data.cursor;
+      }
+
+      if (!hasFetchedRef.current) {
+        hasFetchedRef.current = true;
+        setIsLoading(false);
+      }
     },
-    [channel, vodId]
+    [channel, vodId, fetchWithRetry]
   );
 
   useEffect(() => {
@@ -269,9 +286,9 @@ export function useChatMessages({
   }, [startLoop]);
 
   useEffect(() => {
-    if (scrolling || !isAtBottomRef.current || shownMessages.length === 0) return;
+    if (scrolling || !isAtBottomRef.current || messages.length === 0) return;
     scrollToBottom();
-  }, [shownMessages, scrolling, scrollToBottom]);
+  }, [messages, scrolling, scrollToBottom]);
 
   useEffect(() => {
     if (!chatRef.current) return;
@@ -298,18 +315,54 @@ export function useChatMessages({
     };
   }, []);
 
+  useEffect(() => {
+    const abortController = new AbortController();
+    if (playRef.current) clearTimeout(playRef.current);
+    if (playerState === -1 || !playerRef.current) return;
+
+    const handlePlayerStateChange = () => {
+      if (playerState === 1) {
+        const time = getCurrentTime();
+        if (
+          commentsRef.current.length === 0 ||
+          time < commentsRef.current[0].content_offset_seconds ||
+          time > commentsRef.current[commentsRef.current.length - 1].content_offset_seconds
+        ) {
+          playRef.current = setTimeout(() => {
+            stopLoop();
+            stoppedAtIndexRef.current = 0;
+            commentsRef.current = [];
+            cursorRef.current = null;
+            setMessages([]);
+            hasFetchedRef.current = false;
+            setIsLoading(true);
+            fetchComments(time);
+            loopCbRef.current?.();
+          }, CHAT_STATE_CHANGE_DELAY_MS);
+        } else {
+          loopCbRef.current?.();
+        }
+      } else {
+        stopLoop();
+      }
+    };
+
+    handlePlayerStateChange();
+
+    return () => {
+      abortController.abort();
+      stopLoop();
+      if (playRef.current) clearTimeout(playRef.current);
+    };
+  }, [vodId, playerRef, playerState, getCurrentTime, stopLoop, fetchComments]);
+
   return {
-    shownMessages,
+    messages,
     scrolling,
     isLoading,
     setIsLoading,
     chatRef,
-    commentsRef,
-    cursorRef,
     handleScroll,
     scrollToBottom,
-    startLoop,
-    stopLoop,
-    fetchComments,
   };
 }

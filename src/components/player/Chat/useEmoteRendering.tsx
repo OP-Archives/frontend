@@ -1,0 +1,376 @@
+import { useMemo, useCallback } from 'react';
+import MessageTooltip from './MessageTooltip';
+import { Twemoji, emojiTest, extractEmojis } from './Twemoji';
+import type {
+  EmoteEntry,
+  EmoteProvider,
+  FfzEmote,
+  BttvEmote,
+  SevenTVEmote,
+  Badge,
+  BadgeVersion,
+  Comment,
+} from '@/types';
+
+const BASE_TWITCH_CDN = 'https://static-cdn.jtvnw.net';
+const BASE_FFZ_EMOTE_CDN = 'https://cdn.frankerfacez.com/emote';
+const BASE_BTTV_EMOTE_CDN = 'https://cdn.betterttv.net/emote';
+const BASE_7TV_EMOTE_CDN = 'https://cdn.7tv.app/emote';
+
+const URL_REGEX = /^(https?:\/\/)?[\w.-]+\.[\w\/.-]+$/i;
+
+interface UseEmoteRenderingOptions {
+  emotes: {
+    ffz_emotes?: FfzEmote[];
+    bttv_emotes?: BttvEmote[];
+    seventv_emotes?: SevenTVEmote[];
+  };
+  badgesRef: React.RefObject<Record<'channel' | 'global', Badge[]> | undefined>;
+}
+
+interface UseEmoteRenderingReturn {
+  transformMessage: (fragments: Comment['message'], keyPrefix: string) => React.ReactNode | null;
+  transformBadges: (textBadges: Comment['user_badges'], keyPrefix: string) => React.ReactElement;
+  renderEmoteTooltip: (emote: EmoteEntry, word: string, key: string) => React.ReactElement;
+}
+
+export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOptions): UseEmoteRenderingReturn {
+  const emoteLookup = useMemo(() => {
+    const lookup = new Map<string, EmoteEntry>();
+    const ffz = emotes?.ffz_emotes || [];
+    const bttv = emotes?.bttv_emotes || [];
+    const seventv = emotes?.seventv_emotes || [];
+
+    ffz.forEach((emote: FfzEmote) => {
+      const code = emote.code || emote.text;
+      const name = emote.name || code;
+      lookup.set(code || name, { ...emote, code, name, provider: 'FFZ' as EmoteProvider });
+    });
+    bttv.forEach((emote: BttvEmote) =>
+      lookup.set(emote.code, { ...emote, name: emote.code, provider: 'BTTV' as EmoteProvider })
+    );
+    seventv.forEach((emote: SevenTVEmote) => {
+      const code = emote.code || '';
+      const name = emote.name || code;
+      lookup.set(name, { ...emote, code, name, provider: '7TV' as EmoteProvider });
+    });
+
+    return lookup;
+  }, [emotes]);
+
+  const getEmoteImageUrl = useCallback((emote: EmoteEntry, type: EmoteProvider, size: number = 1): string => {
+    switch (type) {
+      case 'FFZ':
+        return `${BASE_FFZ_EMOTE_CDN}/${emote.id}/${size}`;
+      case 'BTTV':
+        return `${BASE_BTTV_EMOTE_CDN}/${emote.id}/${size === 4 ? 2 : size}x`;
+      case '7TV':
+        return `${BASE_7TV_EMOTE_CDN}/${emote.id}/${size}x.webp`;
+      default:
+        return `${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/${size}.0`;
+    }
+  }, []);
+
+  const getEmoteImageSrcSet = useCallback((emote: EmoteEntry, type: EmoteProvider): string => {
+    switch (type) {
+      case 'FFZ':
+        return `${BASE_FFZ_EMOTE_CDN}/${emote.id}/1 1x, ${BASE_FFZ_EMOTE_CDN}/${emote.id}/2 2x, ${BASE_FFZ_EMOTE_CDN}/${emote.id}/4 4x`;
+      case 'BTTV':
+        return `${BASE_BTTV_EMOTE_CDN}/${emote.id}/1x 1x, ${BASE_BTTV_EMOTE_CDN}/${emote.id}/2x 2x, ${BASE_BTTV_EMOTE_CDN}/${emote.id}/3x 3x`;
+      case '7TV':
+        return `${BASE_7TV_EMOTE_CDN}/${emote.id}/1x.webp 1x, ${BASE_7TV_EMOTE_CDN}/${emote.id}/2x.webp 2x, ${BASE_7TV_EMOTE_CDN}/${emote.id}/3x.webp 3x, ${BASE_7TV_EMOTE_CDN}/${emote.id}/4x.webp 4x`;
+      default:
+        return `${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/1.0 1x, ${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/2.0 2x, ${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/3.0 4x`;
+    }
+  }, []);
+
+  const SEVENTV_isZeroWidth = useCallback((emote: EmoteEntry): boolean => {
+    const ZERO_WIDTH = 1 << 8;
+    return (emote.flags && ZERO_WIDTH) !== 0;
+  }, []);
+
+  const renderEmoteTooltip = useCallback(
+    (emote: EmoteEntry, word: string, key: string) => {
+      const emoteType = emote.provider;
+
+      return (
+        <MessageTooltip
+          key={key}
+          title={
+            <div className="flex w-fit flex-col items-center">
+              <img
+                className="mb-[0.3rem] w-auto border-none align-top"
+                src={getEmoteImageUrl(emote, emoteType, 2)}
+                alt={word}
+              />
+              <p className="block text-xs">{`Emote: ${emote.name || emote.code}`}</p>
+              <p className="block text-xs">{`${emoteType} Emotes`}</p>
+            </div>
+          }
+        >
+          <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+            <img
+              className="h-auto min-h-[28px] w-auto max-w-full border-none"
+              style={{ verticalAlign: 'middle' }}
+              src={getEmoteImageUrl(emote, emoteType)}
+              srcSet={getEmoteImageSrcSet(emote, emoteType)}
+              alt={word}
+            />{' '}
+          </span>
+        </MessageTooltip>
+      );
+    },
+    [getEmoteImageUrl, getEmoteImageSrcSet]
+  );
+
+  const renderCombinedEmoteTooltip = useCallback(
+    (normalEmote: EmoteEntry, zwEmote: EmoteEntry, key: string) => {
+      const normalType = normalEmote.provider;
+      const zwType = zwEmote.provider;
+
+      return (
+        <MessageTooltip
+          key={key}
+          title={
+            <div className="flex w-fit flex-col items-center gap-2">
+              <div className="flex flex-col items-center">
+                <img
+                  className="mb-[0.3rem] w-auto border-none align-top"
+                  src={getEmoteImageUrl(normalEmote, normalType, 2)}
+                  alt={normalEmote.code}
+                />
+                <p className="block text-xs">{`Emote: ${normalEmote.name || normalEmote.code}`}</p>
+                <p className="block text-xs">{`${normalType} Emotes`}</p>
+              </div>
+              <hr className="w-full border-[#222230]" />
+              <div className="flex flex-col items-center">
+                <img
+                  className="mb-[0.3rem] w-auto border-none align-top"
+                  src={getEmoteImageUrl(zwEmote, zwType, 2)}
+                  alt={zwEmote.code}
+                />
+                <p className="block text-xs">{`Zero-Width: ${zwEmote.name || zwEmote.code}`}</p>
+                <p className="block text-xs">{`${zwType} Emotes`}</p>
+              </div>
+            </div>
+          }
+        >
+          <span style={{ display: 'inline-block', position: 'relative', verticalAlign: 'middle' }}>
+            <img
+              className="h-auto min-h-[28px] w-auto max-w-full border-none"
+              style={{ verticalAlign: 'middle' }}
+              src={getEmoteImageUrl(normalEmote, normalType)}
+              srcSet={getEmoteImageSrcSet(normalEmote, normalType)}
+              alt={normalEmote.code}
+            />
+            <img
+              className="pointer-events-none absolute top-1/2 left-1/2 h-auto w-auto max-w-full -translate-x-1/2 -translate-y-1/2 border-none align-middle"
+              style={{ verticalAlign: 'middle' }}
+              src={getEmoteImageUrl(zwEmote, zwType)}
+              srcSet={getEmoteImageSrcSet(zwEmote, zwType)}
+              alt={zwEmote.code}
+            />
+          </span>
+        </MessageTooltip>
+      );
+    },
+    [getEmoteImageUrl, getEmoteImageSrcSet]
+  );
+
+  const transformMessage = useCallback(
+    (fragments: Comment['message'], keyPrefix: string): React.ReactNode | null => {
+      if (!fragments) return null;
+
+      const textFragments: (React.ReactElement | string)[] = [];
+      for (let fIndex = 0; fIndex < fragments.length; fIndex++) {
+        const fragment = fragments[fIndex];
+
+        if (fragment.emote || fragment.emoticon) {
+          const emoteID = fragment.emote ? fragment.emote.emoteID : fragment.emoticon!.emoticon_id;
+          textFragments.push(
+            renderEmoteTooltip(
+              { id: emoteID, code: fragment.text, provider: 'Twitch' as EmoteProvider },
+              fragment.text,
+              `${keyPrefix}-frag-${fIndex}-emote-${fragment.text}`
+            ),
+            ' '
+          );
+        } else {
+          const words = fragment.text.split(' ');
+          let lastNormalEmoteData: EmoteEntry | null = null;
+          let lastNormalEmoteIndex = -1;
+          for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            const emote = emoteLookup.get(word);
+            if (emote) {
+              if (emote.provider === '7TV') {
+                const isZeroWidth = SEVENTV_isZeroWidth(emote);
+
+                if (isZeroWidth && lastNormalEmoteData) {
+                  const storedEmote = lastNormalEmoteData as EmoteEntry;
+                  const combinedKey = `${keyPrefix}-frag-${fIndex}-combined-${storedEmote.code}-${word}-${i}`;
+                  const combined = renderCombinedEmoteTooltip(storedEmote, emote, combinedKey);
+
+                  if (lastNormalEmoteIndex >= 0 && lastNormalEmoteIndex < textFragments.length) {
+                    textFragments[lastNormalEmoteIndex] = combined;
+                  }
+                  lastNormalEmoteData = null;
+                  lastNormalEmoteIndex = -1;
+                } else if (isZeroWidth) {
+                  const zeroWidthKey = `${keyPrefix}-frag-${fIndex}-emote-${word}-${i}`;
+                  const zwSpan = (
+                    <MessageTooltip
+                      key={zeroWidthKey}
+                      title={
+                        <div className="flex w-fit flex-col items-center">
+                          <img
+                            className="mb-[0.3rem] w-auto border-none align-top"
+                            src={getEmoteImageUrl(emote, emote.provider, 2)}
+                            alt={word}
+                          />
+                          <p className="block text-xs">{`Emote: ${emote.name || emote.code}`}</p>
+                          <p className="block text-xs">{`${emote.provider} Emotes`}</p>
+                        </div>
+                      }
+                    >
+                      <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                        <img
+                          className="h-auto min-h-[28px] w-auto max-w-full border-none"
+                          style={{ verticalAlign: 'middle' }}
+                          src={getEmoteImageUrl(emote, emote.provider)}
+                          srcSet={getEmoteImageSrcSet(emote, emote.provider)}
+                          alt={word}
+                        />{' '}
+                      </span>
+                    </MessageTooltip>
+                  );
+                  textFragments.push(zwSpan, ' ');
+                } else {
+                  const normalKey = `${keyPrefix}-frag-${fIndex}-emote-${word}-${i}`;
+                  const normalEmoteEl = renderEmoteTooltip(emote, word, normalKey);
+                  lastNormalEmoteData = emote;
+                  lastNormalEmoteIndex = textFragments.length;
+                  textFragments.push(normalEmoteEl, ' ');
+                }
+              } else {
+                const normalKey = `${keyPrefix}-frag-${fIndex}-emote-${word}-${i}`;
+                const normalEmoteEl = renderEmoteTooltip(emote, word, normalKey);
+                lastNormalEmoteData = emote;
+                lastNormalEmoteIndex = textFragments.length;
+                textFragments.push(normalEmoteEl, ' ');
+              }
+            } else {
+              lastNormalEmoteData = null;
+              if (emojiTest(word)) {
+                const parts = extractEmojis(word);
+                for (const part of parts) {
+                  if (part.text) {
+                    textFragments.push(
+                      <span key={`${keyPrefix}-frag-${fIndex}-text-${part.text}-${i}`}>{part.text}</span>
+                    );
+                  } else {
+                    textFragments.push(
+                      <MessageTooltip
+                        key={`${keyPrefix}-frag-${fIndex}-twemoji-${part.emoji}-${i}`}
+                        title={
+                          <div className="flex w-fit flex-col items-center">
+                            <Twemoji options={{ className: 'twemoji' }}>{part.emoji}</Twemoji>
+                            <p className="block text-xs">Twitter Emotes</p>
+                          </div>
+                        }
+                      >
+                        <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                          <Twemoji options={{ className: 'twemoji' }}>{part.emoji}</Twemoji>
+                        </span>
+                      </MessageTooltip>
+                    );
+                  }
+                }
+                textFragments.push(' ');
+              } else if (URL_REGEX.test(word)) {
+                textFragments.push(
+                  <a
+                    key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}
+                    href={`/leave?target=${encodeURIComponent(word)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--chat-accent)] hover:underline"
+                  >
+                    {word}
+                  </a>,
+                  ' '
+                );
+              } else {
+                textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{word}</span>, ' ');
+              }
+            }
+          }
+        }
+      }
+
+      return textFragments.length > 0 ? <span style={{ display: 'inline' }}>{textFragments}</span> : null;
+    },
+    [
+      emoteLookup,
+      renderEmoteTooltip,
+      renderCombinedEmoteTooltip,
+      SEVENTV_isZeroWidth,
+      getEmoteImageUrl,
+      getEmoteImageSrcSet,
+    ]
+  );
+
+  const transformBadges = useCallback(
+    (textBadges: Comment['user_badges'], keyPrefix: string): React.ReactElement => {
+      if (!badgesRef.current) {
+        return <span className="inline" />;
+      }
+
+      const badgeWrapper: React.ReactElement[] = [];
+      const { channel: channelBadges, global: globalBadges } = badgesRef.current;
+
+      for (let i = 0; i < textBadges!.length; i++) {
+        const textBadge = textBadges![i];
+        const badgeId = textBadge._id ?? textBadge.setID;
+        const version = textBadge.version;
+
+        const badge =
+          channelBadges?.find((b: Badge) => b.set_id === badgeId) ||
+          globalBadges?.find((b: Badge) => b.set_id === badgeId);
+        if (!badge) continue;
+
+        const badgeVersion = badge.versions.find((v: BadgeVersion) => v.id === version);
+        if (!badgeVersion) continue;
+
+        badgeWrapper.push(
+          <MessageTooltip
+            key={`${keyPrefix}-badge-${badgeId}-${version}`}
+            title={
+              <div className="flex w-fit flex-col items-center">
+                <img className="mb-[0.3rem] max-w-full border-none align-top" src={badgeVersion.image_url_4x} alt="" />
+                <p className="block text-xs">{`${badgeId}`}</p>
+              </div>
+            }
+          >
+            <img
+              className="inline-block h-[1rem] min-w-[1rem] align-middle"
+              style={{ margin: '0 0.2rem 0.1rem 0', backgroundPosition: '50%' }}
+              srcSet={`${badgeVersion.image_url_1x} 1x, ${badgeVersion.image_url_2x} 2x, ${badgeVersion.image_url_4x} 4x`}
+              src={badgeVersion.image_url_1x}
+              alt=""
+            />
+          </MessageTooltip>
+        );
+      }
+
+      return <span style={{ display: 'inline' }}>{badgeWrapper}</span>;
+    },
+    [badgesRef]
+  );
+
+  return {
+    transformMessage,
+    transformBadges,
+    renderEmoteTooltip,
+  };
+}
