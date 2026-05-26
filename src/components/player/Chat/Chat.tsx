@@ -55,7 +55,10 @@ const MemoizedComment = memo(function MemoizedComment({
   messageFontSize,
 }: MemoizedCommentProps) {
   return (
-    <div className="flex w-full shrink-0 items-baseline px-2 py-1 transition-colors hover:border-l-2 hover:border-[#6366f1] hover:bg-white/5">
+    <div
+      className="chat-message-highlight flex w-full shrink-0 items-baseline px-2 py-1 transition-colors hover:bg-white/5"
+      style={{ '--highlight-color': adjustUsernameColor(comment.user_color) } as React.CSSProperties}
+    >
       {showTimestamp && (
         <div className="mr-2 shrink-0 text-[#9ca3af] text-[var(--chat-font-size-timestamp)]">
           {toHHMMSS(comment.content_offset_seconds)}

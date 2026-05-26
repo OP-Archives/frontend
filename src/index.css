@@ -135,6 +135,25 @@ body {
   display: inline-block;
 }
 
+.chat-message-highlight {
+  position: relative;
+}
+
+.chat-message-highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+.chat-message-highlight:hover::before {
+  background-color: var(--highlight-color, #6366f1);
+}
+
 /* Theatre mode overrides */
 body.theatre-mode nav {
   display: none !important;
@@ -151,5 +170,3 @@ body.theatre-mode #root > div {
 body.theatre-mode .theatre-hide {
   display: none !important;
 }
-
-
