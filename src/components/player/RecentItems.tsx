@@ -4,7 +4,7 @@ import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useScrollCarousel } from '@/hooks/useScrollCarousel';
 import { useTypedParams } from '@/hooks/useTypedParams';
-import type { VODNavigation, GameEntry, VOD } from '@/types';
+import type { VODNavigation, GameEntry, VodData, PartInfo } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 import ChaptersMenu from '@/vods/ChaptersMenu';
 
@@ -18,7 +18,7 @@ interface RecentItemsVodsProps {
   currentId: number;
   prev: VODNavigation[] | undefined;
   next: VODNavigation[] | undefined;
-  currentVod?: VODNavigation | VOD;
+  currentVod?: VODNavigation;
   hasGames?: boolean;
 }
 
@@ -26,20 +26,20 @@ interface RecentItemsGamesProps {
   games: GameEntry[];
   currentGameId: string;
   currentVodId: string;
-  setPart?: (part: import('@/types').PartInfo) => void;
+  setPart?: (part: PartInfo) => void;
   prevVods?: VODNavigation[];
   nextVods?: VODNavigation[];
-  currentVod?: VODNavigation | VOD;
+  currentVod?: VODNavigation;
 }
 
-function toVodData(item: VODNavigation): import('@/types').VodData {
+function toVodData(item: VODNavigation): VodData {
   return {
     id: item.id,
     title: item.title || '',
     created_at: item.created_at || '',
     duration: item.duration || 0,
     platform: item.platform,
-    is_live: false,
+    is_live: item.is_live ?? false,
     thumbnail_url: item.thumbnail_url || '',
     chapters: (item.chapters || []).map((ch) => ({
       name: ch.name,
@@ -53,15 +53,14 @@ function toVodData(item: VODNavigation): import('@/types').VodData {
   };
 }
 
-export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent: boolean }) {
+export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation; isCurrent: boolean }) {
   const { vodId } = useTypedParams<{ vodId: string }>();
   const location = useLocation();
 
   const getLink = (newId: number) => location.pathname.replace(String(vodId), String(newId));
 
-  const vodData = toVodData(vod as VODNavigation);
-  const thumbnail =
-    'vod_uploads' in vod ? vod.vod_uploads?.[0]?.thumbnail_url : (vod as VODNavigation).thumbnail_url || '';
+  const vodData = toVodData(vod);
+  const thumbnail = 'vod_uploads' in vod ? vod.vod_uploads?.[0]?.thumbnail_url : vod.thumbnail_url || '';
 
   return (
     <div className="mb-2 block w-full min-w-0">
@@ -84,14 +83,22 @@ export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; is
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
           )}
-          {isCurrent ? null : <Link to={getLink(vod.id)} className="absolute inset-0 block" />}
+          {isCurrent || vod.is_live ? null : <Link to={getLink(vod.id)} className="absolute inset-0 block" />}
           <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
-          {((vod as VODNavigation).platform || '') && (
+          {vod.is_live && (
+            <div className="absolute top-2 left-2 z-10">
+              <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                LIVE
+              </span>
+            </div>
+          )}
+          {(vod.platform || '') && (
             <div className="absolute top-2 right-2 z-10">
               <span className="inline-flex items-center justify-center rounded bg-black/60 p-1 backdrop-blur-sm">
-                {(vod as VODNavigation).platform === 'twitch' ? (
+                {vod.platform === 'twitch' ? (
                   <TwitchIcon width={14} height={14} className="text-[#9146FF]" />
-                ) : (vod as VODNavigation).platform === 'kick' ? (
+                ) : vod.platform === 'kick' ? (
                   <KickIcon width={14} height={14} className="text-[#53fc18]" />
                 ) : null}
               </span>
@@ -99,26 +106,24 @@ export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; is
           )}
           <div className="absolute bottom-0 left-0">
             <span className="bg-black/60 p-1.5 text-xs text-white">
-              {DATE_FORMATTER.format(new Date((vod as VODNavigation).created_at || '')).replace(',', '')}
+              {DATE_FORMATTER.format(new Date(vod.created_at || '')).replace(',', '')}
             </span>
           </div>
-          {((vod as VODNavigation).duration ?? 0) > 0 && (
+          {(vod.duration ?? 0) > 0 && (
             <div className="absolute right-0 bottom-0">
-              <span className="bg-black/60 p-1.5 text-xs text-white">
-                {toHHMMSS((vod as VODNavigation).duration ?? 0)}
-              </span>
+              <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration ?? 0)}</span>
             </div>
           )}
         </div>
       </div>
       <div className="mt-1 mb-1 flex cursor-default items-start">
-        {((vod as VODNavigation).chapters || []).length > 0 && (
+        {(vod.chapters || []).length > 0 && (
           <div className="mr-2 shrink-0">
             <ChaptersMenu vod={vodData} />
           </div>
         )}
         <div className="min-w-0 flex-1">
-          {isCurrent ? (
+          {isCurrent || vod.is_live ? (
             <span className="inline-flex max-w-full min-w-0 no-underline">
               <CustomWidthTooltip title={vod.title || ''}>
                 <span className="truncate text-xs font-medium text-[#6366f1]">{vod.title}</span>
@@ -142,7 +147,7 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
 
   const allItems = [...(prev || []), ...(next || []), ...(currentVod ? [currentVod] : [])]
     .filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
-    .filter((v) => !hasGames || (v as VOD).games?.length || 0 > 0)
+    .filter((v) => !hasGames || v.games?.length || 0 > 0)
     .sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
 
   const { showLeft, showRight, visibleItems, scrollBy, containerRef } = useScrollCarousel({

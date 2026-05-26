@@ -68,12 +68,16 @@ export default function WatchMenu({ vod, cdnEnabled }: WatchMenuProps) {
               </a>
             )}
             <a
-              href={manualUrl}
-              onClick={() => {
+              href={vod.is_live ? undefined : manualUrl}
+              onClick={(e) => {
+                if (vod.is_live) {
+                  e.preventDefault();
+                  return;
+                }
                 close();
                 navigate(manualUrl);
               }}
-              className="flex w-full cursor-pointer items-center gap-2 rounded px-3 py-2 text-left text-[#f0f0f5] transition-colors hover:bg-[#222230]"
+              className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-[#f0f0f5] transition-colors hover:bg-[#222230] ${vod.is_live ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}`}
             >
               <FilePlay size={20} /> Manual
             </a>

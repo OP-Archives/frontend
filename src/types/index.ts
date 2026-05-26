@@ -7,6 +7,7 @@ export interface VODNavigation {
   duration?: number;
   created_at?: string;
   thumbnail_url?: string | null;
+  is_live?: boolean;
   chapters?: Chapter[];
   games?: GameEntry[];
   vod_uploads?: { thumbnail_url: string }[];
