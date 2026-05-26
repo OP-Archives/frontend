@@ -99,6 +99,17 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   }, 300);
 
   const saveSetting = (key: string, value: unknown) => {
+    if (value === undefined) {
+      const savedSettings = safeLocalStorage.getItem('chatSettings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings) || {};
+          delete settings[key];
+          safeLocalStorage.setItem('chatSettings', JSON.stringify(settings));
+        } catch {}
+      }
+      return;
+    }
     const savedSettings = safeLocalStorage.getItem('chatSettings');
     let settings: Record<string, unknown> = {};
     if (savedSettings) {
@@ -170,8 +181,8 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   };
 
   const handleResetWidth = () => {
-    setChatWidth(340);
-    saveSetting('chatWidth', 340);
+    setChatWidth(undefined);
+    saveSetting('chatWidth', undefined);
   };
 
   const handleResetTimestamps = () => {
@@ -208,12 +219,10 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
     document.documentElement.style.removeProperty('--chat-font-size-message');
     document.documentElement.style.removeProperty('--chat-font-size-timestamp');
     setShowResetConfirm(false);
-    setShowModal(false);
   };
 
   const sliderMin = 150;
-  const sliderMax = typeof window !== 'undefined' ? Math.min(window.innerWidth - 400, 800) : 800;
-  const sliderDisabled = typeof window !== 'undefined' && window.innerWidth - 400 <= 150;
+  const sliderMax = 800;
 
   const selectedFont = FONT_OPTIONS.find((f) => f.value === fontFamily);
 
@@ -271,15 +280,18 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                       <Type size={14} />
                     </span>
                   )}
-                  {fontFamily !== DEFAULT_SETTINGS.fontFamily && (
-                    <button
-                      onClick={handleResetFontFamily}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                      title="Reset font family"
-                    >
-                      <RotateCcw size={14} />
-                    </button>
-                  )}
+                  <button
+                    onClick={handleResetFontFamily}
+                    disabled={fontFamily === DEFAULT_SETTINGS.fontFamily}
+                    className={`flex h-7 w-7 items-center justify-center self-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                      fontFamily === DEFAULT_SETTINGS.fontFamily
+                        ? 'cursor-not-allowed opacity-40'
+                        : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+                    }`}
+                    title="Reset font family"
+                  >
+                    <RotateCcw size={14} />
+                  </button>
                 </>
               ) : (
                 <div className="flex flex-1 gap-2">
@@ -309,15 +321,18 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                   >
                     <X size={14} />
                   </button>
-                  {fontFamily !== DEFAULT_SETTINGS.fontFamily && (
-                    <button
-                      onClick={handleResetFontFamily}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                      title="Reset font family"
-                    >
-                      <RotateCcw size={14} />
-                    </button>
-                  )}
+                  <button
+                    onClick={handleResetFontFamily}
+                    disabled={fontFamily === DEFAULT_SETTINGS.fontFamily}
+                    className={`flex h-7 w-7 items-center justify-center self-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                      fontFamily === DEFAULT_SETTINGS.fontFamily
+                        ? 'cursor-not-allowed opacity-40'
+                        : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+                    }`}
+                    title="Reset font family"
+                  >
+                    <RotateCcw size={14} />
+                  </button>
                 </div>
               )}
             </div>
@@ -344,15 +359,18 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                 className="h-1.5 flex-1 cursor-pointer appearance-none rounded-lg bg-[#222230] accent-[#6366f1]"
               />
               <span className="text-sm whitespace-nowrap text-[#9ca3af]">{messageFontSize}px</span>
-              {messageFontSize !== DEFAULT_SETTINGS.messageFontSize && (
-                <button
-                  onClick={handleResetFontSize}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                  title="Reset font size"
-                >
-                  <RotateCcw size={14} />
-                </button>
-              )}
+              <button
+                onClick={handleResetFontSize}
+                disabled={messageFontSize === DEFAULT_SETTINGS.messageFontSize}
+                className={`flex h-7 w-7 items-center justify-center self-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                  messageFontSize === DEFAULT_SETTINGS.messageFontSize
+                    ? 'cursor-not-allowed opacity-40'
+                    : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+                }`}
+                title="Reset font size"
+              >
+                <RotateCcw size={14} />
+              </button>
             </div>
           </div>
 
@@ -367,15 +385,16 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                 onFocus={(e: React.FocusEvent<HTMLInputElement>) => e.target.select()}
               />
               <span className="text-sm whitespace-nowrap text-[#9ca3af]">secs</span>
-              {userChatDelay !== 0 && (
-                <button
-                  onClick={handleResetDelay}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                  title="Reset chat delay"
-                >
-                  <RotateCcw size={14} />
-                </button>
-              )}
+              <button
+                onClick={handleResetDelay}
+                disabled={userChatDelay === 0}
+                className={`flex h-7 w-7 items-center justify-center self-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                  userChatDelay === 0 ? 'cursor-not-allowed opacity-40' : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+                }`}
+                title="Reset chat delay"
+              >
+                <RotateCcw size={14} />
+              </button>
             </div>
           </div>
 
@@ -387,7 +406,6 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                 min={sliderMin}
                 max={sliderMax}
                 step={10}
-                disabled={sliderDisabled}
                 value={chatWidth ?? 340}
                 onChange={(e) => {
                   const num = parseInt(e.target.value);
@@ -397,15 +415,18 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                 className="h-1.5 flex-1 cursor-pointer appearance-none rounded-lg bg-[#222230] accent-[#6366f1]"
               />
               <span className="text-sm whitespace-nowrap text-[#9ca3af]">{chatWidth ?? 340}px</span>
-              {chatWidth !== 340 && (
-                <button
-                  onClick={handleResetWidth}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                  title="Reset chat width"
-                >
-                  <RotateCcw size={14} />
-                </button>
-              )}
+              <button
+                onClick={handleResetWidth}
+                disabled={chatWidth == null || chatWidth === 340}
+                className={`flex h-7 w-7 items-center justify-center self-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                  chatWidth == null || chatWidth === 340
+                    ? 'cursor-not-allowed opacity-40'
+                    : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+                }`}
+                title="Reset chat width"
+              >
+                <RotateCcw size={14} />
+              </button>
             </div>
           </div>
 
@@ -459,15 +480,16 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
             <label htmlFor="show-timestamp" className="text-sm text-[#9ca3af]">
               Show Timestamps
             </label>
-            {showTimestamp && (
-              <button
-                onClick={handleResetTimestamps}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                title="Reset timestamps"
-              >
-                <RotateCcw size={14} />
-              </button>
-            )}
+            <button
+              onClick={handleResetTimestamps}
+              disabled={!showTimestamp}
+              className={`flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                !showTimestamp ? 'cursor-not-allowed opacity-40' : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+              }`}
+              title="Reset timestamps"
+            >
+              <RotateCcw size={14} />
+            </button>
           </div>
 
           <div className="flex items-center gap-2">
@@ -484,21 +506,22 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
             <label htmlFor="chat-on-left" className="text-sm text-[#9ca3af]">
               Chat on Left
             </label>
-            {chatOnLeft && (
-              <button
-                onClick={handleResetChatOnLeft}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-                title="Reset chat position"
-              >
-                <RotateCcw size={14} />
-              </button>
-            )}
+            <button
+              onClick={handleResetChatOnLeft}
+              disabled={!chatOnLeft}
+              className={`flex h-7 w-7 items-center justify-center rounded-lg border border-[#222230] bg-[#222230] transition-colors ${
+                !chatOnLeft ? 'cursor-not-allowed opacity-40' : 'text-[#9ca3af] hover:text-[#f0f0f5]'
+              }`}
+              title="Reset chat position"
+            >
+              <RotateCcw size={14} />
+            </button>
           </div>
         </div>
       </div>
 
       {showResetConfirm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
           <div className="fixed inset-0 bg-black/80" onClick={() => setShowResetConfirm(false)} />
           <div className="relative z-[61] w-[320px] rounded-xl border border-[#222230] bg-[#16161e] p-6 shadow-2xl">
             <div className="mb-4 flex justify-center">
@@ -508,8 +531,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
             </div>
             <h3 className="mb-2 text-center text-base font-semibold text-[#f0f0f5]">Reset All Settings?</h3>
             <p className="mb-5 text-center text-sm text-[#9ca3af]">
-              This will reset all chat settings to their defaults, including font, width, delay, timestamps, and filter
-              words.
+              This will reset all chat settings to their defaults.
             </p>
             <div className="flex gap-3">
               <button
