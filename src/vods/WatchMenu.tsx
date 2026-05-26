@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { YouTubeIcon } from '@/assets/icons';
 import { useDropdown } from '@/hooks/useDropdown';
 import { useTypedParams } from '@/hooks/useTypedParams';
-import type { VodData } from '@/types';
+import type { VodListItem } from '@/types';
 
 interface WatchMenuProps {
-  vod: VodData;
+  vod: VodListItem;
   cdnEnabled: boolean;
 }
 

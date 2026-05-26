@@ -4,7 +4,7 @@ import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useScrollCarousel } from '@/hooks/useScrollCarousel';
 import { useTypedParams } from '@/hooks/useTypedParams';
-import type { VODNavigation, GameEntry, VodData, PartInfo } from '@/types';
+import type { VODNavigation, GameEntry, VodListItem, PartInfo } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 import ChaptersMenu from '@/vods/ChaptersMenu';
 
@@ -32,7 +32,7 @@ interface RecentItemsGamesProps {
   currentVod?: VODNavigation;
 }
 
-function toVodData(item: VODNavigation): VodData {
+function toVodListItem(item: VODNavigation): VodListItem {
   return {
     id: item.id,
     title: item.title || '',
@@ -59,7 +59,7 @@ export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation; isCurren
 
   const getLink = (newId: number) => location.pathname.replace(String(vodId), String(newId));
 
-  const vodData = toVodData(vod);
+  const vodData = toVodListItem(vod);
   const thumbnail = 'vod_uploads' in vod ? vod.vod_uploads?.[0]?.thumbnail_url : vod.thumbnail_url || '';
 
   return (

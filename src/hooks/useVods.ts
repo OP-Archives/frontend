@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { VodData, PaginatedApiResponse } from '@/types';
+import type { VodListItem, PaginatedApiResponse } from '@/types';
+import { unwrap } from '@/utils/api';
 import { archiveClient } from '@/utils/archive-client';
 
 export interface VodsQueryParams {
@@ -16,8 +17,8 @@ export interface VodsQueryParams {
 }
 
 export interface VodsListData {
-  data: VodData[] | null;
-  meta: PaginatedApiResponse<VodData>['meta'] | null;
+  data: VodListItem[] | null;
+  meta: PaginatedApiResponse<VodListItem>['meta'] | null;
 }
 
 function toRecord(params: VodsQueryParams): Record<string, string> {
@@ -39,7 +40,11 @@ function toRecord(params: VodsQueryParams): Record<string, string> {
 export function useVods(slug: string, params: VodsQueryParams) {
   return useQuery<VodsListData>({
     queryKey: ['vods', slug, params],
-    queryFn: ({ signal }) => archiveClient.vods.list(slug, toRecord(params), { signal }),
+    queryFn: ({ signal }) =>
+      archiveClient.vods.list(slug, toRecord(params), { signal }).then((r) => ({
+        data: r.data,
+        meta: r.meta,
+      })),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
   });
@@ -51,7 +56,11 @@ export function prefetchNextPageVods(
 ) {
   queryClient.prefetchQuery({
     queryKey: ['vods', params.slug, params],
-    queryFn: ({ signal }) => archiveClient.vods.list(params.slug, toRecord(params), { signal }),
+    queryFn: ({ signal }) =>
+      archiveClient.vods.list(params.slug, toRecord(params), { signal }).then((r) => ({
+        data: r.data,
+        meta: r.meta,
+      })),
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -59,10 +68,7 @@ export function prefetchNextPageVods(
 export function useVod(slug: string, vodId: string) {
   return useQuery({
     queryKey: ['vods', slug, vodId],
-    queryFn: async () => {
-      const res = await archiveClient.vods.get(slug, vodId);
-      return res.data;
-    },
+    queryFn: async ({ signal }) => unwrap(archiveClient.vods.get(slug, vodId, { signal })),
     enabled: !!(slug && vodId),
   });
 }
@@ -70,10 +76,7 @@ export function useVod(slug: string, vodId: string) {
 export function useVodEmotes(slug: string, vodId: string) {
   return useQuery({
     queryKey: ['vods', slug, vodId, 'emotes'],
-    queryFn: async () => {
-      const res = await archiveClient.vods.emotes(slug, vodId);
-      return res.data;
-    },
+    queryFn: async () => unwrap(archiveClient.vods.emotes(slug, vodId)),
     enabled: !!(slug && vodId),
   });
 }
@@ -81,10 +84,7 @@ export function useVodEmotes(slug: string, vodId: string) {
 export function useVodComments(slug: string, vodId: string, params?: Record<string, string>) {
   return useQuery({
     queryKey: ['vods', slug, vodId, 'comments', params],
-    queryFn: async () => {
-      const res = await archiveClient.vods.comments(slug, vodId, params);
-      return res.data;
-    },
+    queryFn: async () => unwrap(archiveClient.vods.comments(slug, vodId, params)),
     enabled: !!(slug && vodId),
   });
 }

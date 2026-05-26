@@ -7,7 +7,7 @@ import { RecentItemsVods } from '@/components/player/RecentItems';
 import Loading from '@/components/ui/Loading';
 import { NotFound } from '@/components/ui/NotFound';
 import { useTenantContext } from '@/contexts/TenantContext';
-import type { VOD, VODUpload, PartInfo, PlayerState } from '@/types';
+import type { VodDetail, VODUpload, PartInfo, PlayerState } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
 import { convertTimestamp } from '@/utils/helpers';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
@@ -27,7 +27,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
   const { vodId = '', tenant = '' } = params;
   const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
-  const [vod, setVod] = useState<VOD | undefined>(undefined);
+  const [vod, setVod] = useState<VodDetail | undefined>(undefined);
   const [youtube, setYoutube] = useState<VODUpload[] | undefined>(undefined);
   const [part, setPart] = useState<PartInfo | null>(null);
   const [delay, setDelay] = useState<number | undefined>(undefined);

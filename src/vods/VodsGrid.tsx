@@ -1,8 +1,8 @@
 import VodCard from './VodCard';
-import type { VodData } from '@/types';
+import type { VodListItem } from '@/types';
 
 interface VodsGridProps {
-  vods: VodData[] | null;
+  vods: VodListItem[] | null;
   isLoading: boolean;
   isFetching: boolean;
   limit: number;
@@ -71,7 +71,7 @@ export function VodsGrid({ vods, isLoading, isFetching, limit }: VodsGridProps) 
       <div
         className={`mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-6 transition-opacity duration-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
       >
-        {vods.map((vod: VodData, index: number) => (
+        {vods.map((vod: VodListItem, index: number) => (
           <VodCard key={vod.id} vod={vod} priority={index < 10} />
         ))}
       </div>

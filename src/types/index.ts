@@ -47,12 +47,6 @@ export interface VodDetail {
   next?: VODNavigation[];
 }
 
-// Keep VodData as an alias for backward compatibility
-export type VodData = VodListItem;
-
-// Legacy alias for VodDetail (used in player components)
-export type VOD = VodDetail;
-
 export interface VODUpload {
   id: number;
   upload_id: string;

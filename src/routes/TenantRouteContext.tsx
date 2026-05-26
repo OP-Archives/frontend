@@ -1,17 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { BlurredBackground } from '@/components/BlurredBackground';
 import { TenantContext } from '@/contexts/TenantContext';
-import { useTenants } from '@/hooks/useTenants';
+import { archiveClient } from '@/utils/archive-client';
 
 export function TenantRouteContext({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isTenantRoute = location.pathname.split('/')[1] !== undefined && location.pathname.split('/')[1] !== '';
-  const { data: tenantsData } = useTenants();
-  const tenants = tenantsData?.data;
   const currentTenant = isTenantRoute ? location.pathname.split('/')[1] : '';
-  const currentTenantData = tenants?.find((t: { id: string }) => t.id === currentTenant);
 
+  const { data: tenantRes } = useQuery({
+    queryKey: ['tenant', currentTenant],
+    queryFn: () => archiveClient.tenants.get(currentTenant),
+    enabled: !!currentTenant,
+    staleTime: 5 * 60 * 1000,
+    retry: 0,
+  });
+
+  const currentTenantData = tenantRes?.data;
   const cdnEnabled = currentTenantData?.cdn?.enabled ?? false;
   const rawCdnUrl = currentTenantData?.cdn?.baseUrl ?? '';
   const cdnBaseUrl = rawCdnUrl && !rawCdnUrl.startsWith('http') ? `https://${rawCdnUrl}` : rawCdnUrl;

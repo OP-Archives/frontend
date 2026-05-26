@@ -1,13 +1,13 @@
-import { Play } from 'lucide-react';
+import { Play, Loader2 } from 'lucide-react';
 import { useRef, ChangeEvent } from 'react';
 import PlayerControls from './PlayerControls';
 import { useCustomPlayer } from '@/hooks/useCustomPlayer';
-import type { VOD, PlayerState, PlayerSettings } from '@/types';
+import type { VodDetail, PlayerState, PlayerSettings } from '@/types';
 
 export interface PlayerProps {
   setCurrentTime: (_time: number) => void;
   type?: string;
-  vod: VOD;
+  vod: VodDetail;
   timestamp?: number;
   setDelay?: (_delay: number) => void;
   setPlayerState: (_state: PlayerState) => void;
@@ -51,6 +51,7 @@ export default function Player(props: PlayerProps) {
     isFullscreen,
     playbackSpeed,
     playIconSize,
+    isBuffering,
     toggleFullscreen,
     togglePlayPause,
     toggleMute,
@@ -143,6 +144,12 @@ export default function Player(props: PlayerProps) {
             >
               <Play className="text-white drop-shadow-2xl" size={playIconSize} />
             </div>
+
+            {isBuffering && (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <Loader2 className="h-10 w-10 animate-spin text-white/80" />
+              </div>
+            )}
 
             <PlayerControls
               isPlaying={isPlaying}

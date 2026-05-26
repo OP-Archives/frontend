@@ -5,7 +5,7 @@ import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useTenantContext } from '@/contexts/TenantContext';
 import { useTypedParams } from '@/hooks/useTypedParams';
-import type { VodData } from '@/types';
+import type { VodListItem } from '@/types';
 import { toHHMMSS } from '@/utils/helpers';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
@@ -14,18 +14,18 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 });
 
-const getVodLink = (vod: VodData, tenant: string) => {
+const getVodLink = (vod: VodListItem, tenant: string) => {
   if (vod.is_live) return '';
   if (vod.vod_uploads?.length > 0) return `/${tenant}/vods/${vod.id}`;
   if (vod.games?.length > 0) return `/${tenant}/games/${vod.id}`;
   return `/${tenant}/manual/${vod.id}`;
 };
 
-const getThumbnail = (vod: VodData) => {
+const getThumbnail = (vod: VodListItem) => {
   return vod.vod_uploads?.[0]?.thumbnail_url || vod.games?.[0]?.thumbnail_url || vod.thumbnail_url || '';
 };
 
-export default function VodCard({ vod, priority }: { vod: VodData; priority?: boolean }) {
+export default function VodCard({ vod, priority }: { vod: VodListItem; priority?: boolean }) {
   const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
   const { cdnEnabled } = useTenantContext();
   const DEFAULT_VOD = getVodLink(vod, tenantParam);

@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropdown } from '@/hooks/useDropdown';
 import { useTypedParams } from '@/hooks/useTypedParams';
-import type { VodData, ChapterItem } from '@/types';
+import type { VodListItem, ChapterItem } from '@/types';
 import { toHHMMSS, toHMS, getImage } from '@/utils/helpers';
 
 interface ChaptersProps {
-  vod: VodData;
+  vod: VodListItem;
 }
 
 const EMPTY_CHAPTERS: ChapterItem[] = [];

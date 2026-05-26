@@ -4,7 +4,7 @@ import GamesMenu from './GamesMenu';
 import VodChapters from './VodChapters';
 import YoutubePlayer from './YoutubePlayer';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
-import type { VOD, VODUpload, GameEntry, PartInfo, PlayerState, PlayerSettings, Chapter } from '@/types';
+import type { VodDetail, VODUpload, GameEntry, PartInfo, PlayerState, PlayerSettings, Chapter } from '@/types';
 import { toHMS } from '@/utils/helpers';
 import { loadPlayerSettings, savePlayerSettings } from '@/utils/playerSettings';
 import { saveResumePosition } from '@/utils/positionStorage';
@@ -23,7 +23,7 @@ export interface BaseVodProps {
   playerRef: React.RefObject<HTMLVideoElement | null>;
   part?: PartInfo | null;
   setPart?: (_part: PartInfo | null) => void;
-  vod: VOD | undefined;
+  vod: VodDetail | undefined;
   type?: string;
   setDelay?: (_delay: number) => void;
   timestamp?: number;

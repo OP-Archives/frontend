@@ -6,7 +6,8 @@ import { PlayerTenantProfile } from '@/components/player/PlayerTenantProfile';
 import { RecentItemsVods } from '@/components/player/RecentItems';
 import Loading from '@/components/ui/Loading';
 import { useTenantContext } from '@/contexts/TenantContext';
-import type { VOD, PlayerState } from '@/types';
+import type { VodDetail, PlayerState } from '@/types';
+import { unwrap } from '@/utils/api';
 import { archiveClient } from '@/utils/archive-client';
 import { convertTimestamp } from '@/utils/helpers';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
@@ -27,7 +28,7 @@ export default function CustomVod(props: CustomVodProps) {
   const tenant = params.tenant ?? '';
   const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
-  const [vod, setVod] = useState<VOD | undefined>(undefined);
+  const [vod, setVod] = useState<VodDetail | undefined>(undefined);
   const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
   const [delay, setDelay] = useState(0);
   const [userChatDelay, setUserChatDelay] = useState(0);
@@ -63,13 +64,12 @@ export default function CustomVod(props: CustomVodProps) {
 
     const fetchVod = async () => {
       try {
-        const response = await archiveClient.vods.get(channel, vodId!, {
-          signal: abortController.signal,
-        });
-        if (!response.success) {
-          throw response;
-        }
-        setVod(response.data);
+        const data = await unwrap(
+          archiveClient.vods.get(channel, vodId!, {
+            signal: abortController.signal,
+          })
+        );
+        setVod(data);
       } catch (e) {
         if ((e as Error).name !== 'AbortError') {
           console.error(e);

@@ -6,7 +6,8 @@ import { PlayerTenantProfile } from '@/components/player/PlayerTenantProfile';
 import { RecentItemsGames } from '@/components/player/RecentItems';
 import Loading from '@/components/ui/Loading';
 import { useTenantContext } from '@/contexts/TenantContext';
-import type { VOD, GameEntry, PartInfo, PlayerState } from '@/types';
+import type { VodDetail, GameEntry, PartInfo, PlayerState } from '@/types';
+import { unwrap } from '@/utils/api';
 import { archiveClient } from '@/utils/archive-client';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
 import { safeLocalStorage } from '@/utils/safeLocalStorage';
@@ -24,7 +25,7 @@ export default function Games(props: GamesProps) {
   const { vodId = '', tenant = '' } = params;
   const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
-  const [vod, setVod] = useState<VOD | undefined>(undefined);
+  const [vod, setVod] = useState<VodDetail | undefined>(undefined);
   const [games, setGames] = useState<GameEntry[] | undefined>(undefined);
   const [part, setPart] = useState<PartInfo | null | undefined>(undefined);
   const [userChatDelay, setUserChatDelay] = useState(0);
@@ -62,13 +63,12 @@ export default function Games(props: GamesProps) {
 
     const fetchVod = async () => {
       try {
-        const response = await archiveClient.vods.get(channel, vodId!, {
-          signal: abortController.signal,
-        });
-        if (!response.success) {
-          throw response;
-        }
-        setVod(response.data);
+        const data = await unwrap(
+          archiveClient.vods.get(channel, vodId!, {
+            signal: abortController.signal,
+          })
+        );
+        setVod(data);
       } catch (e) {
         if ((e as Error).name !== 'AbortError') {
           console.error(e);

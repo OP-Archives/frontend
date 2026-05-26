@@ -1,6 +1,6 @@
 import type {
   Tenant,
-  VodData,
+  VodListItem,
   VodDetail,
   GameData,
   LibraryGameItem,
@@ -65,7 +65,7 @@ function buildQuery(params: Record<string, unknown>): string {
 export const archiveClient = {
   tenants: {
     list: (params?: Record<string, string>) => {
-      const query = new URLSearchParams(params).toString();
+      const query = buildQuery(params || {});
       return fetchJson<PaginatedApiResponse<Tenant>>(`${getApiBase()}/tenants${query ? `?${query}` : ''}`);
     },
     get: (slug: string) => fetchJson<ApiResponse<Tenant>>(`${getApiBase()}/tenants/${slug}`),
@@ -73,7 +73,7 @@ export const archiveClient = {
   vods: {
     list: (slug: string, params?: Record<string, string>, options?: RequestOptions) => {
       const query = buildQuery(params || {});
-      return fetchJson<PaginatedApiResponse<VodData>>(
+      return fetchJson<PaginatedApiResponse<VodListItem>>(
         `${getApiBase()}/${slug}/vods${query ? `?${query}` : ''}`,
         options
       );
@@ -83,7 +83,7 @@ export const archiveClient = {
     emotes: (slug: string, vodId: string, options?: RequestOptions) =>
       fetchJson<ApiResponse<EmotesResponse>>(`${getApiBase()}/${slug}/vods/${vodId}/emotes`, options),
     comments: (slug: string, vodId: string, params?: Record<string, string>) => {
-      const query = new URLSearchParams(params || {}).toString();
+      const query = buildQuery(params || {});
       return fetchJson<ApiResponse<CommentsResponse>>(
         `${getApiBase()}/${slug}/vods/${vodId}/comments${query ? `?${query}` : ''}`
       );
@@ -98,7 +98,7 @@ export const archiveClient = {
       );
     },
     library: (slug: string, params?: Record<string, string>) => {
-      const query = new URLSearchParams(params || {}).toString();
+      const query = buildQuery(params || {});
       return fetchJson<PaginatedApiResponse<LibraryGameItem>>(
         `${getApiBase()}/${slug}/games/library${query ? `?${query}` : ''}`
       );

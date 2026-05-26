@@ -15,7 +15,7 @@ export function About() {
           content: (
             <p>
               op archive is a platform designed for streamers and their communities to archive, organize, and watch VODs
-              and or Games from multi-platforms like Twitch and Kick. It provides a clean viewing experience.
+              and or Games from multi-platforms like Twitch and Kick.
             </p>
           ),
         },
@@ -28,6 +28,7 @@ export function About() {
               <li>Multi-platform support for Twitch and Kick</li>
               <li>Search and filter across VODs, games, and library content</li>
               <li>Custom CDN and manual with a custom player</li>
+              <li>Resume playback from previous sessions </li>
               <li>Responsive design that works on desktop and mobile</li>
             </ul>
           ),

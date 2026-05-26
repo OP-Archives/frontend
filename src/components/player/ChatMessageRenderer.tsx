@@ -30,7 +30,10 @@ export const MemoizedComment = memo(function MemoizedComment({
       style={{ '--highlight-color': adjustUsernameColor(comment.user_color) } as React.CSSProperties}
     >
       {showTimestamp && (
-        <div className="mr-2 shrink-0 text-[#9ca3af] text-[var(--chat-font-size-timestamp)]">
+        <div
+          className="mr-2 min-w-0 shrink-0 align-middle text-[#adadb8]"
+          style={{ fontSize: 'var(--chat-font-size-timestamp)' }}
+        >
           {toHHMMSS(comment.content_offset_seconds)}
         </div>
       )}
