@@ -3,6 +3,10 @@ import type { ErrorData } from 'hls.js';
 import { useRef, useEffect, useState } from 'react';
 import type { PlayerSource } from '@/types';
 
+const setNativeVideoSrc = (video: HTMLVideoElement, url: string) => {
+  video.src = url;
+};
+
 interface HlsConfig {
   enableWorker: boolean;
   lowLatencyMode: boolean;
@@ -63,8 +67,7 @@ export function useHlsPlayer({ type, cdnBase, platformVodId, playerRef }: UseHls
         if (!videoEl) return;
 
         if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
-          // eslint-disable-next-line react-compiler/react-compiler
-          videoEl.src = hlsUrl;
+          setNativeVideoSrc(videoEl, hlsUrl);
           return;
         }
 
