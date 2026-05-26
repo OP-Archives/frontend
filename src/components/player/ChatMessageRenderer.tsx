@@ -5,6 +5,8 @@ import { adjustUsernameColor } from './Chat/UsernameColor';
 import type { Comment, EmoteEntry, EmoteProvider, Badge, BadgeVersion } from '@/types';
 import { toHHMMSS } from '@/utils/helpers';
 
+const URL_REGEX = /^(https?:\/\/)?[\w.-]+\.[\w\/.-]+$/i;
+
 interface MemoizedCommentProps {
   comment: Comment;
   showTimestamp: boolean;
@@ -258,6 +260,19 @@ export function useChatMessageRenderer({
                   }
                 }
                 textFragments.push(' ');
+              } else if (URL_REGEX.test(word)) {
+                textFragments.push(
+                  <a
+                    key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}
+                    href={`/leave?target=${encodeURIComponent(word)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--chat-accent)] hover:underline"
+                  >
+                    {word}
+                  </a>,
+                  ' '
+                );
               } else {
                 textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{word}</span>, ' ');
               }

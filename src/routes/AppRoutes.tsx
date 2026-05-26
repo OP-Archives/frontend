@@ -5,6 +5,7 @@ import { Games } from '@/games/Games';
 import { Library } from '@/games/Library';
 import { Landing } from '@/landing/Landing';
 import { About } from '@/pages/About';
+import LeaveSiteConfirmation from '@/pages/LeaveSiteConfirmation';
 import { StartArchiving } from '@/pages/StartArchiving';
 import { TenantProfile } from '@/tenants/TenantProfile';
 import { Vod } from '@/vods/Vod';
@@ -17,6 +18,7 @@ export const AppRoutes = (
     <Route path="about" element={<About />} />
     <Route path="archive" element={<StartArchiving />} />
     <Route path="start" element={<StartArchiving />} />
+    <Route path="leave" element={<LeaveSiteConfirmation />} />
     <Route path=":tenant" element={<TenantProfile />}>
       <Route index element={<Vods />} />
       <Route path="games" element={<Games />} />

@@ -27,6 +27,7 @@ import { archiveClient } from '@/utils/archive-client';
 import { toHHMMSS } from '@/utils/helpers';
 import { safeLocalStorage } from '@/utils/safeLocalStorage';
 
+const URL_REGEX = /^(https?:\/\/)?[\w.-]+\.[\w\/.-]+$/i;
 const BASE_TWITCH_CDN = 'https://static-cdn.jtvnw.net';
 const BASE_FFZ_EMOTE_CDN = 'https://cdn.frankerfacez.com/emote';
 const BASE_BTTV_EMOTE_CDN = 'https://cdn.betterttv.net/emote';
@@ -719,6 +720,19 @@ export default function Chat(props: ChatProps) {
                   }
                 }
                 textFragments.push(' ');
+              } else if (URL_REGEX.test(word)) {
+                textFragments.push(
+                  <a
+                    key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}
+                    href={`/leave?target=${encodeURIComponent(word)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[var(--chat-accent)] hover:underline"
+                  >
+                    {word}
+                  </a>,
+                  ' '
+                );
               } else {
                 textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{word}</span>, ' ');
               }
