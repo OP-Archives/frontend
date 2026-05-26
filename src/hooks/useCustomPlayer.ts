@@ -32,6 +32,7 @@ export interface UseCustomPlayerReturn {
   playIconSize: number;
   isBuffering: boolean;
   toggleFullscreen: () => void;
+  togglePiP: () => void;
   togglePlayPause: () => void;
   toggleMute: () => void;
   handleVolumeChange: (_event: Event, newValue: number | number[]) => void;
@@ -114,6 +115,7 @@ export function useCustomPlayer({
     playIconSize: playerState.playIconSize,
     isBuffering: playerState.isBuffering,
     toggleFullscreen: videoControls.toggleFullscreen,
+    togglePiP: videoControls.togglePiP,
     togglePlayPause: videoControls.togglePlayPause,
     toggleMute: videoControls.toggleMute,
     handleVolumeChange: videoControls.handleVolumeChange,

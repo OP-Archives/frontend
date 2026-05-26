@@ -53,6 +53,7 @@ export default function Player(props: PlayerProps) {
     playIconSize,
     isBuffering,
     toggleFullscreen,
+    togglePiP,
     togglePlayPause,
     toggleMute,
     handleVolumeChange,
@@ -166,6 +167,7 @@ export default function Player(props: PlayerProps) {
               onToggleMute={toggleMute}
               onToggleTheatreMode={toggleTheatreMode}
               onToggleFullscreen={toggleFullscreen}
+              onTogglePiP={togglePiP}
               playerContainerRef={playerContainerRef}
               onPlaybackSpeedChange={handlePlaybackSpeedChange}
               onCopyTimestamp={copyTimestamp}

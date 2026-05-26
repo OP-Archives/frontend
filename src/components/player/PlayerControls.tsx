@@ -7,6 +7,7 @@ import {
   Minimize,
   Minimize2,
   Pause,
+  PictureInPicture2,
   Play,
   Settings,
   Volume2,
@@ -15,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayerControls } from '@/hooks/usePlayerControls';
-import { formatTime } from '@/utils/helpers';
+import { formatTime, toHMS } from '@/utils/helpers';
 
 interface PlayerControlsProps {
   isPlaying: boolean;
@@ -29,6 +30,7 @@ interface PlayerControlsProps {
   onSeekChange: (_event: Event, _newValue: number | number[]) => void;
   onToggleMute: () => void;
   onToggleFullscreen: () => void;
+  onTogglePiP: () => void;
   playerContainerRef: React.RefObject<HTMLDivElement | null>;
   theatreMode: boolean;
   onToggleTheatreMode: () => void;
@@ -49,6 +51,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
     onSeekChange,
     playerContainerRef,
     onToggleFullscreen,
+    onTogglePiP,
     theatreMode,
     onToggleTheatreMode,
     playbackSpeed = 1,
@@ -66,7 +69,6 @@ export default function PlayerControls(props: PlayerControlsProps) {
     setSettingsAnchorEl,
     showSpeedMenu,
     setShowSpeedMenu,
-    menuMaxHeight,
     setMenuMaxHeight,
     progressTooltipRef,
     volumeTooltipRef,
@@ -219,6 +221,14 @@ export default function PlayerControls(props: PlayerControlsProps) {
             </button>
 
             <button
+              onClick={onTogglePiP}
+              className="flex items-center justify-center text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
+              title="Picture in Picture"
+            >
+              <PictureInPicture2 className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
+
+            <button
               onClick={onToggleTheatreMode}
               className="flex items-center justify-center text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
               title={theatreMode ? 'Exit Theatre Mode' : 'Theatre Mode'}
@@ -245,60 +255,68 @@ export default function PlayerControls(props: PlayerControlsProps) {
             {settingsAnchorEl && isMenuOpen && (
               <div
                 ref={settingsMenuRef}
-                className="absolute right-0 bottom-full mb-4 animate-[fadeIn_0.2s_ease-out] overflow-hidden rounded-lg border border-[#222230] bg-[#16161e] shadow-md"
+                className="absolute right-0 bottom-full mb-3 w-56 animate-[fadeIn_0.2s_ease-out] overflow-hidden rounded-xl border border-[#222230] bg-[#16161e] shadow-xl"
+                style={{ animation: 'fadeIn 0.2s ease-out' }}
               >
                 {showSpeedMenu ? (
-                  <>
+                  <div>
                     <button
                       onClick={() => setShowSpeedMenu(false)}
-                      className="flex w-full items-center rounded px-3 py-2 text-left text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
-                      style={{ gap: '8px' }}
+                      className="flex w-full items-center gap-2.5 border-b border-[#222230] px-4 py-2.5 text-left text-sm font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
                     >
-                      <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                      <span className="text-xs sm:text-sm">Back</span>
+                      <ChevronLeft className="h-4 w-4" />
+                      <span>Back</span>
                     </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => setShowSpeedMenu(true)}
-                      className="flex w-full items-center justify-between rounded px-3 py-2 text-left whitespace-nowrap text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
+                    <div
+                      className="max-h-60 overflow-y-auto p-1.5"
+                      style={{
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: '#222230 transparent',
+                      }}
                     >
-                      <span className="text-xs sm:text-sm">Playback Speed</span>
-                      <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </button>
-                    <hr className="my-1 border-[#222230]" />
-                    <button
-                      onClick={handleCopyTimestamp}
-                      className="flex w-full items-center rounded px-3 py-2 text-left whitespace-nowrap text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
-                      style={{ gap: '8px' }}
-                    >
-                      {copied ? (
-                        <Check className="h-3.5 w-3.5 text-green-400 sm:h-4 sm:w-4" />
-                      ) : (
-                        <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      )}
-                      <span className={`text-xs sm:text-sm ${copied ? 'text-green-400' : ''}`}>
-                        {copied ? 'Copied!' : 'Copy Timestamp'}
-                      </span>
-                    </button>
-                  </>
-                )}
-                {showSpeedMenu && (
-                  <div style={{ maxHeight: `${Math.min(250, menuMaxHeight - 40)}px`, overflowY: 'auto' }}>
-                    <div>
                       {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3].map((speed) => (
                         <button
                           key={speed}
                           onClick={() => handlePlaybackSpeedChange(speed)}
-                          className={`w-full rounded px-3 py-2 text-left text-sm transition-colors ${
-                            playbackSpeed === speed ? 'bg-[#6366f1] text-white' : 'text-[#f0f0f5] hover:text-[#6366f1]'
+                          className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                            playbackSpeed === speed
+                              ? 'bg-[#6366f1]/15 text-[#6366f1]'
+                              : 'text-[#f0f0f5] hover:bg-[#222230]/60 hover:text-[#6366f1]'
                           }`}
                         >
-                          {speed}x
+                          <span className="font-medium">{speed}x</span>
+                          {playbackSpeed === speed && <Check className="h-4 w-4 shrink-0" />}
                         </button>
                       ))}
                     </div>
+                  </div>
+                ) : (
+                  <div className="p-1.5">
+                    <button
+                      onClick={() => setShowSpeedMenu(true)}
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm font-medium text-[#f0f0f5] transition-all hover:bg-[#222230]/60 hover:text-[#6366f1]"
+                    >
+                      Playback Speed
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-[#9ca3af]">{playbackSpeed}x</span>
+                        <ChevronRight className="h-4 w-4 shrink-0" />
+                      </div>
+                    </button>
+                    <hr className="my-1.5 border-[#222230]" />
+                    <button
+                      onClick={handleCopyTimestamp}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-all ${
+                        copied ? 'text-green-400' : 'text-[#f0f0f5] hover:bg-[#222230]/60 hover:text-[#6366f1]'
+                      }`}
+                    >
+                      Copy Timestamp
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-[#9ca3af]">
+                          {copied ? 'Copied!' : toHMS(Math.floor(currentTime))}
+                        </span>
+                        {copied ? <Check className="h-4 w-4 shrink-0" /> : <Copy className="h-4 w-4 shrink-0" />}
+                      </div>
+                    </button>
                   </div>
                 )}
               </div>

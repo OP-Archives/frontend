@@ -25,6 +25,7 @@ interface UseVideoControlsOptions {
 
 export interface UseVideoControlsReturn {
   toggleFullscreen: () => void;
+  togglePiP: () => void;
   togglePlayPause: () => void;
   toggleMute: () => void;
   handleVolumeChange: (_event: Event, newValue: number | number[]) => void;
@@ -243,12 +244,28 @@ export function useVideoControls({
     playerRef.current.currentTime = 0;
   }, [source, playerRef]);
 
+  const togglePiP = useCallback(async () => {
+    const video = playerRef.current;
+    if (!video) return;
+
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else if (video.requestPictureInPicture) {
+        await video.requestPictureInPicture();
+      }
+    } catch (err) {
+      console.error('PiP failed:', err);
+    }
+  }, [playerRef]);
+
   const toggleTheatreMode = useCallback(() => {
     // This is handled by the parent component
   }, []);
 
   return {
     toggleFullscreen,
+    togglePiP,
     togglePlayPause,
     toggleMute,
     handleVolumeChange,
