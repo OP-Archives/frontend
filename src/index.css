@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import '@daypicker/react/style.css';
 
 @theme {
   --color-bg-primary: #0a0a0f;
@@ -19,6 +20,51 @@
   --radius-lg: 8px;
   --radius-xl: 12px;
   --radius-md: 6px;
+}
+
+.rdp-root {
+  --rdp-accent-color: #6366f1;
+  --rdp-background-color: #6366f1;
+  --rdp-selected-bg-color: #6366f1;
+  --rdp-day-btn-bg: transparent;
+  --rdp-disabled-color: #5c5c65;
+  --rdp-outside-color: #5c5c65;
+  --rdp-selected-outside-bg-color: rgba(99, 102, 241, 0.1);
+  --rdp-selected-outside-color: #818cf8;
+}
+
+.rdp-nav button:hover {
+  background-color: #222230;
+  color: #f0f0f5;
+}
+
+.rdp-day:hover:not([disabled]) {
+  background-color: #222230;
+}
+
+.rdp-day[aria-selected='true']:not(.rdp-day_selected) {
+  background-color: #6366f1;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.rdp-day_selected {
+  background-color: #6366f1 !important;
+  color: #fff !important;
+  border-radius: 6px;
+}
+
+.rdp-caption_label {
+  color: #f0f0f5;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.rdp-weekday {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 html {

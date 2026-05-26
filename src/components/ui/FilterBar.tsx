@@ -1,5 +1,6 @@
 import { ArrowLeft, X } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { DatePicker } from './DatePicker';
 
 interface FilterBarProps {
   mode: 'vods' | 'games' | 'library';
@@ -7,11 +8,13 @@ interface FilterBarProps {
   onFilterChange: (value: string) => void;
   searchValue: string;
   onSearchChange: (value: string) => void;
+  debouncedOnSearchChange?: (value: string) => void;
   onSearchClear: () => void;
   dateStartValue?: string;
   dateEndValue?: string;
   onDateStartChange?: (value: string) => void;
   onDateEndChange?: (value: string) => void;
+  maxDate?: string;
   showDateRange?: boolean;
   showSearch?: boolean;
   disabled?: boolean;
@@ -21,6 +24,7 @@ interface FilterBarProps {
   extraControls?: ReactNode;
   filterOptions?: string[];
   showFilter?: boolean;
+  searchPlaceholder?: string;
 }
 
 export default function FilterBar({
@@ -43,15 +47,16 @@ export default function FilterBar({
   extraControls,
   filterOptions = ['Default', 'Date', 'Game'],
   showFilter = mode !== 'library',
+  searchPlaceholder,
+  debouncedOnSearchChange,
+  maxDate,
 }: FilterBarProps) {
-  const todayString = new Date().toISOString().split('T')[0];
-
   return (
     <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
       {hasBackButton && (
         <button
           onClick={onBack}
-          className="mr-2 flex items-center gap-1 rounded border border-[#6366f1] bg-[#6366f1]/20 px-3 py-1.5 text-sm text-[#6366f1] transition-colors hover:bg-[#6366f1]/10"
+          className="border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 mr-2 flex h-9 items-center gap-1 rounded-md border px-3 text-sm transition-all duration-200"
         >
           <ArrowLeft size={16} /> Back
         </button>
@@ -61,7 +66,7 @@ export default function FilterBar({
           disabled={disabled || !!gameId}
           value={filterValue}
           onChange={(e) => onFilterChange(e.target.value)}
-          className="mr-1 w-max rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 text-sm text-[#f0f0f5]"
+          className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 mr-1 h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {filterOptions.map((data) => (
             <option key={data} value={data}>
@@ -77,41 +82,26 @@ export default function FilterBar({
         dateEndValue !== undefined &&
         !gameId && (
           <div className="ml-1 flex items-center gap-1">
-            <input
-              type="date"
-              min=""
-              max={todayString}
-              value={dateStartValue}
-              onChange={(e) => {
-                onDateStartChange(e.target.value);
-              }}
-              className="rounded border border-[#222230] bg-[#16161e] px-2 py-1.5 text-sm text-[#f0f0f5]"
-            />
-            <input
-              type="date"
-              min=""
-              max={todayString}
-              value={dateEndValue}
-              onChange={(e) => {
-                onDateEndChange(e.target.value);
-              }}
-              className="rounded border border-[#222230] bg-[#16161e] px-2 py-1.5 text-sm text-[#f0f0f5]"
-            />
+            <DatePicker value={dateStartValue} onChange={onDateStartChange} maxDate={maxDate} />
+            <DatePicker value={dateEndValue} onChange={onDateEndChange} maxDate={maxDate} />
           </div>
         )}
       {showSearch && (
         <div className="relative ml-1">
           <input
             type="text"
-            placeholder={mode === 'vods' ? 'Search by Title' : 'Search by Game'}
-            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder={searchPlaceholder ?? (mode === 'vods' ? 'Search by Title' : 'Search by Game')}
+            onChange={(e) => {
+              onSearchChange(e.target.value);
+              debouncedOnSearchChange?.(e.target.value);
+            }}
             value={searchValue}
-            className="w-44 rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 pr-8 text-sm text-[#f0f0f5] placeholder-[#9ca3af]"
+            className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-44 rounded-md border px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
           />
           {searchValue && (
             <button
               onClick={onSearchClear}
-              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
+              className="text-text-secondary hover:text-text-primary absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer transition-colors"
             >
               <X size={16} />
             </button>

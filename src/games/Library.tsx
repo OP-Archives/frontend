@@ -122,7 +122,7 @@ export function Library() {
               debouncedSetSearchTerm(e.target.value);
             }}
             value={inputSearch}
-            className="h-9 w-44 rounded border border-[#222230] bg-[#16161e] px-3 pr-8 text-sm text-[#f0f0f5] placeholder-[#9ca3af]"
+            className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-44 rounded-md border px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
           />
           {inputSearch && (
             <button
@@ -136,7 +136,7 @@ export function Library() {
         <select
           value={sort}
           onChange={changeSort}
-          className="ml-auto w-max rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 text-sm text-[#f0f0f5]"
+          className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 ml-auto h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
         >
           {SORTS.map((data) => (
             <option key={data} value={data}>

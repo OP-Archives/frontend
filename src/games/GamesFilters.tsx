@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import FilterBar from '@/components/ui/FilterBar';
+import { useDebouncedSetter } from '@/hooks/debounceHelper';
 import type { GamesQueryParams } from '@/hooks/useGames';
 import { useListFilters } from '@/hooks/useListFilters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -28,7 +29,6 @@ export function useGamesFilters() {
     state,
     updateParams,
     changeFilter,
-    handleClearSearch,
     queryKeyParams: baseParams,
   } = useListFilters({
     filterOptions: FILTERS,
@@ -37,7 +37,17 @@ export function useGamesFilters() {
     isMobile,
   });
 
-  const filterGame = state.inputSearch;
+  const [inputGame, setInputGame] = useState(state.inputSearch);
+
+  useEffect(() => {
+    setInputGame(state.inputSearch);
+  }, [state.inputSearch]);
+
+  const debouncedSetGame = useDebouncedSetter((val: string) => {
+    updateUrlParams({ game: val, filter: 'Game', page: '1' });
+  }, 500);
+
+  const filterGame = inputGame;
 
   const queryKeyParams: GamesQueryParams = useMemo(
     () => ({
@@ -66,7 +76,12 @@ export function useGamesFilters() {
     updateUrlParams,
     changeFilter,
     queryKeyParams,
-    handleClearGame: handleClearSearch,
+    setInputGame,
+    debouncedSetGame,
+    handleClearGame: () => {
+      setInputGame('');
+      updateUrlParams({ game: null, filter: 'Game', page: '1' });
+    },
   };
 }
 
@@ -75,9 +90,18 @@ interface GamesFiltersBarProps {
   changeFilter: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleClearGame: () => void;
   updateUrlParams: (updates: Record<string, string | null>) => void;
+  setInputGame: (val: string) => void;
+  debouncedSetGame: (val: string) => void;
 }
 
-export function GamesFiltersBar({ state, changeFilter, handleClearGame, updateUrlParams }: GamesFiltersBarProps) {
+export function GamesFiltersBar({
+  state,
+  changeFilter,
+  handleClearGame,
+  updateUrlParams,
+  setInputGame,
+  debouncedSetGame,
+}: GamesFiltersBarProps) {
   const { filter, inputGame, inputStartDate, inputEndDate, gameId } = state;
 
   return (
@@ -89,14 +113,14 @@ export function GamesFiltersBar({ state, changeFilter, handleClearGame, updateUr
         changeFilter(e);
       }}
       searchValue={inputGame}
-      onSearchChange={(val) => {
-        updateUrlParams({ game: val, filter: 'Game', page: '1' });
-      }}
+      onSearchChange={setInputGame}
+      debouncedOnSearchChange={debouncedSetGame}
       onSearchClear={handleClearGame}
       dateStartValue={inputStartDate}
       dateEndValue={inputEndDate}
       onDateStartChange={(val) => updateUrlParams({ from: val, page: '1' })}
       onDateEndChange={(val) => updateUrlParams({ to: val, page: '1' })}
+      maxDate={new Date().toISOString().split('T')[0]}
       showDateRange={filter === 'Date'}
       showSearch={filter === 'Game'}
       disabled={!!gameId}

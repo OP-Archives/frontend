@@ -6,7 +6,16 @@ import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useGames, prefetchNextPageGames } from '@/hooks/useGames';
 
 export function Games() {
-  const { tenant, state, queryKeyParams, handleClearGame, changeFilter, updateUrlParams } = useGamesFilters();
+  const {
+    tenant,
+    state,
+    queryKeyParams,
+    handleClearGame,
+    changeFilter,
+    updateUrlParams,
+    setInputGame,
+    debouncedSetGame,
+  } = useGamesFilters();
   const queryClient = useQueryClient();
 
   const { data, isLoading, isFetching } = useGames(tenant, queryKeyParams);
@@ -32,6 +41,8 @@ export function Games() {
         changeFilter={changeFilter}
         handleClearGame={handleClearGame}
         updateUrlParams={updateUrlParams}
+        setInputGame={setInputGame}
+        debouncedSetGame={debouncedSetGame}
       />
       <GamesGrid games={games} isLoading={isLoading} isFetching={isFetching} tenant={tenant} limit={state.limit} />
       <PaginationControls

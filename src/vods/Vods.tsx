@@ -16,6 +16,10 @@ export function Vods() {
     changeFilter,
     changePlatform,
     updateUrlParams,
+    setInputGame,
+    setInputTitle,
+    debouncedSetTitle,
+    debouncedSetGame,
   } = useVodsFilters();
   const queryClient = useQueryClient();
 
@@ -45,6 +49,10 @@ export function Vods() {
         handleClearGame={handleClearGame}
         enabledPlatforms={enabledPlatforms}
         updateUrlParams={updateUrlParams}
+        setInputGame={setInputGame}
+        setInputTitle={setInputTitle}
+        debouncedSetTitle={debouncedSetTitle}
+        debouncedSetGame={debouncedSetGame}
       />
       <VodsGrid vods={vods} isLoading={isLoading} isFetching={isFetching} limit={state.limit} />
       <div className="mt-6 mb-6">

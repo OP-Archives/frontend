@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import FilterBar from '@/components/ui/FilterBar';
 import { useTenantContext } from '@/contexts/TenantContext';
+import { useDebouncedSetter } from '@/hooks/debounceHelper';
 import { useListFilters } from '@/hooks/useListFilters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTypedParams } from '@/hooks/useTypedParams';
@@ -42,10 +43,32 @@ export function useVodsFilters() {
     isMobile: isMobile,
   });
 
-  const [inputGame, setInputGame] = useState(state.inputSearch);
   const [platformState, setPlatformState] = useState(PLATFORMS[0]);
+  const [inputGame, setInputGame] = useState(() => {
+    const chapter = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('chapter') : null;
+    return chapter || '';
+  });
+  const [inputTitle, setInputTitle] = useState(state.inputSearch);
 
-  const filterTitle = state.inputSearch;
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setInputGame(searchParams.get('chapter') || '');
+  }, []);
+
+  useEffect(() => {
+    setInputTitle(state.inputSearch);
+  }, [state.inputSearch]);
+
+  const debouncedSetTitle = useDebouncedSetter((val: string) => {
+    updateUrlParams({ title: val, filter: 'Title', page: '1' });
+  }, 500);
+
+  const debouncedSetGame = useDebouncedSetter((val: string) => {
+    updateUrlParams({ chapter: val, filter: 'Game', page: '1' });
+  }, 500);
+
+  const filterTitle = inputTitle;
+  const filterGame = inputGame;
 
   const queryKeyParams: VodsQueryParams = useMemo(
     () => ({
@@ -55,9 +78,9 @@ export function useVodsFilters() {
       order: 'desc',
       ...(platformState !== PLATFORMS[0] ? { platform: platformState.toLowerCase() } : {}),
       ...(state.filter === 'Title' && filterTitle ? { title: filterTitle } : {}),
-      ...(state.filter === 'Game' && inputGame ? { chapter: inputGame } : {}),
+      ...(state.filter === 'Game' && filterGame ? { chapter: filterGame } : {}),
     }),
-    [baseParams.limit, baseParams.page, platformState, state.filter, filterTitle, inputGame]
+    [baseParams.limit, baseParams.page, platformState, state.filter, filterTitle, filterGame]
   );
 
   const updateUrlParams = (updates: Record<string, string | null>) => {
@@ -65,7 +88,9 @@ export function useVodsFilters() {
   };
 
   const handleClearTitle = () => {
+    setInputTitle('');
     handleClearSearch();
+    updateUrlParams({ title: null, filter: 'Title', page: '1' });
   };
 
   const handleClearGame = () => {
@@ -87,10 +112,10 @@ export function useVodsFilters() {
   const vodsState: VodsFiltersState = {
     ...state,
     filterTitle,
-    filterGame: inputGame,
+    filterGame,
     platform: platformState,
     inputTitle: filterTitle,
-    inputGame,
+    inputGame: filterGame,
   };
 
   return {
@@ -101,6 +126,10 @@ export function useVodsFilters() {
     changePlatform,
     queryKeyParams,
     enabledPlatforms,
+    setInputGame,
+    setInputTitle,
+    debouncedSetTitle,
+    debouncedSetGame,
     handleClearTitle,
     handleClearGame,
   };
@@ -114,6 +143,10 @@ interface VodsFiltersBarProps {
   handleClearGame: () => void;
   enabledPlatforms: number;
   updateUrlParams: (updates: Record<string, string | null>) => void;
+  setInputGame: (val: string) => void;
+  setInputTitle: (val: string) => void;
+  debouncedSetTitle: (val: string) => void;
+  debouncedSetGame: (val: string) => void;
 }
 
 export function VodsFiltersBar({
@@ -124,6 +157,10 @@ export function VodsFiltersBar({
   handleClearGame,
   enabledPlatforms,
   updateUrlParams,
+  setInputGame,
+  setInputTitle,
+  debouncedSetTitle,
+  debouncedSetGame,
 }: VodsFiltersBarProps) {
   const { filter, inputTitle, inputGame, inputStartDate, inputEndDate, gameId } = state;
 
@@ -138,9 +175,16 @@ export function VodsFiltersBar({
       searchValue={filter === 'Title' ? inputTitle : inputGame}
       onSearchChange={(val) => {
         if (filter === 'Title') {
-          updateUrlParams({ title: val, filter: 'Title', page: '1' });
+          setInputTitle(val);
         } else {
-          updateUrlParams({ chapter: val, filter: 'Game', page: '1' });
+          setInputGame(val);
+        }
+      }}
+      debouncedOnSearchChange={(val) => {
+        if (filter === 'Title') {
+          debouncedSetTitle(val);
+        } else {
+          debouncedSetGame(val);
         }
       }}
       onSearchClear={() => {
@@ -151,8 +195,10 @@ export function VodsFiltersBar({
       dateEndValue={inputEndDate}
       onDateStartChange={(val) => updateUrlParams({ from: val, page: '1' })}
       onDateEndChange={(val) => updateUrlParams({ to: val, page: '1' })}
+      maxDate={new Date().toISOString().split('T')[0]}
       showDateRange={filter === 'Date'}
       showSearch={filter === 'Title' || filter === 'Game'}
+      searchPlaceholder={filter === 'Game' ? 'Search by Game' : 'Search by Title'}
       disabled={!!gameId}
       gameId={gameId}
       onBack={() => window.history.back()}
@@ -163,7 +209,7 @@ export function VodsFiltersBar({
             disabled={!!gameId}
             value={state.platform}
             onChange={changePlatform}
-            className="ml-1 w-max rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 text-sm text-[#f0f0f5]"
+            className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 ml-1 h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           >
             {PLATFORMS.map((data) => (
               <option key={data} value={data}>
