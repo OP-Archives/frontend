@@ -1,5 +1,4 @@
 import { Route } from 'react-router-dom';
-import { TitleManager } from './TitleManager';
 import { NotFound } from '@/components/ui/NotFound';
 import { Games } from '@/games/Games';
 import { Library } from '@/games/Library';
@@ -13,7 +12,6 @@ import { Vods } from '@/vods/Vods';
 
 export const AppRoutes = (
   <>
-    <Route element={<TitleManager />} />
     <Route path="/" element={<Landing />} />
     <Route path="about" element={<About />} />
     <Route path="archive" element={<StartArchiving />} />

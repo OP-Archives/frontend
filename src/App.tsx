@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes/AppRoutes';
 import { TenantRouteContext } from './routes/TenantRouteContext';
+import { TitleManager } from './routes/TitleManager';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { Footer } from '@/components/ui/Footer';
 import { Navbar } from '@/navbar/navbar';
@@ -20,6 +21,7 @@ function AppLayout() {
         }`}
       >
         <TenantRouteContext>
+          <TitleManager />
           <Routes>{AppRoutes}</Routes>
         </TenantRouteContext>
       </main>
