@@ -189,7 +189,7 @@ export default function Chat(props: ChatProps) {
     [filterRegex]
   );
 
-  const { messages, scrolling, isLoading, chatRef, handleScroll, scrollToBottom } = useChatEngine({
+  const { messages, scrolling, isLoading, commentsCount, chatRef, handleScroll, scrollToBottom } = useChatEngine({
     channel: channel!,
     vodId,
     playerRef,
@@ -424,6 +424,7 @@ export default function Chat(props: ChatProps) {
             <ChatMessages
               comments={messages}
               isLoading={isLoading}
+              commentsCount={commentsCount}
               shownMessages={commentElements}
               scrolling={scrolling}
               scrollToBottom={scrollToBottom}

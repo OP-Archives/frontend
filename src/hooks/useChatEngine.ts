@@ -24,6 +24,7 @@ interface UseChatEngineReturn {
   scrolling: boolean;
   isLoading: boolean;
   setIsLoading: (v: boolean) => void;
+  commentsCount: number;
   chatRef: React.RefObject<HTMLElement | null>;
   handleScroll: () => void;
   scrollToBottom: () => void;
@@ -41,6 +42,7 @@ export function useChatEngine({
   const [messages, setMessages] = useState<Comment[]>([]);
   const [scrolling, setScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [commentsCount, setCommentsCount] = useState(0);
 
   const commentsRef = useRef<Comment[]>([]);
   const cursorRef = useRef<string | null>(null);
@@ -271,9 +273,10 @@ export function useChatEngine({
       if (data) {
         commentsRef.current = data.comments;
         cursorRef.current = data.cursor;
+        setCommentsCount(data.comments.length);
       }
 
-      if (!hasFetchedRef.current) {
+      if (!hasFetchedRef.current && data) {
         hasFetchedRef.current = true;
         setIsLoading(false);
       }
@@ -334,6 +337,7 @@ export function useChatEngine({
             commentsRef.current = [];
             cursorRef.current = null;
             setMessages([]);
+            setCommentsCount(0);
             hasFetchedRef.current = false;
             setIsLoading(true);
             fetchComments(time);
@@ -361,6 +365,7 @@ export function useChatEngine({
     scrolling,
     isLoading,
     setIsLoading,
+    commentsCount,
     chatRef,
     handleScroll,
     scrollToBottom,

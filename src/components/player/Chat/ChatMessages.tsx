@@ -9,14 +9,13 @@ interface ChatMessagesProps {
   chatRef: React.MutableRefObject<HTMLElement | null>;
   handleScroll: () => void;
   isLoading: boolean;
+  commentsCount: number;
 }
 
 export default function ChatMessages(props: ChatMessagesProps) {
-  const { comments, shownMessages, scrolling, scrollToBottom, chatRef, handleScroll, isLoading } = props;
+  const { shownMessages, scrolling, scrollToBottom, chatRef, handleScroll, isLoading, commentsCount } = props;
 
-  const commentsArray = Array.isArray(comments) ? comments : comments.current;
-
-  if (commentsArray && commentsArray.length === 0) {
+  if (commentsCount === 0) {
     if (isLoading) {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center">
