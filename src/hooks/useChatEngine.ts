@@ -59,6 +59,7 @@ export function useChatEngine({
   const isAutoScrollingRef = useRef(false);
   const isAtBottomRef = useRef(true);
   const lastScrollTopRef = useRef(0);
+  const lastClientHeightRef = useRef(0);
   const scrollingRef = useRef(scrolling);
   const hasFetchedRef = useRef(false);
 
@@ -211,14 +212,20 @@ export function useChatEngine({
     if (isAutoScrollingRef.current) {
       lastScrollHeightRef.current = chatRef.current.scrollHeight;
       lastScrollTopRef.current = chatRef.current.scrollTop;
+      lastClientHeightRef.current = chatRef.current.clientHeight;
       return;
     }
 
     const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
 
-    if (scrollHeight !== lastScrollHeightRef.current) {
+    if (scrollHeight !== lastScrollHeightRef.current || clientHeight !== lastClientHeightRef.current) {
       lastScrollHeightRef.current = scrollHeight;
       lastScrollTopRef.current = scrollTop;
+      lastClientHeightRef.current = clientHeight;
+
+      if (isAtBottomRef.current) {
+        scrollToBottom();
+      }
       return;
     }
 
@@ -238,7 +245,8 @@ export function useChatEngine({
 
     lastScrollHeightRef.current = scrollHeight;
     lastScrollTopRef.current = scrollTop;
-  }, []);
+    lastClientHeightRef.current = clientHeight;
+  }, [scrollToBottom]);
 
   const startLoop = useCallback(() => {
     if (loopRef.current !== null) clearInterval(loopRef.current);

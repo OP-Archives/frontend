@@ -56,15 +56,15 @@ export function useChatSettings(): UseChatSettingsReturn {
 
   const loadSettings = useCallback(() => {
     const savedSettings = safeLocalStorage.getItem('chatSettings');
-    let hasSettings = false;
+    let hasChatWidth = false;
 
     if (savedSettings) {
-      hasSettings = true;
       try {
         const settings = JSON.parse(savedSettings);
 
         if (settings.chatWidth !== undefined) {
           setChatWidth(settings.chatWidth as number);
+          hasChatWidth = true;
         }
         if (settings.showTimestamp !== undefined) {
           setShowTimestamp(Boolean(settings.showTimestamp));
@@ -100,7 +100,7 @@ export function useChatSettings(): UseChatSettingsReturn {
       }
     }
 
-    if (!hasSettings || savedSettings === null) {
+    if (!hasChatWidth) {
       const responsiveDefault = getResponsiveDefaultWidth();
       if (responsiveDefault !== undefined) {
         setChatWidth(responsiveDefault);

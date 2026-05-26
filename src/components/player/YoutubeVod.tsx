@@ -179,7 +179,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
       >
         {/* Left Column - Scrollable */}
         <div
-          className={`flex min-w-0 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isPortrait ? 'w-full flex-shrink-0' : 'flex-1'}`}
+          className={`flex min-w-0 [scrollbar-width:none] flex-col overflow-x-hidden [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isPortrait ? 'w-full flex-shrink-0 overflow-y-visible' : 'flex-1 overflow-y-auto'}`}
         >
           {/* BaseVod strictly set to 100% height of parent to fill the initial viewport */}
           <div className={`flex w-full shrink-0 flex-col ${isPortrait ? '' : 'h-full'}`}>

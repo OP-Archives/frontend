@@ -43,7 +43,9 @@ export default function YoutubePlayer(props: YoutubePlayerProps) {
   const autoHideTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setIsTouchDevice(window.matchMedia('(pointer: coarse)').matches);
+    setIsTouchDevice(
+      window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    );
   }, []);
 
   useEffect(() => {
