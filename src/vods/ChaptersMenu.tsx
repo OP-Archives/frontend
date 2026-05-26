@@ -12,7 +12,7 @@ interface ChaptersProps {
 const EMPTY_CHAPTERS: ChapterItem[] = [];
 
 export default function ChaptersMenu({ vod }: ChaptersProps) {
-  const { position, isOpen, close, toggle } = useDropdown(400);
+  const { position, isOpen, close, toggle, setMenuRef } = useDropdown(400);
   const [expanded, setExpanded] = useState(false);
   const chaptersArray = vod.chapters || EMPTY_CHAPTERS;
   const visibleChapters = expanded ? chaptersArray : chaptersArray.slice(0, 15);
@@ -47,6 +47,7 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
       </button>
       {isOpen && (
         <div
+          ref={setMenuRef}
           className="fixed z-50 max-h-[400px] overflow-y-auto overscroll-contain rounded border border-[#222230] bg-[#16161e] shadow-xl"
           style={{
             ...(position.top !== undefined ? { top: position.top } : {}),

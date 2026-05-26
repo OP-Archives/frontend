@@ -1,10 +1,10 @@
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
-import { Link, useParams, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
-import type { VODNavigation, GameEntry, VodData, VOD } from '@/types';
-import { PartInfo } from '@/types';
+import { useScrollCarousel } from '@/hooks/useScrollCarousel';
+import { useTypedParams } from '@/hooks/useTypedParams';
+import type { VODNavigation, GameEntry, VOD } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 import ChaptersMenu from '@/vods/ChaptersMenu';
 
@@ -26,13 +26,13 @@ interface RecentItemsGamesProps {
   games: GameEntry[];
   currentGameId: string;
   currentVodId: string;
-  setPart?: (part: PartInfo) => void;
+  setPart?: (part: import('@/types').PartInfo) => void;
   prevVods?: VODNavigation[];
   nextVods?: VODNavigation[];
   currentVod?: VODNavigation | VOD;
 }
 
-function toVodData(item: VODNavigation): VodData {
+function toVodData(item: VODNavigation): import('@/types').VodData {
   return {
     id: item.id,
     title: item.title || '',
@@ -53,14 +53,15 @@ function toVodData(item: VODNavigation): VodData {
   };
 }
 
-function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent: boolean }) {
-  const { vodId } = useParams<{ vodId: string }>();
+export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent: boolean }) {
+  const { vodId } = useTypedParams<{ vodId: string }>();
   const location = useLocation();
 
   const getLink = (newId: number) => location.pathname.replace(String(vodId), String(newId));
 
   const vodData = toVodData(vod as VODNavigation);
-  const thumbnail = vod.vod_uploads?.[0]?.thumbnail_url || vod.thumbnail_url || '';
+  const thumbnail =
+    'vod_uploads' in vod ? vod.vod_uploads?.[0]?.thumbnail_url : (vod as VODNavigation).thumbnail_url || '';
 
   return (
     <div className="mb-2 block w-full min-w-0">
@@ -85,12 +86,12 @@ function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent
           )}
           {isCurrent ? null : <Link to={getLink(vod.id)} className="absolute inset-0 block" />}
           <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
-          {vod.platform && (
+          {((vod as VODNavigation).platform || '') && (
             <div className="absolute top-2 right-2 z-10">
               <span className="inline-flex items-center justify-center rounded bg-black/60 p-1 backdrop-blur-sm">
-                {vod.platform === 'twitch' ? (
+                {(vod as VODNavigation).platform === 'twitch' ? (
                   <TwitchIcon width={14} height={14} className="text-[#9146FF]" />
-                ) : vod.platform === 'kick' ? (
+                ) : (vod as VODNavigation).platform === 'kick' ? (
                   <KickIcon width={14} height={14} className="text-[#53fc18]" />
                 ) : null}
               </span>
@@ -98,18 +99,20 @@ function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent
           )}
           <div className="absolute bottom-0 left-0">
             <span className="bg-black/60 p-1.5 text-xs text-white">
-              {DATE_FORMATTER.format(new Date(vod.created_at || '')).replace(',', '')}
+              {DATE_FORMATTER.format(new Date((vod as VODNavigation).created_at || '')).replace(',', '')}
             </span>
           </div>
-          {vod.duration && (
+          {((vod as VODNavigation).duration ?? 0) > 0 && (
             <div className="absolute right-0 bottom-0">
-              <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration)}</span>
+              <span className="bg-black/60 p-1.5 text-xs text-white">
+                {toHHMMSS((vod as VODNavigation).duration ?? 0)}
+              </span>
             </div>
           )}
         </div>
       </div>
       <div className="mt-1 mb-1 flex cursor-default items-start">
-        {vod.chapters && vod.chapters.length > 0 && (
+        {((vod as VODNavigation).chapters || []).length > 0 && (
           <div className="mr-2 shrink-0">
             <ChaptersMenu vod={vodData} />
           </div>
@@ -135,33 +138,18 @@ function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation | VOD; isCurrent
 }
 
 export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }: RecentItemsVodsProps) {
-  const { tenant } = useParams<{ tenant: string }>();
-  const [offset, setOffset] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const { tenant } = useTypedParams<{ tenant: string }>();
 
   const allItems = [...(prev || []), ...(next || []), ...(currentVod ? [currentVod] : [])]
     .filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
-    .filter((v) => !hasGames || (v.games?.length || 0) > 0)
+    .filter((v) => !hasGames || (v as VOD).games?.length || 0 > 0)
     .sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
 
+  const { showLeft, showRight, visibleItems, scrollBy, containerRef } = useScrollCarousel({
+    itemCount: allItems.length,
+  });
+
   if (allItems.length <= 1) return null;
-  const visibleCount = 5;
-
-  const showLeft = offset > 0;
-  const showRight = offset + visibleCount < allItems.length;
-
-  const visibleItems = allItems.slice(offset, offset + visibleCount);
-
-  const scrollBy = (amount: number) => {
-    const newOffset = Math.max(0, Math.min(offset + amount, allItems.length - visibleCount));
-    setOffset(newOffset);
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        left: containerRef.current.clientWidth * (amount / visibleCount),
-        behavior: 'smooth',
-      });
-    }
-  };
 
   return (
     <div>
@@ -179,7 +167,7 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
         <div className="relative">
           {showLeft && (
             <button
-              onClick={() => scrollBy(-visibleCount)}
+              onClick={() => scrollBy(-5)}
               className="absolute top-1/2 -left-2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-[#16161e]/90 text-[#9ca3af] shadow-lg transition-opacity hover:bg-[#16161e] hover:text-white"
             >
               <ChevronLeft size={16} />
@@ -189,7 +177,7 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
             ref={containerRef}
             className="flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
-            {visibleItems.map((item) => (
+            {visibleItems(allItems).map((item) => (
               <div key={item.id} className="min-w-0 flex-[0_0_calc((100%-32px)/5)]">
                 <RecentVodCard vod={item} isCurrent={item.id === currentId} />
               </div>
@@ -197,7 +185,7 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
           </div>
           {showRight && (
             <button
-              onClick={() => scrollBy(visibleCount)}
+              onClick={() => scrollBy(5)}
               className="absolute top-1/2 -right-2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-[#16161e]/90 text-[#9ca3af] shadow-lg transition-opacity hover:bg-[#16161e] hover:text-white"
             >
               <ChevronRight size={16} />
@@ -218,37 +206,17 @@ export function RecentItemsGames({
   nextVods,
   currentVod,
 }: RecentItemsGamesProps) {
-  const navigate = useNavigate();
+  const navigateRef = useNavigate();
   const [searchParams] = useSearchParams();
   const currentGameIndex = games.findIndex((g) => parseInt(g.id) === parseInt(currentGameId));
-  const initialOffset = Math.max(0, Math.min(currentGameIndex - 2, games.length - 5));
-  const [offset, setOffset] = useState(currentGameIndex >= 0 ? initialOffset : 0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (currentGameIndex >= 0) {
-      setOffset(Math.max(0, Math.min(currentGameIndex - 2, games.length - 5)));
-    }
-  }, [currentGameIndex, games.length]);
+  const { showLeft, showRight, visibleItems, scrollBy, containerRef } = useScrollCarousel({
+    itemCount: games.length,
+    initialOffset: Math.max(0, Math.min(currentGameIndex - 2, games.length - 5)),
+    autoCenterIndex: currentGameIndex >= 0 ? currentGameIndex : undefined,
+  });
 
   if (games.length === 0) return null;
-  const visibleCount = 5;
-
-  const showLeft = offset > 0;
-  const showRight = offset + visibleCount < games.length;
-
-  const visibleGames = games.slice(offset, offset + visibleCount);
-
-  const scrollBy = (amount: number) => {
-    const newOffset = Math.max(0, Math.min(offset + amount, games.length - visibleCount));
-    setOffset(newOffset);
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        left: containerRef.current.clientWidth * (amount / visibleCount),
-        behavior: 'smooth',
-      });
-    }
-  };
 
   return (
     <div>
@@ -257,7 +225,7 @@ export function RecentItemsGames({
         <div className="relative">
           {showLeft && (
             <button
-              onClick={() => scrollBy(-visibleCount)}
+              onClick={() => scrollBy(-5)}
               className="absolute top-1/2 -left-2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-[#16161e]/90 text-[#9ca3af] shadow-lg transition-opacity hover:bg-[#16161e] hover:text-white"
             >
               <ChevronLeft size={16} />
@@ -267,7 +235,7 @@ export function RecentItemsGames({
             ref={containerRef}
             className="flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
-            {visibleGames.map((game, index) => {
+            {visibleItems(games).map((game, index) => {
               const isCurrent = (!currentGameId && index === 0) || parseInt(currentGameId) === parseInt(game.id);
 
               return (
@@ -284,10 +252,10 @@ export function RecentItemsGames({
                         onClick={() => {
                           if (setPart && !isCurrent) {
                             const gameIndex = games.findIndex((g) => g.id === game.id);
-                            setPart({ part: gameIndex + 1, timestamp: 0 });
+                            setPart!({ part: gameIndex + 1, timestamp: 0 });
                             const newParams = new URLSearchParams(searchParams);
                             newParams.set('game_id', game.id);
-                            navigate(`?${newParams.toString()}`);
+                            navigateRef(`?${newParams.toString()}`, { replace: true });
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }
                         }}
@@ -348,7 +316,7 @@ export function RecentItemsGames({
           </div>
           {showRight && (
             <button
-              onClick={() => scrollBy(visibleCount)}
+              onClick={() => scrollBy(5)}
               className="absolute top-1/2 -right-2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-[#16161e]/90 text-[#9ca3af] shadow-lg transition-opacity hover:bg-[#16161e] hover:text-white"
             >
               <ChevronRight size={16} />

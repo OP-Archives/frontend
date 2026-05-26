@@ -11,7 +11,7 @@ interface WatchMenuProps {
 }
 
 export default function WatchMenu({ vod, cdnEnabled }: WatchMenuProps) {
-  const { position, isOpen, close, toggle } = useDropdown();
+  const { position, isOpen, close, toggle, setMenuRef } = useDropdown();
   const navigate = useNavigate();
 
   const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
@@ -30,12 +30,13 @@ export default function WatchMenu({ vod, cdnEnabled }: WatchMenuProps) {
           e.stopPropagation();
           toggle(e.currentTarget);
         }}
-        className="flex cursor-pointer items-center gap-1 rounded border border-[#6366f1] px-3 py-1 text-[13px] font-medium text-[#6366f1] transition-colors hover:bg-[#6366f1]/10"
+        className="flex cursor-pointer items-center gap-1 rounded bg-[#6366f1] px-3 py-1 text-[13px] font-medium text-white transition-colors hover:bg-[#5558e6]"
       >
-        <Play size={14} /> Watch
+        <Play size={14} className="mt-0.5" /> Watch
       </button>
       {isOpen && (
         <div
+          ref={setMenuRef}
           className="fixed z-50 w-max rounded border border-[#222230] bg-[#16161e] shadow-xl"
           style={{ left: position.left, top: position.top }}
         >

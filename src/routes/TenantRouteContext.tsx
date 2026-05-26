@@ -13,7 +13,8 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const currentTenantData = tenants?.find((t: { id: string }) => t.id === currentTenant);
 
   const cdnEnabled = currentTenantData?.cdn?.enabled ?? false;
-  const cdnBaseUrl = currentTenantData?.cdn?.baseUrl ?? '';
+  const rawCdnUrl = currentTenantData?.cdn?.baseUrl ?? '';
+  const cdnBaseUrl = rawCdnUrl && !rawCdnUrl.startsWith('http') ? `https://${rawCdnUrl}` : rawCdnUrl;
 
   return (
     <TenantContext.Provider value={{ tenant: currentTenantData ?? null, cdnEnabled, cdnBaseUrl }}>

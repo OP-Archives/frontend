@@ -13,11 +13,9 @@ import {
   VolumeX,
   Check,
 } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
+import { usePlayerControls } from '@/hooks/usePlayerControls';
 import { formatTime } from '@/utils/helpers';
-
-const CONTROL_BAR_HEIGHT = 60;
-const AUTO_HIDE_DELAY = 3000;
 
 interface PlayerControlsProps {
   isPlaying: boolean;
@@ -47,110 +45,49 @@ export default function PlayerControls(props: PlayerControlsProps) {
     currentTime,
     duration,
     isFullscreen,
-    onTogglePlayPause,
     onVolumeChange,
     onSeekChange,
-    onToggleMute,
-    onToggleFullscreen,
     playerContainerRef,
+    onToggleFullscreen,
     theatreMode,
     onToggleTheatreMode,
     playbackSpeed = 1,
     onPlaybackSpeedChange,
     onCopyTimestamp,
+    onTogglePlayPause,
+    onToggleMute,
   } = props;
 
-  const [showControls, setShowControls] = useState(true);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [settingsAnchorEl, setSettingsAnchorEl] = useState<HTMLElement | null>(null);
-  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
-  const [menuMaxHeight, setMenuMaxHeight] = useState(250);
-  const settingsMenuRef = useRef<HTMLDivElement | null>(null);
-  const autoHideTimerRef = useRef<number | null>(null);
-  const closeSettingsTimerRef = useRef<number | null>(null);
-  const progressBarRef = useRef<HTMLInputElement>(null);
-  const volumeBarRef = useRef<HTMLInputElement>(null);
-  const progressTooltipRef = useRef<HTMLDivElement>(null);
-  const volumeTooltipRef = useRef<HTMLDivElement>(null);
-  const isDraggingVolume = useRef(false);
-
-  useEffect(() => {
-    const handleMouseMove = () => {
-      setShowControls(true);
-      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
-
-      if (!isMenuOpen) {
-        autoHideTimerRef.current = setTimeout(() => {
-          if (isPlaying) {
-            setShowControls(false);
-          }
-        }, AUTO_HIDE_DELAY);
-      }
-    };
-
-    const handleMouseLeave = () => {
-      if (isPlaying && !isMenuOpen) {
-        setShowControls(false);
-      }
-    };
-
-    const playerContainer = playerContainerRef.current;
-    if (playerContainer) {
-      playerContainer.addEventListener('mousemove', handleMouseMove);
-      playerContainer.addEventListener('mouseleave', handleMouseLeave);
-      playerContainer.addEventListener('click', handleMouseMove);
-    }
-
-    if (isMenuOpen) {
-      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
-      setShowControls(true);
-    } else if (isPlaying) {
-      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
-      autoHideTimerRef.current = setTimeout(() => {
-        setShowControls(false);
-      }, AUTO_HIDE_DELAY);
-    }
-
-    return () => {
-      if (playerContainer) {
-        playerContainer.removeEventListener('mousemove', handleMouseMove);
-        playerContainer.removeEventListener('mouseleave', handleMouseLeave);
-        playerContainer.removeEventListener('click', handleMouseMove);
-      }
-      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
-    };
-  }, [isPlaying, isMenuOpen, playerContainerRef]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isMenuOpen &&
-        settingsMenuRef.current &&
-        !settingsMenuRef.current.contains(event.target as Node) &&
-        settingsAnchorEl &&
-        !settingsAnchorEl.contains(event.target as Node)
-      ) {
-        handleCloseSettings();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMenuOpen, settingsAnchorEl]);
-
-  useEffect(() => {
-    return () => {
-      if (autoHideTimerRef.current) clearTimeout(autoHideTimerRef.current);
-      if (closeSettingsTimerRef.current) clearTimeout(closeSettingsTimerRef.current);
-    };
-  }, []);
+  const {
+    showControls,
+    isMenuOpen,
+    setIsMenuOpen,
+    settingsAnchorEl,
+    setSettingsAnchorEl,
+    showSpeedMenu,
+    setShowSpeedMenu,
+    menuMaxHeight,
+    setMenuMaxHeight,
+    progressTooltipRef,
+    volumeTooltipRef,
+    settingsMenuRef,
+    handleProgressMouseMove,
+    handleProgressTouchMove,
+    handleProgressTouchEnd,
+    handleProgressMouseLeave,
+    handleVolumeMouseMove,
+    handleVolumeTouchMove,
+    handleVolumeTouchEnd,
+    handleVolumeMouseLeave,
+    handleVolumeMouseUp,
+    handleVolumeMouseDown,
+    handleCloseSettings,
+  } = usePlayerControls({ isPlaying, playerContainerRef, duration });
 
   const [copied, setCopied] = useState(false);
 
   const handleCopyTimestamp = () => {
-    if (onCopyTimestamp) {
-      onCopyTimestamp(currentTime);
-    }
+    if (onCopyTimestamp) onCopyTimestamp(currentTime);
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -159,124 +96,18 @@ export default function PlayerControls(props: PlayerControlsProps) {
   };
 
   const handlePlaybackSpeedChange = (speed: number) => {
-    if (onPlaybackSpeedChange) {
-      onPlaybackSpeedChange(speed);
-    }
+    onPlaybackSpeedChange?.(speed);
     handleCloseSettings();
   };
 
-  const handleCloseSettings = () => {
-    setIsMenuOpen(false);
-
-    closeSettingsTimerRef.current = setTimeout(() => {
-      setSettingsAnchorEl(null);
-      setShowSpeedMenu(false);
-    }, 250);
-  };
-
-  const handleProgressMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
-    if (!progressBarRef.current || !duration) return;
-
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const pos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-
-    const percentage = pos / rect.width;
-    const TOOLTIP_HALF_WIDTH = 30;
-    const clampedPos = Math.max(TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - TOOLTIP_HALF_WIDTH));
-
-    if (progressTooltipRef.current) {
-      progressTooltipRef.current.style.left = `${clampedPos}px`;
-      progressTooltipRef.current.innerText = formatTime(percentage * duration);
-      progressTooltipRef.current.style.opacity = '1';
-    }
-  };
-
-  const handleProgressTouchMove = (e: React.TouchEvent<HTMLInputElement>) => {
-    if (!progressBarRef.current || !duration || !e.touches[0]) return;
-
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const pos = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width));
-
-    const percentage = pos / rect.width;
-    const TOOLTIP_HALF_WIDTH = 30;
-    const clampedPos = Math.max(TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - TOOLTIP_HALF_WIDTH));
-
-    if (progressTooltipRef.current) {
-      progressTooltipRef.current.style.left = `${clampedPos}px`;
-      progressTooltipRef.current.innerText = formatTime(percentage * duration);
-      progressTooltipRef.current.style.opacity = '1';
-    }
-  };
-
-  const handleProgressTouchEnd = () => {
-    if (progressTooltipRef.current) progressTooltipRef.current.style.opacity = '0';
-  };
-
-  const handleProgressMouseLeave = () => {
-    if (progressTooltipRef.current) progressTooltipRef.current.style.opacity = '0';
-  };
-
-  const handleVolumeMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
-    if (!isDraggingVolume.current || !volumeBarRef.current) return;
-
-    const rect = volumeBarRef.current.getBoundingClientRect();
-    const pos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-
-    const percentage = pos / rect.width;
-    const TOOLTIP_HALF_WIDTH = 20;
-    const clampedPos = Math.max(TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - TOOLTIP_HALF_WIDTH));
-
-    if (volumeTooltipRef.current) {
-      volumeTooltipRef.current.style.left = `${clampedPos}px`;
-      volumeTooltipRef.current.innerText = `${Math.round(percentage * 100)}%`;
-      volumeTooltipRef.current.style.opacity = '1';
-    }
-  };
-
-  const handleVolumeTouchMove = (e: React.TouchEvent<HTMLInputElement>) => {
-    if (!volumeBarRef.current || !e.touches[0]) return;
-
-    const rect = volumeBarRef.current.getBoundingClientRect();
-    const pos = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width));
-
-    const percentage = pos / rect.width;
-    const TOOLTIP_HALF_WIDTH = 20;
-    const clampedPos = Math.max(TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - TOOLTIP_HALF_WIDTH));
-
-    if (volumeTooltipRef.current) {
-      volumeTooltipRef.current.style.left = `${clampedPos}px`;
-      volumeTooltipRef.current.innerText = `${Math.round(percentage * 100)}%`;
-      volumeTooltipRef.current.style.opacity = '1';
-    }
-  };
-
-  const handleVolumeTouchEnd = () => {
-    isDraggingVolume.current = false;
-    if (volumeTooltipRef.current) volumeTooltipRef.current.style.opacity = '0';
-  };
-
-  const handleVolumeMouseLeave = () => {
-    isDraggingVolume.current = false;
-    if (volumeTooltipRef.current) volumeTooltipRef.current.style.opacity = '0';
-  };
-
-  const handleVolumeMouseUp = () => {
-    isDraggingVolume.current = false;
-    if (volumeTooltipRef.current) volumeTooltipRef.current.style.opacity = '0';
-  };
-
-  const handleVolumeMouseDown = () => {
-    isDraggingVolume.current = true;
-  };
-
   const volumeGradient = `linear-gradient(to right, #6366f1 ${isMuted ? 0 : volume}%, rgba(99,102,241,0.3) ${isMuted ? 0 : volume}%)`;
-  const seekGradient = `linear-gradient(to right, #6366f1 ${duration ? (currentTime / duration) * 100 : 0}%, #8b5cf6 ${duration ? (currentTime / duration) * 100 : 0}%, rgba(139,92,246,0.3) ${duration ? (currentTime / duration) * 100 : 0}%)`;
+  const seekGradient = `linear-gradient(to right, #6366f1 ${duration ? (currentTime / duration) * 100 : 0}%, rgba(99,102,241,0.3) ${duration ? (currentTime / duration) * 100 : 0}%)`;
 
   return (
     <div
       className="absolute right-0 bottom-0 left-0 flex flex-col justify-end"
       style={{
-        minHeight: CONTROL_BAR_HEIGHT,
+        minHeight: 60,
         maxHeight: '30vh',
         transition: 'opacity 0.3s ease',
         opacity: showControls ? 1 : 0,
@@ -294,7 +125,6 @@ export default function PlayerControls(props: PlayerControlsProps) {
             style={{ left: '0px' }}
           />
           <input
-            ref={progressBarRef}
             type="range"
             min={0}
             max={duration || 1}
@@ -342,7 +172,6 @@ export default function PlayerControls(props: PlayerControlsProps) {
                   style={{ left: '0px' }}
                 />
                 <input
-                  ref={volumeBarRef}
                   type="range"
                   min={0}
                   max={100}
@@ -463,7 +292,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
                           key={speed}
                           onClick={() => handlePlaybackSpeedChange(speed)}
                           className={`w-full rounded px-3 py-2 text-left text-sm transition-colors ${
-                            playbackSpeed === speed ? 'bg-[#6366f1] text-white' : 'text-[#f0f0f5] hover:bg-[#16161e]'
+                            playbackSpeed === speed ? 'bg-[#6366f1] text-white' : 'text-[#f0f0f5] hover:text-[#6366f1]'
                           }`}
                         >
                           {speed}x

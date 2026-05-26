@@ -12,6 +12,7 @@ export interface UseDropdownReturn {
   anchorEl: HTMLElement | null;
   position: DropdownPosition;
   isOpen: boolean;
+  setMenuRef: (el: HTMLDivElement | null) => void;
   open: (el: HTMLElement, position?: DropdownPosition) => void;
   close: () => void;
   toggle: (el: HTMLElement, position?: DropdownPosition) => void;
@@ -62,6 +63,10 @@ export function useDropdown(initialMaxHeight?: number): UseDropdownReturn {
     setAnchorEl(null);
   };
 
+  const setMenuRef = (el: HTMLDivElement | null) => {
+    menuRef.current = el;
+  };
+
   const open = (el: HTMLElement, position?: DropdownPosition) => {
     setAnchorEl(el);
     if (position) {
@@ -83,6 +88,8 @@ export function useDropdown(initialMaxHeight?: number): UseDropdownReturn {
         const spaceBelow = window.innerHeight - rect.bottom;
 
         if (spaceBelow < initialMaxHeight && rect.top > spaceBelow) {
+          delete defaultPosition.top;
+
           defaultPosition.bottom = window.innerHeight - rect.top + 8;
           defaultPosition.maxWidth = window.innerWidth - rect.left - 16;
         } else {
@@ -100,6 +107,7 @@ export function useDropdown(initialMaxHeight?: number): UseDropdownReturn {
     anchorEl,
     position,
     isOpen: !!anchorEl,
+    setMenuRef,
     open,
     close,
     toggle,

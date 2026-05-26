@@ -219,7 +219,7 @@ export default function BaseVod(props: BaseVodProps) {
 
           <div className="flex min-w-0 flex-1 flex-col">
             <CustomWidthTooltip title={vod.title}>
-              <span className="block w-full truncate text-sm leading-none font-semibold">{vod.title}</span>
+              <span className="inline-block max-w-full truncate text-sm leading-none font-semibold">{vod.title}</span>
             </CustomWidthTooltip>
             <span className="mt-1 block w-full truncate text-xs text-[#9ca3af]">
               {DATE_FORMATTER.format(new Date(vod.created_at)).replace(',', '')}

@@ -130,8 +130,10 @@ export default function Games(props: GamesProps) {
     if (!part || !games || typeof part.part !== 'number' || part.part < 1) return;
     const currentGame = games[part.part - 1];
     if (!currentGame) return;
-    navigate(`?game_id=${currentGame.id}`);
-  }, [part?.part, games]);
+    const search = new URLSearchParams(location.search);
+    if (search.get('game_id') === currentGame.id) return;
+    navigate(`?game_id=${currentGame.id}`, { replace: true });
+  }, [part?.part, games, location.search]);
 
   const handlePartChange = (evt: ChangeEvent<HTMLSelectElement>) => {
     const tmpPart = parseInt(evt.target.value) + 1;
