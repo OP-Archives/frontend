@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ChaptersMenu from './ChaptersMenu';
@@ -6,6 +7,7 @@ import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useTenantContext } from '@/contexts/TenantContext';
 import { useTypedParams } from '@/hooks/useTypedParams';
+import { cardHover } from '@/motion/variants';
 import type { VodListItem } from '@/types';
 import { toHHMMSS } from '@/utils/helpers';
 
@@ -36,8 +38,14 @@ const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListIte
 
   return (
     <div className="mb-2 block w-full min-w-0">
-      <div className="group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] transition-shadow duration-200 hover:shadow-[0_8px_20px_rgba(99,102,241,0.25)]">
-        <div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230] transition-all duration-200 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5 group-hover:shadow-[8px_8px_24px_rgba(0,0,0,0.6)]">
+      <motion.div
+        className="group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
+        variants={cardHover}
+        initial="initial"
+        whileHover="whileHover"
+        whileTap="whileTap"
+      >
+        <motion.div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
           {DEFAULT_VOD ? (
             <Link to={DEFAULT_VOD} className="absolute inset-0 block">
               {DEFAULT_THUMBNAIL ? (
@@ -69,7 +77,11 @@ const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListIte
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
           )}
-          <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
+          <motion.div
+            className="shadow-glow pointer-events-none absolute inset-0"
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+          />
           {vod.is_live && (
             <div className="absolute top-2 left-2 z-10">
               <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
@@ -97,8 +109,8 @@ const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListIte
           <div className="absolute right-0 bottom-0">
             <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration)}</span>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       <div className="mt-1 mb-1 flex cursor-default items-center">
         {chapterCount > 0 && (
           <div className="mr-2 shrink-0">

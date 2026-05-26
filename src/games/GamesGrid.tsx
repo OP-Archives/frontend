@@ -1,5 +1,7 @@
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
+import { staggerGrid, staggerItem, cardHover } from '@/motion/variants';
 import type { GameData } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 
@@ -58,13 +60,31 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
 
   if (games && games.length > 0) {
     return (
-      <div
-        className={`mt-2 grid grid-cols-2 gap-6 transition-opacity duration-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+      <motion.div
+        className={`mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+        variants={staggerGrid}
+        initial="hidden"
+        animate="visible"
       >
         {games.map((game: GameData) => (
-          <div key={game.id} className="block w-full min-w-0 cursor-pointer">
-            <div className="group relative aspect-video w-full rounded-md bg-[#6366f1] transition-shadow duration-200 group-hover:shadow-[0_8px_20px_rgba(99,102,241,0.25)]">
-              <div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230] transition-all duration-200 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5 group-hover:shadow-[8px_8px_24px_rgba(0,0,0,0.6)]">
+          <motion.div
+            key={game.id}
+            variants={staggerItem}
+            initial="hidden"
+            animate="visible"
+            className="block w-full min-w-0 cursor-pointer"
+          >
+            <motion.div
+              className="group relative aspect-video w-full rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
+              variants={cardHover}
+              initial="initial"
+              whileHover="whileHover"
+              whileTap="whileTap"
+            >
+              <motion.div
+                className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]"
+                whileHover={{ x: -6, y: -6 }}
+              >
                 <a href={`/${tenant}/games/${game.vod_id}?game_id=${game.id}`}>
                   {game.thumbnail_url ? (
                     <img className="thumbnail h-full w-full object-cover" alt="" src={game.thumbnail_url} />
@@ -72,7 +92,11 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
                     <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
                   )}
                 </a>
-                <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
+                <motion.div
+                  className="shadow-glow pointer-events-none absolute inset-0"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                />
                 <div className="pointer-events-none absolute inset-0">
                   <div className="absolute bottom-0 left-0">
                     <span className="bg-black/60 p-1.5 text-xs text-white">
@@ -85,8 +109,8 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
                     <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(game.duration)}</span>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
             <div className="mt-1 mb-1 flex cursor-default items-start">
               {game.chapter_image && (
                 <div className="mr-2 shrink-0">
@@ -113,9 +137,9 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     );
   }
 

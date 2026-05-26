@@ -1,3 +1,4 @@
+import { MotionConfig } from 'framer-motion';
 import { BrowserRouter, Routes, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes/AppRoutes';
 import { TenantRouteContext } from './routes/TenantRouteContext';
@@ -33,8 +34,10 @@ export function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <AppLayout />
-        <Footer className="z-10 shrink-0" />
+        <MotionConfig transition={{ duration: 0.25, ease: [0.25, 0.4, 0.25, 1] as const }} reducedMotion="user">
+          <AppLayout />
+          <Footer className="z-10 shrink-0" />
+        </MotionConfig>
       </ErrorBoundary>
     </BrowserRouter>
   );

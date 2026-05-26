@@ -1,4 +1,6 @@
+import { motion } from 'framer-motion';
 import VodCard from './VodCard';
+import { staggerGrid, staggerItem } from '@/motion/variants';
 import type { VodListItem } from '@/types';
 
 interface VodsGridProps {
@@ -68,13 +70,18 @@ export function VodsGrid({ vods, isLoading, isFetching, limit }: VodsGridProps) 
 
   if (vods && vods.length > 0) {
     return (
-      <div
-        className={`mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-6 transition-opacity duration-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+      <motion.div
+        className={`mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+        variants={staggerGrid}
+        initial="hidden"
+        animate="visible"
       >
         {vods.map((vod: VodListItem, index: number) => (
-          <VodCard key={vod.id} vod={vod} priority={index < 10} />
+          <motion.div key={vod.id} variants={staggerItem} initial="hidden" animate="visible">
+            <VodCard vod={vod} priority={index < 10} />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     );
   }
 

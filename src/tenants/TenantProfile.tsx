@@ -1,4 +1,5 @@
-import { useParams, useLocation } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { TenantContent } from './TenantContent';
 import { TenantProfileCard } from './TenantProfileCard';
 import { TenantTabs } from './TenantTabs';
@@ -6,6 +7,7 @@ import { Loading } from '@/components/ui/Loading';
 import { useTenantContext } from '@/contexts/TenantContext';
 
 export function TenantProfile() {
+  const navigate = useNavigate();
   const { tenant } = useParams<{ tenant: string }>();
   const location = useLocation();
   const { tenant: tenantData, isLoading } = useTenantContext();
@@ -17,6 +19,18 @@ export function TenantProfile() {
     { label: 'Games', path: `/${tenant}/games`, visible: !!tenantData?.games },
     { label: 'Library', path: `/${tenant}/library`, visible: !!hasContent },
   ];
+
+  const isIndexRoute = location.pathname === `/${tenant}`;
+
+  useLayoutEffect(() => {
+    if (isIndexRoute && !isLoading && tenantData) {
+      if (tenantData?.vods) {
+        navigate('vods', { replace: true });
+      } else if (tenantData?.games) {
+        navigate('games', { replace: true });
+      }
+    }
+  }, [isIndexRoute, navigate, tenantData?.vods, tenantData?.games, isLoading]);
 
   if (isLoading || !tenantData) {
     return (

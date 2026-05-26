@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { ReactNode, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -62,25 +63,31 @@ export default function CustomWidthTooltip({ title, placement = 'top', children 
     >
       {children}
 
-      {isHovered &&
-        createPortal(
-          <div
-            className="pointer-events-none fixed z-[1300] w-max max-w-[calc(100vw-2rem)] animate-[fadeIn_0.2s_ease-out]"
-            style={{
-              top: coords.top,
-              left: coords.left,
-              transform: getTransform(),
-            }}
-          >
-            <div
-              className="rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 text-sm break-words whitespace-normal text-white shadow-lg"
-              style={{ maxWidth: 'min(400px, calc(100vw - 2rem))' }}
+      <AnimatePresence>
+        {isHovered &&
+          createPortal(
+            <motion.div
+              className="pointer-events-none fixed z-[1300] w-max max-w-[calc(100vw-2rem)]"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15, ease: [0.25, 0.4, 0.25, 1] }}
+              style={{
+                top: coords.top,
+                left: coords.left,
+                transform: getTransform(),
+              }}
             >
-              {title}
-            </div>
-          </div>,
-          document.body
-        )}
+              <div
+                className="rounded border border-[#222230] bg-[#16161e] px-3 py-1.5 text-sm break-words whitespace-normal text-white shadow-lg"
+                style={{ maxWidth: 'min(400px, calc(100vw - 2rem))' }}
+              >
+                {title}
+              </div>
+            </motion.div>,
+            document.body
+          )}
+      </AnimatePresence>
     </div>
   );
 }

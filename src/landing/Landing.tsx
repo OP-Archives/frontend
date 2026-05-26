@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
@@ -6,6 +7,7 @@ import { BlurredBackground } from '@/components/BlurredBackground';
 import { Loading } from '@/components/ui/Loading';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useTenants } from '@/hooks/useTenants';
+import { staggerGrid, staggerItem } from '@/motion/variants';
 
 const platformConfig: Record<string, { icon: typeof TwitchIcon; color: string }> = {
   twitch: { icon: TwitchIcon, color: '#9146FF' },
@@ -62,7 +64,12 @@ export function Landing() {
               <p className="mt-1 text-sm text-[#9ca3af]">{error instanceof Error ? error.message : 'Unknown error'}</p>
             </div>
           ) : (
-            <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+              variants={staggerGrid}
+              initial="hidden"
+              animate="visible"
+            >
               {tenants?.map(
                 (tenant: {
                   id: string;
@@ -71,11 +78,14 @@ export function Landing() {
                   status: string;
                   platforms: { name: string; enabled: boolean; id: string | null }[];
                 }) => (
-                  <div
+                  <motion.div
                     key={tenant.id}
+                    variants={staggerItem}
+                    initial="hidden"
+                    animate="visible"
                     onClick={(e) => {
                       if (e.target instanceof HTMLElement && e.target.closest('a')) return;
-                      navigate(`/${tenant.id}/vods`);
+                      navigate(`/${tenant.id}`);
                     }}
                     className="group flex cursor-pointer items-start gap-3 rounded-md border border-transparent bg-[#16161e]/80 p-3 backdrop-blur-sm transition-all hover:border-[#222230] hover:bg-[#16161e]"
                   >
@@ -125,10 +135,10 @@ export function Landing() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 )
               )}
-            </div>
+            </motion.div>
           )}
 
           {(!tenants || tenants.length === 0) && !isLoading && (

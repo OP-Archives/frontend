@@ -18,7 +18,6 @@ export const AppRoutes = (
     <Route path="start" element={<StartArchiving />} />
     <Route path="leave" element={<LeaveSiteConfirmation />} />
     <Route path=":tenant" element={<TenantProfile />}>
-      <Route index element={<Vods />} />
       <Route path="games" element={<Games />} />
       <Route path="games/:vodId" element={<Vod />} />
       <Route path="library" element={<Library />} />

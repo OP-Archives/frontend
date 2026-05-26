@@ -13,9 +13,10 @@ export function BlurredBackground({ imageUrl }: BlurredBackgroundProps) {
         className="fixed inset-0 z-[-1]"
         style={{
           backgroundImage: `url(${src})`,
-          backgroundSize: 'cover',
+          backgroundSize: 'contain',
           backgroundPosition: 'center',
-          filter: 'blur(10px) saturate(1.2)',
+          backgroundRepeat: 'no-repeat',
+          filter: 'saturate(1.2)',
           transform: 'scale(1.2)',
         }}
       />

@@ -260,6 +260,7 @@ export interface Tenant {
   cdn: TenantCdn;
   games: boolean;
   vods: boolean;
+  banner_image_url: string | null;
 }
 
 export interface ChapterEntry {

@@ -1,9 +1,11 @@
+import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useScrollCarousel } from '@/hooks/useScrollCarousel';
 import { useTypedParams } from '@/hooks/useTypedParams';
+import { cardHover } from '@/motion/variants';
 import type { VODNavigation, GameEntry, VodListItem, PartInfo } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 import ChaptersMenu from '@/vods/ChaptersMenu';
@@ -64,12 +66,16 @@ export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation; isCurren
 
   return (
     <div className="mb-2 block w-full min-w-0">
-      <div
-        className={`group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] transition-shadow duration-200 hover:shadow-[0_8px_20px_rgba(99,102,241,0.25)] ${
+      <motion.div
+        className={`group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)] ${
           isCurrent ? 'ring-2 ring-[#6366f1]' : ''
         }`}
+        variants={cardHover}
+        initial="initial"
+        whileHover="whileHover"
+        whileTap="whileTap"
       >
-        <div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230] transition-all duration-200 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5 group-hover:shadow-[8px_8px_24px_rgba(0,0,0,0.6)]">
+        <motion.div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
           {thumbnail ? (
             <img
               className="thumbnail h-full w-full object-cover"
@@ -84,7 +90,11 @@ export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation; isCurren
             <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
           )}
           {isCurrent || vod.is_live ? null : <Link to={getLink(vod.id)} className="absolute inset-0 block" />}
-          <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
+          <motion.div
+            className="shadow-glow pointer-events-none absolute inset-0"
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+          />
           {vod.is_live && (
             <div className="absolute top-2 left-2 z-10">
               <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
@@ -114,8 +124,8 @@ export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation; isCurren
               <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration ?? 0)}</span>
             </div>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       <div className="mt-1 mb-1 flex cursor-default items-start">
         {(vod.chapters || []).length > 0 && (
           <div className="mr-2 shrink-0">
@@ -245,12 +255,19 @@ export function RecentItemsGames({
 
               return (
                 <div key={game.id} className="min-w-0 flex-[0_0_calc((100%-32px)/5)]">
-                  <div
-                    className={`group relative aspect-video w-full rounded-md bg-[#6366f1] transition-shadow duration-200 ${
-                      isCurrent ? 'ring-2 ring-[#6366f1]' : 'group-hover:shadow-[0_8px_20px_rgba(99,102,241,0.25)]'
+                  <motion.div
+                    className={`group relative aspect-video w-full rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)] ${
+                      isCurrent ? 'ring-2 ring-[#6366f1]' : ''
                     }`}
+                    variants={cardHover}
+                    initial="initial"
+                    whileHover="whileHover"
+                    whileTap="whileTap"
                   >
-                    <div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230] transition-all duration-200 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5 group-hover:shadow-[8px_8px_24px_rgba(0,0,0,0.6)]">
+                    <motion.div
+                      className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]"
+                      whileHover={{ x: -6, y: -6 }}
+                    >
                       <button
                         type="button"
                         className="absolute inset-0 block"
@@ -281,7 +298,11 @@ export function RecentItemsGames({
                           </div>
                         )}
                       </button>
-                      <div className="shadow-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
+                      <motion.div
+                        className="shadow-glow pointer-events-none absolute inset-0"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                      />
                       {game.duration && (
                         <div className="absolute right-0 bottom-0">
                           <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(game.duration)}</span>
@@ -294,8 +315,8 @@ export function RecentItemsGames({
                           </span>
                         </div>
                       )}
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
                   <div className="mt-1 mb-1 flex cursor-default items-start">
                     {game.chapter_image && (
                       <div className="mr-2 shrink-0">

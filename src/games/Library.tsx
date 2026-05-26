@@ -1,4 +1,5 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { useDebouncedSetter } from '@/hooks/debounceHelper';
 import { useChapters, prefetchNextPageChapters } from '@/hooks/useChapters';
 import { useGamesLibrary, prefetchNextPageGamesLibrary } from '@/hooks/useGames';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { staggerGrid, staggerItem } from '@/motion/variants';
 import { Card } from '@/tenants/Card';
 import type { LibraryGameItem, LibraryChapterItem } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
@@ -167,24 +169,33 @@ export function Library() {
       {!isLoading && items.length === 0 && <p className="mt-12 text-center text-sm text-[#9ca3af]">{emptyMessage}</p>}
 
       {!isLoading && items.length > 0 && (
-        <div
-          className={`mt-2 grid grid-cols-2 gap-6 transition-opacity duration-200 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+        <motion.div
+          className={`mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+          variants={staggerGrid}
+          initial="hidden"
+          animate="visible"
         >
           {items.map((item: LibraryGameItem | LibraryChapterItem) => (
-            <Card
+            <motion.div
               key={(item as LibraryGameItem).game_id || item.game_id}
-              item={{
-                game_id: item.game_id,
-                game_name: isChaptersMode ? undefined : (item as LibraryGameItem).game_name,
-                name: isChaptersMode ? (item as LibraryChapterItem).name : undefined,
-                image: isChaptersMode ? (item as LibraryChapterItem).image : undefined,
-                chapter_image: isChaptersMode ? undefined : (item as LibraryGameItem).chapter_image,
-                count: item.count,
-              }}
-              type={isChaptersMode ? 'chapters' : 'games'}
-            />
+              variants={staggerItem}
+              initial="hidden"
+              animate="visible"
+            >
+              <Card
+                item={{
+                  game_id: item.game_id,
+                  game_name: isChaptersMode ? undefined : (item as LibraryGameItem).game_name,
+                  name: isChaptersMode ? (item as LibraryChapterItem).name : undefined,
+                  image: isChaptersMode ? (item as LibraryChapterItem).image : undefined,
+                  chapter_image: isChaptersMode ? undefined : (item as LibraryGameItem).chapter_image,
+                  count: item.count,
+                }}
+                type={isChaptersMode ? 'chapters' : 'games'}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
       <PaginationControls
         page={page}
