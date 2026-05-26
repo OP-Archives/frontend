@@ -24,7 +24,7 @@ export function Games() {
     <div className="w-full">
       <div className="mt-2 flex flex-col items-center justify-center">
         {totalGames !== null && (
-          <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{`${totalGames} Games`}</h4>
+          <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{`${totalGames} GAMES ARCHIVED`}</h4>
         )}
       </div>
       <GamesFiltersBar

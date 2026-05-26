@@ -33,7 +33,9 @@ export function Vods() {
   return (
     <div className="w-full">
       <div className="mt-2 flex flex-col items-center justify-center">
-        {totalVods !== null && <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{`${totalVods} Vods`}</h4>}
+        {totalVods !== null && (
+          <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{`${totalVods} VODS ARCHIVED`}</h4>
+        )}
       </div>
       <VodsFiltersBar
         state={state}
