@@ -147,7 +147,7 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
 
   const allItems = [...(prev || []), ...(next || []), ...(currentVod ? [currentVod] : [])]
     .filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
-    .filter((v) => !hasGames || v.games?.length || 0 > 0)
+    .filter((v) => !hasGames || (v.games?.length ?? 0) > 0)
     .sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
 
   const { showLeft, showRight, visibleItems, scrollBy, containerRef } = useScrollCarousel({

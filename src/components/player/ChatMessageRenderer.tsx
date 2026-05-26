@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import MessageTooltip from './Chat/MessageTooltip';
-import { Twemoji, testEmoji } from './Chat/Twemoji';
+import { Twemoji, emojiTest, extractEmojis } from './Chat/Twemoji';
 import { adjustUsernameColor } from './Chat/UsernameColor';
 import type { Comment, EmoteEntry, EmoteProvider, Badge, BadgeVersion } from '@/types';
 import { toHHMMSS } from '@/utils/helpers';
@@ -153,10 +153,8 @@ export function useChatMessageRenderer({
       for (let fIndex = 0; fIndex < fragments.length; fIndex++) {
         const fragment = fragments[fIndex];
 
-        if (fragment.emote || (fragment as unknown as { emoticon?: { emoticon_id: string } }).emoticon) {
-          const emoteID = fragment.emote
-            ? fragment.emote.emoteID
-            : (fragment as unknown as { emoticon: { emoticon_id: string } }).emoticon.emoticon_id;
+        if (fragment.emote || fragment.emoticon) {
+          const emoteID = fragment.emote ? fragment.emote.emoteID : fragment.emoticon!.emoticon_id;
           textFragments.push(
             renderEmoteTooltip(
               { id: emoteID, code: fragment.text, provider: 'Twitch' as EmoteProvider },
@@ -231,14 +229,34 @@ export function useChatMessageRenderer({
               }
             } else {
               lastNormalEmoteData = null;
-              if (testEmoji(word)) {
-                textFragments.push(
-                  <Twemoji key={`${keyPrefix}-frag-${fIndex}-twemoji-${word}-${i}`} options={{ className: 'twemoji' }}>
-                    {`${word} `}
-                  </Twemoji>
-                );
+              if (emojiTest(word)) {
+                const parts = extractEmojis(word);
+                for (const part of parts) {
+                  if (part.text) {
+                    textFragments.push(
+                      <span key={`${keyPrefix}-frag-${fIndex}-text-${part.text}-${i}`}>{part.text}</span>
+                    );
+                  } else {
+                    textFragments.push(
+                      <MessageTooltip
+                        key={`${keyPrefix}-frag-${fIndex}-twemoji-${part.emoji}-${i}`}
+                        title={
+                          <div className="flex w-fit flex-col items-center">
+                            <Twemoji options={{ className: 'twemoji' }}>{part.emoji}</Twemoji>
+                            <p className="block text-xs">Twitter Emotes</p>
+                          </div>
+                        }
+                      >
+                        <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                          <Twemoji options={{ className: 'twemoji' }}>{part.emoji}</Twemoji>
+                        </span>
+                      </MessageTooltip>
+                    );
+                  }
+                }
+                textFragments.push(' ');
               } else {
-                textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{`${word} `}</span>);
+                textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{word}</span>, ' ');
               }
             }
           }

@@ -131,7 +131,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
             value={currentTime}
             onChange={(e) => {
               const val = parseFloat(e.target.value);
-              onSeekChange(new Event('') as unknown as Event, val);
+              onSeekChange(e.nativeEvent, val);
             }}
             onTouchMove={handleProgressTouchMove}
             onTouchEnd={handleProgressTouchEnd}
@@ -178,7 +178,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
                   value={isMuted ? 0 : volume}
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
-                    onVolumeChange(new Event('') as unknown as Event, val);
+                    onVolumeChange(e.nativeEvent, val);
                   }}
                   onTouchStart={handleVolumeMouseDown}
                   onTouchEnd={handleVolumeTouchEnd}

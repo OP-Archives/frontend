@@ -34,7 +34,7 @@ export function useChapters(slug: string, params: ChaptersParams) {
     queryFn: ({ signal }) =>
       archiveClient.chapters.library(slug, chaptersParamsToRecord(params), { signal }).then((r) => ({
         data: r.data,
-        meta: r.meta as unknown as PaginatedMeta,
+        meta: r.meta,
       })),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
@@ -50,7 +50,7 @@ export function prefetchNextPageChapters(
     queryFn: ({ signal }) =>
       archiveClient.chapters.library(params.slug, chaptersParamsToRecord(params), { signal }).then((r) => ({
         data: r.data,
-        meta: r.meta as unknown as PaginatedMeta,
+        meta: r.meta,
       })),
     staleTime: 5 * 60 * 1000,
   });

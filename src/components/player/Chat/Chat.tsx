@@ -5,7 +5,7 @@ import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatSettingsModal from './ChatSettingsModal';
 import MessageTooltip from './MessageTooltip';
-import { Twemoji, testEmoji } from './Twemoji';
+import { Twemoji, emojiTest, extractEmojis } from './Twemoji';
 import { adjustUsernameColor } from './UsernameColor';
 import type {
   Comment,
@@ -270,15 +270,15 @@ export default function Chat(props: ChatProps) {
           throw response;
         }
         const data = response.data;
-        const hasFfz = (data as EmotesResponse)?.ffz_emotes?.length;
-        const hasBttv = (data as EmotesResponse)?.bttv_emotes?.length;
-        const has7tv = (data as EmotesResponse)?.seventv_emotes?.length;
+        const hasFfz = data.ffz_emotes?.length;
+        const hasBttv = data.bttv_emotes?.length;
+        const has7tv = data.seventv_emotes?.length;
 
         if (hasFfz || hasBttv || has7tv) {
           setEmotes((prev) => ({
-            ffz_emotes: hasFfz ? (data as EmotesResponse).ffz_emotes : prev.ffz_emotes,
-            bttv_emotes: hasBttv ? (data as EmotesResponse).bttv_emotes : prev.bttv_emotes,
-            seventv_emotes: has7tv ? (data as EmotesResponse).seventv_emotes : prev.seventv_emotes,
+            ffz_emotes: hasFfz ? data.ffz_emotes : prev.ffz_emotes,
+            bttv_emotes: hasBttv ? data.bttv_emotes : prev.bttv_emotes,
+            seventv_emotes: has7tv ? data.seventv_emotes : prev.seventv_emotes,
           }));
         }
 
@@ -365,7 +365,7 @@ export default function Chat(props: ChatProps) {
             sets?: Record<string, { emoticons: FfzEmote[] }>;
             room?: { set?: number };
           };
-          const emoticons = d.sets?.[d.room?.set as unknown as string]?.emoticons || [];
+          const emoticons = d.sets?.[String(d.room?.set)]?.emoticons || [];
           setEmotes((emotes) => ({ ...emotes, ffz_emotes: emoticons }));
         })
         .catch((e) => {
@@ -614,10 +614,8 @@ export default function Chat(props: ChatProps) {
       for (let fIndex = 0; fIndex < fragments.length; fIndex++) {
         const fragment = fragments[fIndex];
 
-        if (fragment.emote || (fragment as unknown as { emoticon?: { emoticon_id: string } }).emoticon) {
-          const emoteID = fragment.emote
-            ? fragment.emote.emoteID
-            : (fragment as unknown as { emoticon: { emoticon_id: string } }).emoticon.emoticon_id;
+        if (fragment.emote || fragment.emoticon) {
+          const emoteID = fragment.emote ? fragment.emote.emoteID : fragment.emoticon!.emoticon_id;
           textFragments.push(
             renderEmoteTooltip(
               { id: emoteID, code: fragment.text, provider: 'Twitch' as EmoteProvider },
@@ -692,14 +690,34 @@ export default function Chat(props: ChatProps) {
               }
             } else {
               lastNormalEmoteData = null;
-              if (testEmoji(word)) {
-                textFragments.push(
-                  <Twemoji key={`${keyPrefix}-frag-${fIndex}-twemoji-${word}-${i}`} options={{ className: 'twemoji' }}>
-                    {`${word} `}
-                  </Twemoji>
-                );
+              if (emojiTest(word)) {
+                const parts = extractEmojis(word);
+                for (const part of parts) {
+                  if (part.text) {
+                    textFragments.push(
+                      <span key={`${keyPrefix}-frag-${fIndex}-text-${part.text}-${i}`}>{part.text}</span>
+                    );
+                  } else {
+                    textFragments.push(
+                      <MessageTooltip
+                        key={`${keyPrefix}-frag-${fIndex}-twemoji-${part.emoji}-${i}`}
+                        title={
+                          <div className="flex w-fit flex-col items-center">
+                            <Twemoji options={{ className: 'twemoji' }}>{part.emoji}</Twemoji>
+                            <p className="block text-xs">Twitter Emotes</p>
+                          </div>
+                        }
+                      >
+                        <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                          <Twemoji options={{ className: 'twemoji' }}>{part.emoji}</Twemoji>
+                        </span>
+                      </MessageTooltip>
+                    );
+                  }
+                }
+                textFragments.push(' ');
               } else {
-                textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{`${word} `}</span>);
+                textFragments.push(<span key={`${keyPrefix}-frag-${fIndex}-text-${word}-${i}`}>{word}</span>, ' ');
               }
             }
           }

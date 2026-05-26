@@ -22,7 +22,9 @@ export interface CustomVodProps {
 export default function CustomVod(props: CustomVodProps) {
   const { logo = '', cdnBase, twitchId } = props;
   const location = useLocation();
-  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>() as { vodId: string; tenant: string };
+  const params = useParams<{ vodId: string; tenant: string }>();
+  const vodId = params.vodId ?? '';
+  const tenant = params.tenant ?? '';
   const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
@@ -67,7 +69,7 @@ export default function CustomVod(props: CustomVodProps) {
         if (!response.success) {
           throw response;
         }
-        setVod(response.data as unknown as VOD);
+        setVod(response.data);
       } catch (e) {
         if ((e as Error).name !== 'AbortError') {
           console.error(e);
@@ -165,6 +167,7 @@ export default function CustomVod(props: CustomVodProps) {
                     duration: vod.duration,
                     created_at: vod.created_at,
                     thumbnail_url: vod.vod_uploads?.[0]?.thumbnail_url || null,
+                    is_live: vod.is_live,
                     chapters: vod.chapters,
                   }}
                 />

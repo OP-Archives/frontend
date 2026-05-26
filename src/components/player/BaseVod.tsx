@@ -230,7 +230,7 @@ export default function BaseVod(props: BaseVodProps) {
               {isYoutubeVod && youtube!.length > 1 && (
                 <select
                   value={part!.part - 1}
-                  onChange={(e) => handlePartChange?.(e as unknown as ChangeEvent<HTMLSelectElement>)}
+                  onChange={(e) => handlePartChange?.(e)}
                   className="h-7 appearance-none rounded-md border border-[#222230] bg-[#16161e] px-2 pr-6 text-xs text-white transition-colors focus:border-[#6366f1] focus:outline-none sm:h-9 sm:pr-8 sm:text-sm"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,

@@ -42,15 +42,15 @@ export function useChatEmotes({ channel, vodId, twitchId }: UseChatEmotesOptions
         const response = await archiveClient.vods.emotes(channel, vodId);
         if (!response.success) throw response;
         const data = response.data;
-        const hasFfz = (data as EmotesResponse)?.ffz_emotes?.length;
-        const hasBttv = (data as EmotesResponse)?.bttv_emotes?.length;
-        const has7tv = (data as EmotesResponse)?.seventv_emotes?.length;
+        const hasFfz = data.ffz_emotes?.length;
+        const hasBttv = data.bttv_emotes?.length;
+        const has7tv = data.seventv_emotes?.length;
 
         if (hasFfz || hasBttv || has7tv) {
           setEmotes((prev) => ({
-            ffz_emotes: hasFfz ? (data as EmotesResponse).ffz_emotes : prev.ffz_emotes,
-            bttv_emotes: hasBttv ? (data as EmotesResponse).bttv_emotes : prev.bttv_emotes,
-            seventv_emotes: has7tv ? (data as EmotesResponse).seventv_emotes : prev.seventv_emotes,
+            ffz_emotes: hasFfz ? data.ffz_emotes : prev.ffz_emotes,
+            bttv_emotes: hasBttv ? data.bttv_emotes : prev.bttv_emotes,
+            seventv_emotes: has7tv ? data.seventv_emotes : prev.seventv_emotes,
           }));
         }
 
@@ -126,7 +126,7 @@ export function useChatEmotes({ channel, vodId, twitchId }: UseChatEmotesOptions
         .then((data) => {
           if ((data as { status: number }).status >= 400) return;
           const d = data as { sets?: Record<string, { emoticons: FfzEmote[] }>; room?: { set?: number } };
-          const emoticons = d.sets?.[d.room?.set as unknown as string]?.emoticons || [];
+          const emoticons = d.sets?.[String(d.room?.set)]?.emoticons || [];
           setEmotes((emotes) => ({ ...emotes, ffz_emotes: emoticons }));
         })
         .catch((e) => {

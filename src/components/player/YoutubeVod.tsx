@@ -23,7 +23,8 @@ export interface YoutubeVodProps {
 export default function YoutubeVod(props: YoutubeVodProps) {
   const { type, logo = '', twitchId, origin } = props;
   const location = useLocation();
-  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>() as { vodId: string; tenant: string };
+  const params = useParams<{ vodId: string; tenant: string }>();
+  const { vodId = '', tenant = '' } = params;
   const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
@@ -69,7 +70,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
         if (!response.success) {
           throw response;
         }
-        const data = response.data as unknown as VOD;
+        const data = response.data;
         setVod(data);
         if (!type) {
           const useType = data.vod_uploads.some((upload: VODUpload) => upload.type === 'live') ? 'live' : 'vod';
@@ -216,6 +217,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
                     duration: vod.duration,
                     created_at: vod.created_at,
                     thumbnail_url: vod.vod_uploads?.[0]?.thumbnail_url || null,
+                    is_live: vod.is_live,
                     chapters: vod.chapters,
                   }}
                 />

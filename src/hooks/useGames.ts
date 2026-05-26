@@ -38,7 +38,7 @@ export function useGames(slug: string, params: GamesQueryParams) {
     queryFn: ({ signal }) =>
       archiveClient.games.list(slug, toRecord(params), { signal }).then((r) => ({
         data: r.data,
-        meta: r.meta as unknown as PaginatedMeta,
+        meta: r.meta,
       })),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
@@ -54,7 +54,7 @@ export function prefetchNextPageGames(
     queryFn: ({ signal }) =>
       archiveClient.games.list(params.slug, toRecord(params), { signal }).then((r) => ({
         data: r.data,
-        meta: r.meta as unknown as PaginatedMeta,
+        meta: r.meta,
       })),
     staleTime: 5 * 60 * 1000,
   });
@@ -90,7 +90,7 @@ export function useGamesLibrary(slug: string, params: GamesLibraryParams) {
     queryFn: () =>
       archiveClient.games.library(slug, libraryParamsToRecord(params)).then((r) => ({
         data: r.data,
-        meta: r.meta as unknown as PaginatedMeta,
+        meta: r.meta,
       })),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
@@ -106,7 +106,7 @@ export function prefetchNextPageGamesLibrary(
     queryFn: () =>
       archiveClient.games.library(params.slug, libraryParamsToRecord(params)).then((r) => ({
         data: r.data,
-        meta: r.meta as unknown as PaginatedMeta,
+        meta: r.meta,
       })),
     staleTime: 5 * 60 * 1000,
   });

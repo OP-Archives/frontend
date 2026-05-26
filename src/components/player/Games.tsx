@@ -20,7 +20,8 @@ export interface GamesProps {
 export default function Games(props: GamesProps) {
   const { logo = '', twitchId } = props;
   const location = useLocation();
-  const { vodId, tenant } = useParams<{ vodId: string; tenant: string }>() as { vodId: string; tenant: string };
+  const params = useParams<{ vodId: string; tenant: string }>();
+  const { vodId = '', tenant = '' } = params;
   const channel = tenant;
   const { tenant: tenantData } = useTenantContext();
   const [vod, setVod] = useState<VOD | undefined>(undefined);
@@ -67,7 +68,7 @@ export default function Games(props: GamesProps) {
         if (!response.success) {
           throw response;
         }
-        setVod(response.data as unknown as VOD);
+        setVod(response.data);
       } catch (e) {
         if ((e as Error).name !== 'AbortError') {
           console.error(e);
