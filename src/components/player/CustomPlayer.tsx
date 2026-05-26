@@ -2,7 +2,7 @@ import { Play, Loader2 } from 'lucide-react';
 import { useRef, ChangeEvent } from 'react';
 import PlayerControls from './PlayerControls';
 import { useCustomPlayer } from '@/hooks/useCustomPlayer';
-import type { VodDetail, PlayerState, PlayerSettings } from '@/types';
+import type { VodDetail, PlayerState, PlayerSettings, PlayerSource } from '@/types';
 
 export interface PlayerProps {
   setCurrentTime: (_time: number) => void;
@@ -39,6 +39,7 @@ export default function Player(props: PlayerProps) {
   } = props;
 
   const playerContainerRef = useRef<HTMLDivElement | null>(null);
+  const originalSourceRef = useRef<PlayerSource>(undefined);
 
   const {
     source,
@@ -149,6 +150,24 @@ export default function Player(props: PlayerProps) {
             {isBuffering && (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <Loader2 className="h-10 w-10 animate-spin text-white/80" />
+              </div>
+            )}
+
+            {fileError && (
+              <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80">
+                <div className="mb-4 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-sm text-red-200">
+                  {fileError}
+                </div>
+                <button
+                  onClick={() => {
+                    originalSourceRef.current = source;
+                    setSource(undefined);
+                    setTimeout(() => setSource(originalSourceRef.current), 100);
+                  }}
+                  className="rounded-lg bg-[#6366f1] px-4 py-2 text-white transition-colors hover:bg-[#818cf8]"
+                >
+                  Retry
+                </button>
               </div>
             )}
 

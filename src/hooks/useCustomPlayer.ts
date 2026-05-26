@@ -100,33 +100,8 @@ export function useCustomPlayer({
   });
 
   return {
-    source: hlsPlayer.source,
-    setSource: hlsPlayer.setSource,
-    fileError: hlsPlayer.fileError,
-    isPlaying: playerState.isPlaying,
-    volume: playerState.volume,
-    isMuted: playerState.isMuted,
-    currentTime: playerState.currentTime,
-    duration: playerState.duration,
-    isFullscreen: playerState.isFullscreen,
-    playbackSpeed: playerState.playbackSpeed,
-    isTouchDevice: playerState.isTouchDevice,
-    playIconSize: playerState.playIconSize,
-    isBuffering: playerState.isBuffering,
-    toggleFullscreen: videoControls.toggleFullscreen,
-    togglePiP: videoControls.togglePiP,
-    togglePlayPause: videoControls.togglePlayPause,
-    toggleMute: videoControls.toggleMute,
-    handleVolumeChange: videoControls.handleVolumeChange,
-    handleSeekChange: videoControls.handleSeekChange,
-    handlePlaybackSpeedChange: videoControls.handlePlaybackSpeedChange,
-    handleError: videoControls.handleError,
-    timeUpdate: videoControls.timeUpdate,
-    handlePlay: videoControls.handlePlay,
-    handlePause: videoControls.handlePause,
-    handleEnded: videoControls.handleEnded,
-    handleWaiting: videoControls.handleWaiting,
-    handlePlaying: videoControls.handlePlaying,
-    handleLoadedMetadata: videoControls.handleLoadedMetadata,
-  };
+    ...hlsPlayer,
+    ...playerState,
+    ...videoControls,
+  } as UseCustomPlayerReturn;
 }

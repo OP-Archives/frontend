@@ -11,6 +11,7 @@ import { unwrap } from '@/utils/api';
 import { archiveClient } from '@/utils/archive-client';
 import { getResumePosition, saveResumePosition, clearResumePosition } from '@/utils/positionStorage';
 import { safeLocalStorage } from '@/utils/safeLocalStorage';
+import { hasGetCurrentTime } from '@/utils/typeGuards';
 
 export interface GamesProps {
   logo?: string;
@@ -115,8 +116,7 @@ export default function Games(props: GamesProps) {
         clearResumePosition(currentGame!.id, 'game_', tenant);
         break;
       case 2:
-        const ytP = playerRef.current as { getCurrentTime?(): number } | null | undefined;
-        const currentTime = ytP?.getCurrentTime?.() ?? 0;
+        const currentTime = hasGetCurrentTime(playerRef.current) ? playerRef.current.getCurrentTime() : 0;
         if (currentTime > 0) {
           saveResumePosition(currentGame!.id, currentTime, 'game_', tenant);
         }

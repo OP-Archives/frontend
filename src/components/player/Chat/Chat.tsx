@@ -22,6 +22,7 @@ import type {
 } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
 import { toHHMMSS } from '@/utils/helpers';
+import { hasGetCurrentTime, isNativeVideo } from '@/utils/typeGuards';
 
 const BASE_BTTV_EMOTE_API = 'https://api.betterttv.net/3';
 const BASE_7TV_EMOTE_API = 'https://7tv.io/v3';
@@ -143,12 +144,18 @@ export default function Chat(props: ChatProps) {
         if (i + 1 >= (part?.part ?? 1)) break;
         time += video.duration ?? 0;
       }
-      time += (current as { getCurrentTime?: () => number }).getCurrentTime?.() ?? 0;
+      if (hasGetCurrentTime(current)) {
+        time += current.getCurrentTime();
+      }
     } else if (games) {
       time += parseFloat(games![(part?.part ?? 1) - 1].start);
-      time += (current as { getCurrentTime?: () => number }).getCurrentTime?.() ?? 0;
+      if (hasGetCurrentTime(current)) {
+        time += current.getCurrentTime();
+      }
     } else {
-      time += (current as { currentTime?: number }).currentTime ?? 0;
+      if (isNativeVideo(current)) {
+        time += current.currentTime ?? 0;
+      }
     }
     time += mergedDelay;
     time += userChatDelay ?? 0;
@@ -159,9 +166,17 @@ export default function Chat(props: ChatProps) {
     const current = playerRef.current;
     if (!current) return false;
     if (isYoutubeVod || games) {
-      return (current as { getPlayerState?: () => number }).getPlayerState?.() === 1;
+      return (
+        typeof current === 'object' &&
+        current !== null &&
+        'getPlayerState' in current &&
+        (current as { getPlayerState?: () => number })?.getPlayerState?.() === 1
+      );
     }
-    return !!(current as { paused?: boolean }).paused === false;
+    if (isNativeVideo(current)) {
+      return current.paused === false;
+    }
+    return false;
   }, [isYoutubeVod, games, playerRef]);
 
   const shouldFilterMessage = useCallback(

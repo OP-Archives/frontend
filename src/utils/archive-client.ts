@@ -1,3 +1,4 @@
+import { API_TIMEOUT_MS } from './constants';
 import type {
   Tenant,
   VodListItem,
@@ -28,7 +29,7 @@ function getApiBase(): string {
 
 async function fetchJson<T>(url: string, options: FetchOptions = {}): Promise<T> {
   const timeoutController = new AbortController();
-  const timeoutId = setTimeout(() => timeoutController.abort(), 8000);
+  const timeoutId = setTimeout(() => timeoutController.abort(), API_TIMEOUT_MS);
 
   let signal: AbortSignal = timeoutController.signal;
   if (options.signal) {

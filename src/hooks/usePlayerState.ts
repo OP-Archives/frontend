@@ -1,4 +1,11 @@
 import { useState, useEffect } from 'react';
+import {
+  BREAKPOINT_SMALL,
+  BREAKPOINT_MEDIUM,
+  MAX_PLAY_ICON_SIZE,
+  MEDIUM_PLAY_ICON_SIZE,
+  SMALL_PLAY_ICON_SIZE,
+} from '@/utils/constants';
 import { loadPlayerSettings } from '@/utils/playerSettings';
 
 interface UsePlayerStateOptions {
@@ -47,12 +54,12 @@ export function usePlayerState({
   useEffect(() => {
     setIsTouchDevice(window.matchMedia('(pointer: coarse)').matches);
     const updatePlayIconSize = () => {
-      if (window.innerWidth <= 480) {
-        setPlayIconSize(48);
-      } else if (window.innerWidth <= 768) {
-        setPlayIconSize(64);
+      if (window.innerWidth <= BREAKPOINT_SMALL) {
+        setPlayIconSize(SMALL_PLAY_ICON_SIZE);
+      } else if (window.innerWidth <= BREAKPOINT_MEDIUM) {
+        setPlayIconSize(MEDIUM_PLAY_ICON_SIZE);
       } else {
-        setPlayIconSize(96);
+        setPlayIconSize(MAX_PLAY_ICON_SIZE);
       }
     };
     updatePlayIconSize();

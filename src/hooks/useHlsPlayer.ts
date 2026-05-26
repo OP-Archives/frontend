@@ -1,4 +1,4 @@
-import type Hls from 'hls.js';
+import Hls, { Events, ErrorTypes } from 'hls.js';
 import type { ErrorData } from 'hls.js';
 import { useRef, useEffect, useState } from 'react';
 import type { PlayerSource } from '@/types';
@@ -59,26 +59,27 @@ export function useHlsPlayer({ type, cdnBase, platformVodId, playerRef }: UseHls
         const hlsUrl = `${cdnBase}/videos/${platformVodId}/hls/${platformVodId}.m3u8`;
         setSource(hlsUrl);
 
-        if (playerRef.current!.canPlayType('application/vnd.apple.mpegurl')) {
-          playerRef.current!.src = hlsUrl;
+        const videoEl = playerRef.current;
+        if (!videoEl) return;
+
+        if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+          // eslint-disable-next-line react-compiler/react-compiler
+          videoEl.src = hlsUrl;
           return;
         }
 
-        const HlsClass = (await import('hls.js')).default;
-
         if (!isMounted) return;
 
-        if (HlsClass.isSupported()) {
-          hlsInstance.current = new HlsClass(hlsConfig);
+        if (Hls.isSupported()) {
+          hlsInstance.current = new Hls(hlsConfig);
           hlsInstance.current.loadSource(hlsUrl);
-          hlsInstance.current.attachMedia(playerRef.current!);
+          hlsInstance.current.attachMedia(videoEl);
 
-          hlsInstance.current.on(HlsClass.Events.ERROR, (_event: unknown, _data: unknown) => {
-            const data = _data as ErrorData;
+          hlsInstance.current.on(Events.ERROR, (_event: string, data: ErrorData) => {
             if (data.fatal) {
               switch (data.type) {
-                case HlsClass.ErrorTypes.NETWORK_ERROR:
-                case HlsClass.ErrorTypes.MEDIA_ERROR:
+                case ErrorTypes.NETWORK_ERROR:
+                case ErrorTypes.MEDIA_ERROR:
                   hlsInstance.current!.destroy();
                   break;
                 default:
