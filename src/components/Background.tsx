@@ -1,10 +1,10 @@
 import backgroundDefault from '@/assets/background.jpg';
 
-interface BlurredBackgroundProps {
+interface BackgroundProps {
   imageUrl?: string | null;
 }
 
-export function BlurredBackground({ imageUrl }: BlurredBackgroundProps) {
+export function Background({ imageUrl }: BackgroundProps) {
   const src = imageUrl || backgroundDefault;
 
   return (

@@ -18,7 +18,7 @@ export function Games() {
   } = useGamesFilters();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetching } = useGames(tenant, queryKeyParams);
+  const { data, isLoading } = useGames(tenant, queryKeyParams);
   const games = data?.data ?? null;
   const totalGames = data?.meta?.total ?? null;
   const totalPages = Math.ceil((totalGames || 0) / state.limit);
@@ -32,9 +32,9 @@ export function Games() {
   return (
     <div className="w-full">
       <div className="mt-2 flex flex-col items-center justify-center">
-        {totalGames !== null && (
-          <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{`${totalGames} GAMES ARCHIVED`}</h4>
-        )}
+        <h4 className="text-3xl font-medium text-[#6366f1] uppercase">
+          {totalGames !== null ? `${totalGames} GAMES ARCHIVED` : 'GAMES ARCHIVED'}
+        </h4>
       </div>
       <GamesFiltersBar
         state={state}
@@ -44,7 +44,7 @@ export function Games() {
         setInputGame={setInputGame}
         debouncedSetGame={debouncedSetGame}
       />
-      <GamesGrid games={games} isLoading={isLoading} isFetching={isFetching} tenant={tenant} limit={state.limit} />
+      <GamesGrid games={games} isLoading={isLoading} tenant={tenant} limit={state.limit} />
       <PaginationControls
         page={state.page}
         totalPages={totalPages}

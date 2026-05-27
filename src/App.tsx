@@ -17,9 +17,7 @@ function AppLayout() {
     >
       <Navbar />
       <main
-        className={`relative mx-auto flex w-full flex-1 flex-col ${
-          isPlayerRoute ? 'min-h-0 overflow-hidden' : 'max-w-7xl px-4'
-        }`}
+        className={`relative mx-auto flex w-full flex-1 flex-col ${isPlayerRoute ? 'max-w-full' : 'max-w-7xl px-4'}`}
       >
         <TenantRouteContext>
           <TitleManager />

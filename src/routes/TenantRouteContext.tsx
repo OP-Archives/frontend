@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import { BlurredBackground } from '@/components/BlurredBackground';
+import { Background } from '@/components/Background';
 import { TenantContext } from '@/contexts/TenantContext';
-import { pageTransition } from '@/motion/variants';
 import { archiveClient } from '@/utils/archive-client';
 
 export function TenantRouteContext({ children }: { children: React.ReactNode }) {
@@ -25,25 +23,18 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const rawCdnUrl = currentTenantData?.cdn?.baseUrl ?? '';
   const cdnBaseUrl = rawCdnUrl && !rawCdnUrl.startsWith('http') ? `https://${rawCdnUrl}` : rawCdnUrl;
 
+  const isListRoute = /^\/[^/]+\/(vods|games|library)(\/)?$/.test(location.pathname);
+  const isPlayerRouteInTenant = isPlayerRoute && isTenantRoute;
+  const routeKey = isPlayerRouteInTenant ? 'player' : isListRoute ? 'list' : 'tenant';
+
   return (
     <TenantContext.Provider value={{ tenant: currentTenantData ?? null, cdnEnabled, cdnBaseUrl, isLoading }}>
-      {isPlayerRoute ? (
-        <div className="flex flex-1 flex-col overflow-hidden">
-          {isTenantRoute && <BlurredBackground imageUrl={currentTenantData?.background_image_url || null} />}
-          <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex h-full min-h-0 flex-1 flex-col">{children}</div>
-          </div>
+      <div key={routeKey} className="flex flex-1 flex-col overflow-hidden">
+        {isTenantRoute && <Background imageUrl={currentTenantData?.background_image_url || null} />}
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex h-full min-h-0 flex-1 flex-col">{children}</div>
         </div>
-      ) : (
-        <AnimatePresence>
-          <motion.div key={location.pathname} className="flex flex-1 flex-col overflow-hidden" {...pageTransition}>
-            {isTenantRoute && <BlurredBackground imageUrl={currentTenantData?.background_image_url || null} />}
-            <div className="flex min-h-0 flex-1 flex-col">
-              <div className="flex h-full min-h-0 flex-1 flex-col">{children}</div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      )}
+      </div>
     </TenantContext.Provider>
   );
 }

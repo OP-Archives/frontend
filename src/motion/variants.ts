@@ -21,17 +21,16 @@ export const scaleIn: Variants = {
   visible: { opacity: 1, scale: 1 },
 };
 
-// Grid stagger (for card lists)
+// Grid entrance (simultaneous fade, no stagger)
 export const staggerGrid: Variants = {
-  visible: { transition: { staggerChildren: 0.05 } },
+  visible: {},
 };
 
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.3, ease: [0.25, 0.4, 0.25, 1] as const },
+    transition: { duration: 0.2, ease: [0.25, 0.4, 0.25, 1] as const },
   },
 };
 
@@ -42,11 +41,11 @@ export const cardHover: Variants = {
   whileTap: { scale: 0.98 },
 };
 
-// Page transition (slide + fade)
+// Page transition (fade only — no layout shift)
 export const pageTransition: Variants = {
-  initial: { opacity: 0, x: 16, transition: { duration: 0.25, ease: [0.25, 0.4, 0.25, 1] as const } },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.25, ease: [0.25, 0.4, 0.25, 1] as const } },
-  exit: { opacity: 0, x: -16, transition: { duration: 0.25, ease: [0.25, 0.4, 0.25, 1] as const } },
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.25, ease: [0.25, 0.4, 0.25, 1] as const } },
+  exit: { opacity: 0, transition: { duration: 0.25, ease: [0.25, 0.4, 0.25, 1] as const } },
 };
 
 // Tab indicator slide

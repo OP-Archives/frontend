@@ -1,8 +1,6 @@
-import { motion } from 'framer-motion';
 import { ArrowLeft, X } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { DatePicker } from './DatePicker';
-import { filterBar } from '@/motion/variants';
 
 interface FilterBarProps {
   mode: 'vods' | 'games' | 'library';
@@ -54,12 +52,7 @@ export default function FilterBar({
   maxDate,
 }: FilterBarProps) {
   return (
-    <motion.div
-      className="flex flex-row flex-wrap items-center gap-2 pt-1"
-      variants={filterBar}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
       {hasBackButton && (
         <button
           onClick={onBack}
@@ -116,6 +109,6 @@ export default function FilterBar({
         </div>
       )}
       {extraControls}
-    </motion.div>
+    </div>
   );
 }

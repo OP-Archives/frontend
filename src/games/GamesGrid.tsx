@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
-import { staggerGrid, staggerItem, cardHover } from '@/motion/variants';
+import { cardHover } from '@/motion/variants';
 import type { GameData } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
 
@@ -14,14 +14,11 @@ const GAME_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
 interface GamesGridProps {
   games: GameData[] | null;
   isLoading: boolean;
-  isFetching: boolean;
   tenant: string;
   limit: number;
 }
 
-export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: GamesGridProps) {
-  const isBackgroundFetching = isFetching && !isLoading;
-
+export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
   if (isLoading) {
     return (
       <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -60,20 +57,9 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
 
   if (games && games.length > 0) {
     return (
-      <motion.div
-        className={`mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
-        variants={staggerGrid}
-        initial="hidden"
-        animate="visible"
-      >
+      <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {games.map((game: GameData) => (
-          <motion.div
-            key={game.id}
-            variants={staggerItem}
-            initial="hidden"
-            animate="visible"
-            className="block w-full min-w-0 cursor-pointer"
-          >
+          <div key={game.id} className="block w-full min-w-0 cursor-pointer">
             <motion.div
               className="group relative aspect-video w-full rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
               variants={cardHover}
@@ -137,9 +123,9 @@ export function GamesGrid({ games, isLoading, isFetching, tenant, limit }: Games
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     );
   }
 

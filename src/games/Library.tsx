@@ -1,5 +1,4 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useParams } from 'react-router-dom';
@@ -8,7 +7,6 @@ import { useDebouncedSetter } from '@/hooks/debounceHelper';
 import { useChapters, prefetchNextPageChapters } from '@/hooks/useChapters';
 import { useGamesLibrary, prefetchNextPageGamesLibrary } from '@/hooks/useGames';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { staggerGrid, staggerItem } from '@/motion/variants';
 import { Card } from '@/tenants/Card';
 import type { LibraryGameItem, LibraryChapterItem } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
@@ -78,12 +76,11 @@ export function Library() {
 
   const chaptersResult = useChapters(tenant!, queryKeyParams);
   const gamesResult = useGamesLibrary(tenant!, queryKeyParams);
-  const { data, isLoading, isFetching } = isChaptersMode ? chaptersResult : gamesResult;
+  const { data, isLoading } = isChaptersMode ? chaptersResult : gamesResult;
 
   const items = data?.data ?? [];
   const total = data?.meta?.total ?? 0;
   const totalPages = Math.ceil((total || 0) / limit);
-  const isBackgroundFetching = isFetching && !isLoading;
 
   useEffect(() => {
     if (totalPages !== null && page < totalPages) {
@@ -169,19 +166,9 @@ export function Library() {
       {!isLoading && items.length === 0 && <p className="mt-12 text-center text-sm text-[#9ca3af]">{emptyMessage}</p>}
 
       {!isLoading && items.length > 0 && (
-        <motion.div
-          className={`mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
-          variants={staggerGrid}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {items.map((item: LibraryGameItem | LibraryChapterItem) => (
-            <motion.div
-              key={(item as LibraryGameItem).game_id || item.game_id}
-              variants={staggerItem}
-              initial="hidden"
-              animate="visible"
-            >
+            <div key={(item as LibraryGameItem).game_id || item.game_id}>
               <Card
                 item={{
                   game_id: item.game_id,
@@ -193,9 +180,9 @@ export function Library() {
                 }}
                 type={isChaptersMode ? 'chapters' : 'games'}
               />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       )}
       <PaginationControls
         page={page}

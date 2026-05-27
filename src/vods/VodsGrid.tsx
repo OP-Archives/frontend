@@ -1,21 +1,16 @@
-import { motion } from 'framer-motion';
 import VodCard from './VodCard';
-import { staggerGrid, staggerItem } from '@/motion/variants';
 import type { VodListItem } from '@/types';
 
 interface VodsGridProps {
   vods: VodListItem[] | null;
   isLoading: boolean;
-  isFetching: boolean;
   limit: number;
 }
 
-export function VodsGrid({ vods, isLoading, isFetching, limit }: VodsGridProps) {
-  const isBackgroundFetching = isFetching && !isLoading;
-
+export function VodsGrid({ vods, isLoading, limit }: VodsGridProps) {
   if (isLoading) {
     return (
-      <div className="mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {Array.from({ length: limit }).map((_, i) => (
           <div key={i} className="block w-full min-w-0">
             <div className="relative aspect-video w-full overflow-hidden bg-[#16161e]">
@@ -70,18 +65,13 @@ export function VodsGrid({ vods, isLoading, isFetching, limit }: VodsGridProps) 
 
   if (vods && vods.length > 0) {
     return (
-      <motion.div
-        className={`mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
-        variants={staggerGrid}
-        initial="hidden"
-        animate="visible"
-      >
+      <div className="mx-auto mt-2 grid max-w-[1600px] grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {vods.map((vod: VodListItem, index: number) => (
-          <motion.div key={vod.id} variants={staggerItem} initial="hidden" animate="visible">
+          <div key={vod.id}>
             <VodCard vod={vod} priority={index < 10} />
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     );
   }
 

@@ -23,7 +23,7 @@ export function Vods() {
   } = useVodsFilters();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isFetching } = useVods(tenant, queryKeyParams);
+  const { data, isLoading } = useVods(tenant, queryKeyParams);
   const vods = data?.data ?? null;
   const totalVods = data?.meta?.total ?? null;
   const totalPages = Math.ceil((totalVods || 0) / state.limit);
@@ -37,9 +37,9 @@ export function Vods() {
   return (
     <div className="w-full">
       <div className="mt-2 flex flex-col items-center justify-center">
-        {totalVods !== null && (
-          <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{`${totalVods} VODS ARCHIVED`}</h4>
-        )}
+        <h4 className="text-3xl font-medium text-[#6366f1] uppercase">
+          {totalVods !== null ? `${totalVods} VODS ARCHIVED` : 'VODS ARCHIVED'}
+        </h4>
       </div>
       <VodsFiltersBar
         state={state}
@@ -54,7 +54,7 @@ export function Vods() {
         debouncedSetTitle={debouncedSetTitle}
         debouncedSetGame={debouncedSetGame}
       />
-      <VodsGrid vods={vods} isLoading={isLoading} isFetching={isFetching} limit={state.limit} />
+      <VodsGrid vods={vods} isLoading={isLoading} limit={state.limit} />
       <div className="mt-6 mb-6">
         <PaginationControls
           page={state.page}

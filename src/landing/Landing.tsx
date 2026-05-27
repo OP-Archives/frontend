@@ -1,13 +1,10 @@
-import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 //import heroImage from '@/assets/shigure-ui.gif';
-import { BlurredBackground } from '@/components/BlurredBackground';
-import { Loading } from '@/components/ui/Loading';
+import { Background } from '@/components/Background';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useTenants } from '@/hooks/useTenants';
-import { staggerGrid, staggerItem } from '@/motion/variants';
 
 const platformConfig: Record<string, { icon: typeof TwitchIcon; color: string }> = {
   twitch: { icon: TwitchIcon, color: '#9146FF' },
@@ -35,7 +32,7 @@ export function Landing() {
 
   return (
     <div className="relative">
-      <BlurredBackground />
+      <Background />
 
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="flex flex-col items-center pt-16 sm:pt-20 md:pt-24">
@@ -55,8 +52,24 @@ export function Landing() {
 
           {/* Tenant Grid */}
           {isLoading ? (
-            <div className="mt-8 flex min-h-[200px] items-center justify-center">
-              <Loading />
+            <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 rounded-md border border-transparent bg-[#16161e]/80 p-3 backdrop-blur-sm"
+                >
+                  <div className="h-10 w-10 flex-shrink-0 animate-pulse overflow-hidden rounded-full bg-[#222230]" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <div className="h-4 w-24 animate-pulse rounded bg-[#222230]" />
+                    </div>
+                    <div className="mt-1 flex gap-1.5">
+                      <div className="h-4 w-4 animate-pulse rounded-full bg-[#222230]" />
+                      <div className="h-4 w-4 animate-pulse rounded-full bg-[#222230]" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : error ? (
             <div className="mt-8 text-center">
@@ -64,12 +77,7 @@ export function Landing() {
               <p className="mt-1 text-sm text-[#9ca3af]">{error instanceof Error ? error.message : 'Unknown error'}</p>
             </div>
           ) : (
-            <motion.div
-              className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
-              variants={staggerGrid}
-              initial="hidden"
-              animate="visible"
-            >
+            <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {tenants?.map(
                 (tenant: {
                   id: string;
@@ -78,11 +86,8 @@ export function Landing() {
                   status: string;
                   platforms: { name: string; enabled: boolean; id: string | null }[];
                 }) => (
-                  <motion.div
+                  <div
                     key={tenant.id}
-                    variants={staggerItem}
-                    initial="hidden"
-                    animate="visible"
                     onClick={(e) => {
                       if (e.target instanceof HTMLElement && e.target.closest('a')) return;
                       navigate(`/${tenant.id}`);
@@ -135,10 +140,10 @@ export function Landing() {
                         </div>
                       )}
                     </div>
-                  </motion.div>
+                  </div>
                 )
               )}
-            </motion.div>
+            </div>
           )}
 
           {(!tenants || tenants.length === 0) && !isLoading && (
