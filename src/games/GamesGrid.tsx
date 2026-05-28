@@ -115,9 +115,9 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
                   to={`/${tenant}/games/${game.vod_id}?game_id=${game.id}`}
                   className="inline-flex max-w-full min-w-0 no-underline"
                 >
-                  <CustomWidthTooltip title={game.title}>
+                  <CustomWidthTooltip title={game.title || game.game_name || ''}>
                     <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">
-                      {game.title}
+                      {game.title || game.game_name || ''}
                     </span>
                   </CustomWidthTooltip>
                 </Link>

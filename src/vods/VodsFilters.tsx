@@ -72,15 +72,14 @@ export function useVodsFilters() {
 
   const queryKeyParams: VodsQueryParams = useMemo(
     () => ({
-      limit: baseParams.limit ?? 20,
-      page: baseParams.page ?? 1,
+      ...baseParams,
       sort: 'created_at',
       order: 'desc',
       ...(platformState !== PLATFORMS[0] ? { platform: platformState.toLowerCase() } : {}),
       ...(state.filter === 'Title' && filterTitle ? { title: filterTitle } : {}),
       ...(state.filter === 'Game' && filterGame ? { chapter: filterGame } : {}),
     }),
-    [baseParams.limit, baseParams.page, platformState, state.filter, filterTitle, filterGame]
+    [baseParams, platformState, state.filter, filterTitle, filterGame]
   );
 
   const updateUrlParams = (updates: Record<string, string | null>) => {

@@ -51,13 +51,12 @@ export function useGamesFilters() {
 
   const queryKeyParams: GamesQueryParams = useMemo(
     () => ({
-      limit: baseParams.limit ?? 20,
-      page: baseParams.page ?? 1,
+      ...baseParams,
       sort: 'created_at' as const,
       order: 'desc' as const,
       ...(state.filter === 'Game' && filterGame ? { game_name: filterGame } : {}),
     }),
-    [baseParams.limit, baseParams.page, state.filter, filterGame]
+    [baseParams, state.filter, filterGame]
   );
 
   const updateUrlParams = (updates: Record<string, string | null>) => {

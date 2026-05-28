@@ -6,6 +6,7 @@ import { Landing } from '@/landing/Landing';
 import { About } from '@/pages/About';
 import LeaveSiteConfirmation from '@/pages/LeaveSiteConfirmation';
 import { StartArchiving } from '@/pages/StartArchiving';
+import { TenantIndex } from '@/tenants/TenantIndex';
 import { TenantProfile } from '@/tenants/TenantProfile';
 import { Vod } from '@/vods/Vod';
 import { Vods } from '@/vods/Vods';
@@ -18,7 +19,7 @@ export const AppRoutes = (
     <Route path="start" element={<StartArchiving />} />
     <Route path="leave" element={<LeaveSiteConfirmation />} />
     <Route path=":tenant" element={<TenantProfile />}>
-      <Route index element={<Vods />} />
+      <Route index element={<TenantIndex />} />
       <Route path="games" element={<Games />} />
       <Route path="games/:vodId" element={<Vod />} />
       <Route path="library" element={<Library />} />
