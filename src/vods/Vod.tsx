@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import CustomVod from '@/components/player/CustomVod';
 import Games from '@/components/player/Games';
@@ -26,7 +26,14 @@ export function Vod() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const { cdnBaseUrl } = useTenantContext();
+  const { cdnBaseUrl, tenant: tenantData } = useTenantContext();
+
+  const twitchId = useMemo(() => {
+    if (!tenantData) return undefined;
+    const p = tenantData.platforms.find((pl) => pl.name === 'twitch');
+    if (!p || !p.id) return undefined;
+    return parseInt(p.id, 10);
+  }, [tenantData]);
   const { data: vod, isLoading, error } = useVod(tenant!, vodId!);
   const [errorShown, setErrorShown] = useState(false);
 
@@ -62,15 +69,15 @@ export function Vod() {
   const renderPlayer = () => {
     switch (routeType) {
       case 'vods':
-        return <YoutubeVod />;
+        return <YoutubeVod twitchId={twitchId} />;
       case 'cdn':
-        return <CustomVod type="cdn" cdnBase={cdnBaseUrl} />;
+        return <CustomVod type="cdn" cdnBase={cdnBaseUrl} twitchId={twitchId} />;
       case 'manual':
-        return <CustomVod type="manual" />;
+        return <CustomVod type="manual" twitchId={twitchId} />;
       case 'games':
-        return <Games />;
+        return <Games twitchId={twitchId} />;
       default:
-        return <YoutubeVod />;
+        return <YoutubeVod twitchId={twitchId} />;
     }
   };
 

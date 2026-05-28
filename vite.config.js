@@ -38,19 +38,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    extensions: [
-      '.mjs',
-      '.js',
-      '.ts',
-      '.jsx',
-      '.tsx',
-      '.json',
-      '.jpg',
-      '.jpeg',
-      '.png',
-      '.gif',
-      '.webp',
-    ],
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.jpg', '.jpeg', '.png', '.gif', '.webp'],
   },
   server: {
     port: 3000,
