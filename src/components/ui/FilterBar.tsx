@@ -54,42 +54,45 @@ export default function FilterBar({
   minDate,
 }: FilterBarProps) {
   return (
-    <div className="flex flex-row flex-wrap items-center gap-1 pt-1">
-      {hasBackButton && (
-        <button
-          onClick={onBack}
-          className="border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 mr-2 flex h-9 items-center gap-1 rounded-md border px-3 text-sm transition-all duration-200"
-        >
-          <ArrowLeft size={16} /> Back
-        </button>
-      )}
-      {showFilter && (
-        <select
-          disabled={disabled || !!gameId}
-          value={filterValue}
-          onChange={(e) => onFilterChange(e.target.value)}
-          className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 mr-1 h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {filterOptions.map((data) => (
-            <option key={data} value={data}>
-              {data}
-            </option>
-          ))}
-        </select>
-      )}
+    <div className="flex flex-col flex-wrap items-stretch gap-2 pt-1 sm:flex-row sm:items-center sm:gap-1">
+      <div className="flex flex-row items-center gap-2 sm:gap-1">
+        {hasBackButton && (
+          <button
+            onClick={onBack}
+            className="border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 flex h-9 w-fit items-center gap-1 rounded-md border px-3 text-sm transition-all duration-200"
+          >
+            <ArrowLeft size={16} /> Back
+          </button>
+        )}
+        {showFilter && (
+          <select
+            disabled={disabled || !!gameId}
+            value={filterValue}
+            onChange={(e) => onFilterChange(e.target.value)}
+            className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {filterOptions.map((data) => (
+              <option key={data} value={data}>
+                {data}
+              </option>
+            ))}
+          </select>
+        )}
+        <div className="sm:hidden">{extraControls}</div>
+      </div>
       {showDateRange &&
         onDateStartChange &&
         onDateEndChange &&
         dateStartValue !== undefined &&
         dateEndValue !== undefined &&
         !gameId && (
-          <div className="ml-1 flex items-center gap-1">
+          <div className="flex w-full items-center gap-2 sm:ml-1 sm:w-auto sm:gap-1">
             <DatePicker value={dateStartValue} onChange={onDateStartChange} maxDate={maxDate} minDate={minDate} />
             <DatePicker value={dateEndValue} onChange={onDateEndChange} maxDate={maxDate} minDate={minDate} />
           </div>
         )}
       {showSearch && (
-        <div className="relative ml-1">
+        <div className="relative w-full sm:ml-1 sm:w-auto">
           <input
             type="text"
             placeholder={searchPlaceholder ?? (mode === 'vods' ? 'Search by Title' : 'Search by Game')}
@@ -98,7 +101,7 @@ export default function FilterBar({
               debouncedOnSearchChange?.(e.target.value);
             }}
             value={searchValue}
-            className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-44 rounded-md border px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
+            className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-full rounded-md border px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none sm:w-44"
           />
           {searchValue && (
             <button
@@ -110,7 +113,7 @@ export default function FilterBar({
           )}
         </div>
       )}
-      {extraControls}
+      <div className="hidden sm:block">{extraControls}</div>
     </div>
   );
 }

@@ -40,7 +40,7 @@ export function TenantProfileCard({ tenantData, centered = true }: { tenantData:
 
   return (
     <div className={`flex w-full flex-col ${centered ? 'items-center text-center' : ''}`}>
-      <div className="relative aspect-[6/1] w-full overflow-hidden rounded-lg">
+      <div className="relative aspect-[3/1] min-h-[200px] w-full overflow-hidden rounded-lg sm:aspect-[5/1] md:aspect-[6/1]">
         {tenantData.banner_image_url ? (
           <img src={tenantData.banner_image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
         ) : (

@@ -213,7 +213,7 @@ export function VodsFiltersBar({
             disabled={!!gameId}
             value={state.platform}
             onChange={changePlatform}
-            className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 ml-1 h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:ml-1"
           >
             {PLATFORMS.map((data) => (
               <option key={data} value={data}>

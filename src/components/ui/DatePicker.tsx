@@ -111,14 +111,14 @@ export function DatePicker({ value, onChange, maxDate, minDate }: DatePickerProp
   })();
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative w-full sm:w-auto">
       <input
         type="text"
         value={value}
         onChange={handleInputChange}
         onClick={() => setOpen(true)}
         placeholder="YYYY-MM-DD"
-        className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-36 rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
+        className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-full rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none sm:w-36"
       />
       {open && (
         <div className="border-border bg-bg-surface absolute z-50 mt-1 rounded-md border p-2 shadow-lg">
