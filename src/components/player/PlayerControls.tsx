@@ -116,10 +116,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
         pointerEvents: showControls ? 'auto' : 'none',
       }}
     >
-      <div
-        className="flex flex-col rounded-t-xl bg-[#0a0a0f]/85 px-2 pt-10 pb-2 backdrop-blur-md"
-        style={{ gap: '4px' }}
-      >
+      <div className="flex flex-col rounded-t-xl bg-[#0a0a0f]/85 px-2 pb-2 backdrop-blur-md" style={{ gap: '4px' }}>
         <div className="group relative flex w-full items-center">
           <div
             ref={progressTooltipRef}
