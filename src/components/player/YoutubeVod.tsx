@@ -107,6 +107,8 @@ export default function YoutubeVod(props: YoutubeVodProps) {
     return;
   }, [youtube, vod]);
 
+  const lastSaveRef = useRef<number>(0);
+
   useEffect(() => {
     if (playerState === -1 || !vodId || !playerRef.current || !youtube || !part) return;
 
@@ -118,21 +120,55 @@ export default function YoutubeVod(props: YoutubeVodProps) {
         break;
       case 2:
         const ytP = playerRef.current as { getCurrentTime?(): number } | null | undefined;
-        let currentTime = ytP?.getCurrentTime?.() ?? 0;
-        if (currentTime > 0) {
+        let pauseTime = ytP?.getCurrentTime?.() ?? 0;
+        if (pauseTime > 0) {
           if (youtube) {
             for (const video of youtube) {
               if ((video.part ?? 0) >= part.part) break;
-              currentTime += video.duration ?? 0;
+              pauseTime += video.duration ?? 0;
             }
           }
-          saveResumePosition(vodId, currentTime, 'vod_', tenant);
+          saveResumePosition(vodId, pauseTime, 'vod_', tenant);
         }
         break;
       default:
         break;
     }
     return;
+  }, [playerState, vodId, playerRef, youtube, part]);
+
+  useEffect(() => {
+    if (playerState !== 1 || !vodId || !playerRef.current || !youtube || !part) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      if (now - lastSaveRef.current > 10000) {
+        const ytP = playerRef.current as { getCurrentTime?(): number } | null | undefined;
+        let t = ytP?.getCurrentTime?.() ?? 0;
+        if (t > 0 && youtube) {
+          for (const video of youtube) {
+            if ((video.part ?? 0) >= part.part) break;
+            t += video.duration ?? 0;
+          }
+          saveResumePosition(vodId, t, 'vod_', tenant);
+          lastSaveRef.current = now;
+        }
+      }
+    }, 1000);
+
+    // Save immediately on play
+    const ytP = playerRef.current as { getCurrentTime?(): number } | null | undefined;
+    let t = ytP?.getCurrentTime?.() ?? 0;
+    if (t > 0 && youtube) {
+      for (const video of youtube) {
+        if ((video.part ?? 0) >= part.part) break;
+        t += video.duration ?? 0;
+      }
+      saveResumePosition(vodId, t, 'vod_', tenant);
+      lastSaveRef.current = Date.now();
+    }
+
+    return () => clearInterval(interval);
   }, [playerState, vodId, playerRef, youtube, part]);
 
   const handlePartChange = (evt: ChangeEvent<HTMLSelectElement>) => {

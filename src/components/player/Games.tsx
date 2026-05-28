@@ -83,26 +83,56 @@ export default function Games(props: GamesProps) {
     return;
   }, [vod, location.search]);
 
-  useEffect(() => {
-    if (playerState === -1 || !playerRef.current) return;
+  const lastSaveRef = useRef<number>(0);
 
-    const currentGame = games?.[part!.part - 1];
+  useEffect(() => {
+    if (playerState === -1 || !playerRef.current || !part || !games) return;
+
+    const currentGame = games[part.part - 1];
+    if (!currentGame) return;
 
     switch (playerState) {
       case 0:
-        clearResumePosition(currentGame!.id, 'game_', tenant);
+        clearResumePosition(currentGame.id, 'game_', tenant);
         break;
       case 2:
-        const currentTime = hasGetCurrentTime(playerRef.current) ? playerRef.current.getCurrentTime() : 0;
-        if (currentTime > 0) {
-          saveResumePosition(currentGame!.id, currentTime, 'game_', tenant);
+        const pauseTime = hasGetCurrentTime(playerRef.current) ? playerRef.current.getCurrentTime() : 0;
+        if (pauseTime > 0) {
+          saveResumePosition(currentGame.id, pauseTime, 'game_', tenant);
         }
         break;
       default:
         break;
     }
     return;
-  }, [playerState, games, playerRef, part]);
+  }, [playerState, games, playerRef, part, tenant]);
+
+  useEffect(() => {
+    if (playerState !== 1 || !playerRef.current || !part || !games) return;
+
+    const currentGame = games[part.part - 1];
+    if (!currentGame) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      if (now - lastSaveRef.current > 10000) {
+        const t = hasGetCurrentTime(playerRef.current) ? playerRef.current.getCurrentTime() : 0;
+        if (t > 0) {
+          saveResumePosition(currentGame.id, t, 'game_', tenant);
+          lastSaveRef.current = now;
+        }
+      }
+    }, 1000);
+
+    // Save immediately on play
+    const t = hasGetCurrentTime(playerRef.current) ? playerRef.current.getCurrentTime() : 0;
+    if (t > 0) {
+      saveResumePosition(currentGame.id, t, 'game_', tenant);
+      lastSaveRef.current = Date.now();
+    }
+
+    return () => clearInterval(interval);
+  }, [playerState, games, playerRef, part, tenant]);
 
   useEffect(() => {
     if (!part || !games || typeof part.part !== 'number' || part.part < 1) return;

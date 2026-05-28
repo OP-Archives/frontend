@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, ChangeEvent } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import CustomPlayer from './CustomPlayer';
 import GamesMenu from './GamesMenu';
 import VodChapters from './VodChapters';
@@ -7,7 +7,6 @@ import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import type { VodDetail, VODUpload, GameEntry, PartInfo, PlayerState, PlayerSettings, Chapter } from '@/types';
 import { toHMS } from '@/utils/helpers';
 import { loadPlayerSettings, savePlayerSettings } from '@/utils/playerSettings';
-import { saveResumePosition } from '@/utils/positionStorage';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
@@ -64,7 +63,6 @@ export default function BaseVod(props: BaseVodProps) {
   >(undefined);
   const [currentTime, setCurrentTime] = useState<number | undefined>(undefined);
   const [playerSettings, setPlayerSettings] = useState<PlayerSettings>(() => loadPlayerSettings());
-  const lastSaveRef = useRef<number>(0);
 
   useEffect(() => {
     if (!vod) return;
@@ -86,16 +84,6 @@ export default function BaseVod(props: BaseVodProps) {
       if (currentChapter) {
         setChapter(currentChapter);
       }
-    }
-
-    const now = Date.now();
-    if (now - lastSaveRef.current > 10000) {
-      const currentGame = games?.[part!.part - 1];
-      const saveId = currentGame ? currentGame.id : vod.id;
-      const prefix = currentGame ? 'game_' : 'vod_';
-      saveResumePosition(String(saveId), currentTime, prefix, tenant);
-
-      lastSaveRef.current = now;
     }
   }, [currentTime, vod, playerRef, games, part]);
 
