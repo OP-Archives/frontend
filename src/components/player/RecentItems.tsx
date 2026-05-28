@@ -329,8 +329,10 @@ export function RecentItemsGames({
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <CustomWidthTooltip title={game.title || ''}>
-                        <span className="truncate text-xs font-medium text-[#6366f1]">{game.title}</span>
+                      <CustomWidthTooltip title={game.title || game.game_name || ''}>
+                        <span className="truncate text-xs font-medium text-[#6366f1]">
+                          {game.title || game.game_name}
+                        </span>
                       </CustomWidthTooltip>
                     </div>
                   </div>
