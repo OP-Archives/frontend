@@ -112,7 +112,7 @@ function GamesMenu({ games, part, setPart }: GamesMenuProps) {
       >
         <img
           alt=""
-          src={getImage(currentGame?.chapter_image)}
+          src={getImage(currentGame?.chapter_image, 40, 53, currentGame?.game_id)}
           width={40}
           height={53}
           decoding="async"
@@ -150,7 +150,7 @@ function GamesMenu({ games, part, setPart }: GamesMenuProps) {
                     <div className="flex-shrink-0">
                       <img
                         alt=""
-                        src={getImage(game.chapter_image)}
+                        src={getImage(game.chapter_image, 40, 53, game.game_id)}
                         width={40}
                         height={53}
                         decoding="async"

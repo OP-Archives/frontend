@@ -76,6 +76,7 @@ export interface GameEntry {
   thumbnail_url?: string;
   title?: string;
   name?: string;
+  game_id?: string;
   created_at?: string;
 }
 
@@ -107,6 +108,7 @@ export interface GameData {
   chapters?: ChapterItem[];
   game_name?: string;
   chapter_image?: string;
+  game_id?: string;
 }
 
 export interface LibraryChapterItem {

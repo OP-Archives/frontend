@@ -98,18 +98,16 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
               </motion.div>
             </motion.div>
             <div className="mt-1 mb-1 flex cursor-default items-start">
-              {game.chapter_image && (
-                <div className="mr-2 shrink-0">
-                  <img
-                    alt=""
-                    src={getImage(game.chapter_image, 40, 53)}
-                    width={40}
-                    height={53}
-                    className="pointer-events-none h-[53px] w-[40px] shrink-0 object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              )}
+              <div className="mr-2 shrink-0">
+                <img
+                  alt=""
+                  src={getImage(game.chapter_image, 40, 53, game.game_id)}
+                  width={40}
+                  height={53}
+                  className="pointer-events-none h-[53px] w-[40px] shrink-0 object-cover"
+                  loading="lazy"
+                />
+              </div>
               <div className="min-w-0 flex-1">
                 <Link
                   to={`/${tenant}/games/${game.vod_id}?game_id=${game.id}`}

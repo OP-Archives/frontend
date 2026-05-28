@@ -32,18 +32,12 @@ export function Card({ item, type }: CardProps) {
           style={{ aspectRatio: '400/530' }}
         >
           <motion.div className="absolute inset-0 overflow-hidden rounded-t bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
-            {displayImage ? (
-              <img
-                src={getImage(displayImage, 400, 530)}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-[#9ca3af]">
-                No image
-              </span>
-            )}
+            <img
+              src={getImage(displayImage, 400, 530, item.game_id)}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
           </motion.div>
         </div>
       </motion.div>
