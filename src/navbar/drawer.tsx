@@ -17,10 +17,10 @@ export function Drawer() {
         <Menu className="h-6 w-6" />
       </button>
 
-      <AnimatePresence>
-        {open &&
-          createPortal(
-            <div className="fixed inset-0 z-[100] flex">
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div key="drawer-modal" className="fixed inset-0 z-[100] flex">
               <motion.div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 variants={drawerBackdrop}
@@ -127,10 +127,11 @@ export function Drawer() {
                   </div>
                 </div>
               </motion.div>
-            </div>,
-            document.body
+            </motion.div>
           )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }

@@ -153,7 +153,7 @@ export default function Player(props: PlayerProps) {
                 isPlaying ? 'pointer-events-none opacity-0 delay-75' : 'opacity-100 delay-75'
               }`}
             >
-              <Play className="h-[15%] max-h-[72px] min-h-[32px] w-[15%] max-w-[72px] min-w-[32px] text-white drop-shadow-2xl" />
+              <Play className="h-[15%] max-h-[72px] min-h-[32px] w-[15%] max-w-[72px] min-w-[32px] translate-x-1 text-white drop-shadow-2xl" />
             </div>
 
             {isBuffering && (
