@@ -171,6 +171,7 @@ export default function Games(props: GamesProps) {
         games,
         setUserChatDelay,
         playerState,
+        platform: vod?.platform,
         twitchId,
         chatOnLeft,
         setChatOnLeft,

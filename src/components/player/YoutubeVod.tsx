@@ -184,6 +184,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
         setUserChatDelay,
         playerState,
         isYoutubeVod: true,
+        platform: vod?.platform,
         twitchId,
         chatOnLeft,
         setChatOnLeft,

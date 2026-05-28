@@ -130,6 +130,7 @@ export default function CustomVod(props: CustomVodProps) {
         userChatDelay,
         setUserChatDelay,
         playerState,
+        platform: vod?.platform,
         twitchId,
         chatOnLeft,
         setChatOnLeft,

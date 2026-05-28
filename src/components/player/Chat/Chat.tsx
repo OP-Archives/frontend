@@ -84,6 +84,7 @@ export interface ChatProps {
   setPart?: (_part: PartInfo | null) => void;
   games?: GameEntry[];
   isYoutubeVod?: boolean;
+  platform: string;
   playerState: PlayerState;
   setUserChatDelay: (_v: number) => void;
   twitchId?: number;
@@ -104,6 +105,7 @@ export default function Chat(props: ChatProps) {
     games,
     isYoutubeVod,
     setUserChatDelay,
+    platform,
     twitchId,
     chatOnLeft,
     setChatOnLeft,
@@ -202,6 +204,7 @@ export default function Chat(props: ChatProps) {
   const { transformMessage, transformBadges } = useEmoteRendering({
     emotes,
     badgesRef,
+    platform,
   });
 
   const commentElements = useMemo(() => {
@@ -401,7 +404,7 @@ export default function Chat(props: ChatProps) {
     return () => {
       abortController.abort();
     };
-  }, [vodId, twitchId, channel]);
+  }, [vodId, twitchId, platform, channel]);
 
   return (
     <div

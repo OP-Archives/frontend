@@ -16,6 +16,7 @@ const BASE_TWITCH_CDN = 'https://static-cdn.jtvnw.net';
 const BASE_FFZ_EMOTE_CDN = 'https://cdn.frankerfacez.com/emote';
 const BASE_BTTV_EMOTE_CDN = 'https://cdn.betterttv.net/emote';
 const BASE_7TV_EMOTE_CDN = 'https://cdn.7tv.app/emote';
+const BASE_KICK_EMOTE_CDN = 'https://files.kick.com/emotes';
 
 const URL_REGEX = /^(https?:\/\/)?[\w.-]+\.[\w\/.-]+$/i;
 
@@ -26,6 +27,7 @@ interface UseEmoteRenderingOptions {
     seventv_emotes?: SevenTVEmote[];
   };
   badgesRef: React.RefObject<Record<'channel' | 'global', Badge[]> | undefined>;
+  platform: string;
 }
 
 interface UseEmoteRenderingReturn {
@@ -34,7 +36,7 @@ interface UseEmoteRenderingReturn {
   renderEmoteTooltip: (emote: EmoteEntry, word: string, key: string) => React.ReactElement;
 }
 
-export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOptions): UseEmoteRenderingReturn {
+export function useEmoteRendering({ emotes, badgesRef, platform }: UseEmoteRenderingOptions): UseEmoteRenderingReturn {
   const emoteLookup = useMemo(() => {
     const lookup = new Map<string, EmoteEntry>();
     const ffz = emotes?.ffz_emotes || [];
@@ -66,6 +68,8 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
         return `${BASE_BTTV_EMOTE_CDN}/${emote.id}/${size === 4 ? 2 : size}x`;
       case '7TV':
         return `${BASE_7TV_EMOTE_CDN}/${emote.id}/${size}x.webp`;
+      case 'Kick':
+        return `${BASE_KICK_EMOTE_CDN}/${emote.id}/fullsize`;
       default:
         return `${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/${size}.0`;
     }
@@ -79,6 +83,8 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
         return `${BASE_BTTV_EMOTE_CDN}/${emote.id}/1x 1x, ${BASE_BTTV_EMOTE_CDN}/${emote.id}/2x 2x, ${BASE_BTTV_EMOTE_CDN}/${emote.id}/3x 3x`;
       case '7TV':
         return `${BASE_7TV_EMOTE_CDN}/${emote.id}/1x.webp 1x, ${BASE_7TV_EMOTE_CDN}/${emote.id}/2x.webp 2x, ${BASE_7TV_EMOTE_CDN}/${emote.id}/3x.webp 3x, ${BASE_7TV_EMOTE_CDN}/${emote.id}/4x.webp 4x`;
+      case 'Kick':
+        return `${BASE_KICK_EMOTE_CDN}/${emote.id}/fullsize 1x`;
       default:
         return `${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/1.0 1x, ${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/2.0 2x, ${BASE_TWITCH_CDN}/emoticons/v2/${emote.id}/default/dark/3.0 4x`;
     }
@@ -87,6 +93,12 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
   const SEVENTV_isZeroWidth = useCallback((emote: EmoteEntry): boolean => {
     const ZERO_WIDTH = 1 << 8;
     return (emote.flags && ZERO_WIDTH) !== 0;
+  }, []);
+
+  const getEmoteImageClassName = useCallback((type: EmoteProvider): string => {
+    return type === 'Kick'
+      ? 'h-auto min-h-[28px] max-h-[32px] w-auto max-w-full border-none'
+      : 'h-auto min-h-[28px] w-auto max-w-full border-none';
   }, []);
 
   const renderEmoteTooltip = useCallback(
@@ -110,7 +122,7 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
         >
           <span style={{ display: 'inline-block', verticalAlign: 'middle' }}>
             <img
-              className="h-auto min-h-[28px] w-auto max-w-full border-none"
+              className={getEmoteImageClassName(emoteType)}
               style={{ verticalAlign: 'middle' }}
               src={getEmoteImageUrl(emote, emoteType)}
               srcSet={getEmoteImageSrcSet(emote, emoteType)}
@@ -120,7 +132,7 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
         </MessageTooltip>
       );
     },
-    [getEmoteImageUrl, getEmoteImageSrcSet]
+    [getEmoteImageUrl, getEmoteImageSrcSet, getEmoteImageClassName]
   );
 
   const renderCombinedEmoteTooltip = useCallback(
@@ -157,14 +169,14 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
         >
           <span style={{ display: 'inline-block', position: 'relative', verticalAlign: 'middle' }}>
             <img
-              className="h-auto min-h-[28px] w-auto max-w-full border-none"
+              className={getEmoteImageClassName(normalType)}
               style={{ verticalAlign: 'middle' }}
               src={getEmoteImageUrl(normalEmote, normalType)}
               srcSet={getEmoteImageSrcSet(normalEmote, normalType)}
               alt={normalEmote.code}
             />
             <img
-              className="pointer-events-none absolute top-1/2 left-1/2 h-auto w-auto max-w-full -translate-x-1/2 -translate-y-1/2 border-none align-middle"
+              className={`pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${getEmoteImageClassName(zwType)} border-none align-middle`}
               style={{ verticalAlign: 'middle' }}
               src={getEmoteImageUrl(zwEmote, zwType)}
               srcSet={getEmoteImageSrcSet(zwEmote, zwType)}
@@ -174,7 +186,7 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
         </MessageTooltip>
       );
     },
-    [getEmoteImageUrl, getEmoteImageSrcSet]
+    [getEmoteImageUrl, getEmoteImageSrcSet, getEmoteImageClassName]
   );
 
   const transformMessage = useCallback(
@@ -189,7 +201,11 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
           const emoteID = fragment.emote ? fragment.emote.emoteID : fragment.emoticon!.emoticon_id;
           textFragments.push(
             renderEmoteTooltip(
-              { id: emoteID, code: fragment.text, provider: 'Twitch' as EmoteProvider },
+              {
+                id: emoteID,
+                code: fragment.text,
+                provider: (platform.charAt(0).toUpperCase() + platform.slice(1)) as EmoteProvider,
+              },
               fragment.text,
               `${keyPrefix}-frag-${fIndex}-emote-${fragment.text}`
             ),
@@ -317,6 +333,7 @@ export function useEmoteRendering({ emotes, badgesRef }: UseEmoteRenderingOption
       SEVENTV_isZeroWidth,
       getEmoteImageUrl,
       getEmoteImageSrcSet,
+      platform,
     ]
   );
 
