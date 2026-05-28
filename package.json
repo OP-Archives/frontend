@@ -12,11 +12,11 @@
   },
   "dependencies": {
     "@daypicker/react": "^10.0.1",
-    "@tanstack/react-query": "^5.100.11",
+    "@tanstack/react-query": "^5.100.14",
     "@twemoji/api": "^17.0.2",
     "can-autoplay": "^3.0.2",
-    "date-fns": "^4.2.1",
-    "framer-motion": "^12.39.0",
+    "date-fns": "^4.3.0",
+    "framer-motion": "^12.40.0",
     "hls.js": "^1.6.16",
     "humanize-duration": "^3.33.2",
     "lucide-react": "^1.16.0",
@@ -46,8 +46,8 @@
     "svgo": "^4.0.1",
     "tailwindcss": "^4.3.0",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.59.4",
-    "vite": "^8.0.13",
+    "typescript-eslint": "^8.60.0",
+    "vite": "^8.0.14",
     "vite-plugin-compression2": "^2.5.3",
     "vite-plugin-image-optimizer": "^2.0.3"
   }
