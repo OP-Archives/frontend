@@ -1,8 +1,12 @@
 import { Play, Loader2 } from 'lucide-react';
-import { useRef, ChangeEvent } from 'react';
+import { useRef, useEffect, ChangeEvent } from 'react';
 import PlayerControls from './PlayerControls';
 import { useCustomPlayer } from '@/hooks/useCustomPlayer';
 import type { VodDetail, PlayerState, PlayerSettings, PlayerSource } from '@/types';
+
+const setVideoCurrentTime = (video: HTMLVideoElement, time: number) => {
+  video.currentTime = time;
+};
 
 export interface PlayerProps {
   setCurrentTime: (_time: number) => void;
@@ -26,6 +30,7 @@ export default function Player(props: PlayerProps) {
     setCurrentTime,
     type,
     vod,
+    timestamp,
     setDelay,
     setPlayerState,
     cdnBase,
@@ -80,6 +85,11 @@ export default function Player(props: PlayerProps) {
     defaultMuted,
     onUpdateSettings,
   });
+
+  useEffect(() => {
+    if (!playerRef.current || timestamp === undefined || !source) return;
+    setVideoCurrentTime(playerRef.current, timestamp);
+  }, [timestamp, source, playerRef]);
 
   const fileChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const file = evt.target.files![0];
