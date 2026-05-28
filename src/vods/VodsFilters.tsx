@@ -6,6 +6,7 @@ import { useListFilters } from '@/hooks/useListFilters';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTypedParams } from '@/hooks/useTypedParams';
 import type { VodsQueryParams } from '@/hooks/useVods';
+import type { Tenant } from '@/types';
 
 const FILTERS = ['Default', 'Date', 'Title', 'Game'];
 const PLATFORMS = ['All', 'Twitch', 'Kick'];
@@ -125,6 +126,7 @@ export function useVodsFilters() {
     changePlatform,
     queryKeyParams,
     enabledPlatforms,
+    tenantCtx,
     setInputGame,
     setInputTitle,
     debouncedSetTitle,
@@ -141,6 +143,7 @@ interface VodsFiltersBarProps {
   handleClearTitle: () => void;
   handleClearGame: () => void;
   enabledPlatforms: number;
+  tenantCtx: Tenant | null;
   updateUrlParams: (updates: Record<string, string | null>) => void;
   setInputGame: (val: string) => void;
   setInputTitle: (val: string) => void;
@@ -155,6 +158,7 @@ export function VodsFiltersBar({
   handleClearTitle,
   handleClearGame,
   enabledPlatforms,
+  tenantCtx,
   updateUrlParams,
   setInputGame,
   setInputTitle,
@@ -195,6 +199,7 @@ export function VodsFiltersBar({
       onDateStartChange={(val) => updateUrlParams({ from: val, page: '1' })}
       onDateEndChange={(val) => updateUrlParams({ to: val, page: '1' })}
       maxDate={new Date().toISOString().split('T')[0]}
+      minDate={tenantCtx?.created_at?.split('T')[0]}
       showDateRange={filter === 'Date'}
       showSearch={filter === 'Title' || filter === 'Game'}
       searchPlaceholder={filter === 'Game' ? 'Search by Game' : 'Search by Title'}
@@ -203,7 +208,7 @@ export function VodsFiltersBar({
       onBack={() => window.history.back()}
       hasBackButton={!!gameId}
       extraControls={
-        enabledPlatforms > 2 && (
+        enabledPlatforms > 1 && (
           <select
             disabled={!!gameId}
             value={state.platform}

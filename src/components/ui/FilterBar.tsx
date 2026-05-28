@@ -15,6 +15,7 @@ interface FilterBarProps {
   onDateStartChange?: (value: string) => void;
   onDateEndChange?: (value: string) => void;
   maxDate?: string;
+  minDate?: string;
   showDateRange?: boolean;
   showSearch?: boolean;
   disabled?: boolean;
@@ -50,9 +51,10 @@ export default function FilterBar({
   searchPlaceholder,
   debouncedOnSearchChange,
   maxDate,
+  minDate,
 }: FilterBarProps) {
   return (
-    <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
+    <div className="flex flex-row flex-wrap items-center gap-1 pt-1">
       {hasBackButton && (
         <button
           onClick={onBack}
@@ -82,8 +84,8 @@ export default function FilterBar({
         dateEndValue !== undefined &&
         !gameId && (
           <div className="ml-1 flex items-center gap-1">
-            <DatePicker value={dateStartValue} onChange={onDateStartChange} maxDate={maxDate} />
-            <DatePicker value={dateEndValue} onChange={onDateEndChange} maxDate={maxDate} />
+            <DatePicker value={dateStartValue} onChange={onDateStartChange} maxDate={maxDate} minDate={minDate} />
+            <DatePicker value={dateEndValue} onChange={onDateEndChange} maxDate={maxDate} minDate={minDate} />
           </div>
         )}
       {showSearch && (

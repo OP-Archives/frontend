@@ -67,6 +67,30 @@
   font-weight: 500;
 }
 
+.rdp-caption_dropdowns {
+  color: #f0f0f5;
+}
+
+.rdp-caption_dropdowns select {
+  background-color: #16161e;
+  color: #f0f0f5;
+  border: 1px solid #222230;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.rdp-caption_dropdowns select:hover {
+  border-color: #222230;
+}
+
+.rdp-caption_dropdowns select:focus {
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+}
+
 html {
   scroll-behavior: smooth;
   max-width: 100vw;

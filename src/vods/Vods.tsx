@@ -11,6 +11,7 @@ export function Vods() {
     state,
     queryKeyParams,
     enabledPlatforms,
+    tenantCtx,
     handleClearTitle,
     handleClearGame,
     changeFilter,
@@ -48,6 +49,7 @@ export function Vods() {
         handleClearTitle={handleClearTitle}
         handleClearGame={handleClearGame}
         enabledPlatforms={enabledPlatforms}
+        tenantCtx={tenantCtx}
         updateUrlParams={updateUrlParams}
         setInputGame={setInputGame}
         setInputTitle={setInputTitle}
