@@ -72,19 +72,3 @@ export function useVod(slug: string, vodId: string) {
     enabled: !!(slug && vodId),
   });
 }
-
-export function useVodEmotes(slug: string, vodId: string) {
-  return useQuery({
-    queryKey: ['vods', slug, vodId, 'emotes'],
-    queryFn: async () => unwrap(archiveClient.vods.emotes(slug, vodId)),
-    enabled: !!(slug && vodId),
-  });
-}
-
-export function useVodComments(slug: string, vodId: string, params?: Record<string, string>) {
-  return useQuery({
-    queryKey: ['vods', slug, vodId, 'comments', params],
-    queryFn: async () => unwrap(archiveClient.vods.comments(slug, vodId, params)),
-    enabled: !!(slug && vodId),
-  });
-}

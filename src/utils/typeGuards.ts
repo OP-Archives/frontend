@@ -1,19 +1,3 @@
-export interface YoutubePlayerApi {
-  getCurrentTime?(): number;
-  getPlayerState?(): number;
-  loadVideoById?(id: string, time?: number): void;
-  mute?(): void;
-}
-
-export interface NativeVideoPlayer {
-  currentTime?: number;
-  paused?: boolean;
-}
-
-export function isYoutubePlayer(player: unknown): player is YoutubePlayerApi {
-  return typeof player === 'object' && player !== null && 'getPlayerState' in player;
-}
-
 export function isNativeVideo(player: unknown): player is HTMLVideoElement {
   if (typeof player !== 'object' || player === null) return false;
   const el = player as Record<string, unknown>;

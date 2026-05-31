@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { parse } from 'tinyduration';
 
 export function convertTimestamp(timestamp: string): number {
@@ -36,27 +35,6 @@ export function formatTime(time: number | undefined): string {
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export function formatViews(count: number): string {
-  if (count >= 1000000) {
-    return `${(count / 1000000).toFixed(1)}M`;
-  }
-  if (count >= 1000) {
-    return `${(count / 1000).toFixed(1)}K`;
-  }
-  return String(count);
-}
-
-export function formatDate(date: string | number | Date): string {
-  const now = new Date();
-  const diff = now.getTime() - new Date(date).getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days < 1) return 'Today';
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days}d ago`;
-  return format(new Date(date), 'MMM d, yyyy');
 }
 
 export function toHMS(secs: number | string): string {

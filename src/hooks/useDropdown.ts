@@ -1,26 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 
-export interface DropdownPosition {
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-  maxWidth?: number;
-}
-
 export interface UseDropdownReturn {
   anchorEl: HTMLElement | null;
-  position: DropdownPosition;
+  position: { top?: number; bottom?: number; left?: number; right?: number; maxWidth?: number };
   isOpen: boolean;
   setMenuRef: (el: HTMLDivElement | null) => void;
-  open: (el: HTMLElement, position?: DropdownPosition) => void;
+  open: (
+    el: HTMLElement,
+    position?: { top?: number; bottom?: number; left?: number; right?: number; maxWidth?: number }
+  ) => void;
   close: () => void;
-  toggle: (el: HTMLElement, position?: DropdownPosition) => void;
+  toggle: (
+    el: HTMLElement,
+    position?: { top?: number; bottom?: number; left?: number; right?: number; maxWidth?: number }
+  ) => void;
 }
 
 export function useDropdown(initialMaxHeight?: number): UseDropdownReturn {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [position, setPosition] = useState<DropdownPosition>({});
+  const [position, setPosition] = useState<{
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+    maxWidth?: number;
+  }>({});
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,19 +71,25 @@ export function useDropdown(initialMaxHeight?: number): UseDropdownReturn {
     menuRef.current = el;
   };
 
-  const open = (el: HTMLElement, position?: DropdownPosition) => {
+  const open = (
+    el: HTMLElement,
+    position?: { top?: number; bottom?: number; left?: number; right?: number; maxWidth?: number }
+  ) => {
     setAnchorEl(el);
     if (position) {
       setPosition(position);
     }
   };
 
-  const toggle = (el: HTMLElement, position?: DropdownPosition) => {
+  const toggle = (
+    el: HTMLElement,
+    position?: { top?: number; bottom?: number; left?: number; right?: number; maxWidth?: number }
+  ) => {
     if (anchorEl) {
       setAnchorEl(null);
     } else {
       const rect = el.getBoundingClientRect();
-      const defaultPosition: DropdownPosition = {
+      const defaultPosition: { top?: number; bottom?: number; left?: number; right?: number; maxWidth?: number } = {
         top: rect.bottom + 4,
         left: rect.left,
       };

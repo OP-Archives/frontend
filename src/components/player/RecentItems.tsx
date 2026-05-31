@@ -55,105 +55,9 @@ function toVodListItem(item: VODNavigation): VodListItem {
   };
 }
 
-export function RecentVodCard({ vod, isCurrent }: { vod: VODNavigation; isCurrent: boolean }) {
-  const { vodId } = useTypedParams<{ vodId: string }>();
-  const location = useLocation();
-
-  const getLink = (newId: number) => location.pathname.replace(String(vodId), String(newId));
-
-  const vodData = toVodListItem(vod);
-  const thumbnail = 'vod_uploads' in vod ? vod.vod_uploads?.[0]?.thumbnail_url : vod.thumbnail_url || '';
-
-  return (
-    <div className="mb-2 block w-full min-w-0">
-      <motion.div
-        className={`group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)] ${
-          isCurrent ? 'ring-2 ring-[#6366f1]' : ''
-        }`}
-        variants={cardHover}
-        initial="initial"
-        whileHover="whileHover"
-        whileTap="whileTap"
-      >
-        <motion.div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
-          {thumbnail ? (
-            <img
-              className="thumbnail h-full w-full object-cover"
-              alt=""
-              src={thumbnail}
-              width={640}
-              height={360}
-              loading="lazy"
-              decoding="async"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
-          )}
-          {isCurrent || vod.is_live ? null : <Link to={getLink(vod.id)} className="absolute inset-0 block" />}
-          <motion.div
-            className="shadow-glow pointer-events-none absolute inset-0"
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-          />
-          {vod.is_live && (
-            <div className="absolute top-2 left-2 z-10">
-              <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                LIVE
-              </span>
-            </div>
-          )}
-          {(vod.platform || '') && (
-            <div className="absolute top-2 right-2 z-10">
-              <span className="inline-flex items-center justify-center rounded bg-black/60 p-1 backdrop-blur-sm">
-                {vod.platform === 'twitch' ? (
-                  <TwitchIcon width={14} height={14} className="text-[#9146FF]" />
-                ) : vod.platform === 'kick' ? (
-                  <KickIcon width={14} height={14} className="text-[#53fc18]" />
-                ) : null}
-              </span>
-            </div>
-          )}
-          <div className="absolute bottom-0 left-0">
-            <span className="bg-black/60 p-1.5 text-xs text-white">
-              {DATE_FORMATTER.format(new Date(vod.created_at || '')).replace(',', '')}
-            </span>
-          </div>
-          {(vod.duration ?? 0) > 0 && (
-            <div className="absolute right-0 bottom-0">
-              <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration ?? 0)}</span>
-            </div>
-          )}
-        </motion.div>
-      </motion.div>
-      <div className="mt-1 mb-1 flex cursor-default items-start">
-        {(vod.chapters || []).length > 0 && (
-          <div className="mr-2 shrink-0">
-            <ChaptersMenu vod={vodData} />
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          {isCurrent || vod.is_live ? (
-            <span className="inline-flex max-w-full min-w-0 no-underline">
-              <CustomWidthTooltip title={vod.title || ''}>
-                <span className="truncate text-xs font-medium text-[#6366f1]">{vod.title}</span>
-              </CustomWidthTooltip>
-            </span>
-          ) : (
-            <Link to={getLink(vod.id)} className="inline-flex max-w-full min-w-0 no-underline">
-              <CustomWidthTooltip title={vod.title || ''}>
-                <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">{vod.title}</span>
-              </CustomWidthTooltip>
-            </Link>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }: RecentItemsVodsProps) {
   const { tenant } = useTypedParams<{ tenant: string }>();
+  const location = useLocation();
 
   const allItems = [...(prev || []), ...(next || []), ...(currentVod ? [currentVod] : [])]
     .filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
@@ -194,7 +98,94 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
           >
             {visibleItems(allItems).map((item) => (
               <div key={item.id} className="min-w-0 flex-[0_0_calc((100%-32px)/5)]">
-                <RecentVodCard vod={item} isCurrent={item.id === currentId} />
+                <div className="mb-2 block w-full min-w-0">
+                  <motion.div
+                    className={`group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)] ${
+                      item.id === currentId ? 'ring-2 ring-[#6366f1]' : ''
+                    }`}
+                    variants={cardHover}
+                    initial="initial"
+                    whileHover="whileHover"
+                    whileTap="whileTap"
+                  >
+                    <motion.div
+                      className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]"
+                      whileHover={{ x: -6, y: -6 }}
+                    >
+                      {(() => {
+                        const thumbnail =
+                          'vod_uploads' in item ? item.vod_uploads?.[0]?.thumbnail_url : item.thumbnail_url || '';
+                        return thumbnail ? (
+                          <img
+                            className="thumbnail h-full w-full object-cover"
+                            alt=""
+                            src={thumbnail}
+                            width={640}
+                            height={360}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">
+                            ?
+                          </div>
+                        );
+                      })()}
+                      {item.id === currentId || item.is_live ? null : (
+                        <Link
+                          to={location.pathname.replace(String(currentId), String(item.id))}
+                          className="absolute inset-0 block"
+                        />
+                      )}
+                      <motion.div
+                        className="shadow-glow pointer-events-none absolute inset-0"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                      />
+                      {item.is_live && (
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                            LIVE
+                          </span>
+                        </div>
+                      )}
+                      {(item.platform || '') && (
+                        <div className="absolute top-2 right-2 z-10">
+                          <span className="inline-flex items-center justify-center rounded bg-black/60 p-1 backdrop-blur-sm">
+                            {item.platform === 'twitch' ? (
+                              <TwitchIcon width={14} height={14} className="text-[#9146FF]" />
+                            ) : item.platform === 'kick' ? (
+                              <KickIcon width={14} height={14} className="text-[#53fc18]" />
+                            ) : null}
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 left-0">
+                        <span className="bg-black/60 p-1.5 text-xs text-white">
+                          {DATE_FORMATTER.format(new Date(item.created_at || '')).replace(',', '')}
+                        </span>
+                      </div>
+                      {(item.duration ?? 0) > 0 && (
+                        <div className="absolute right-0 bottom-0">
+                          <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(item.duration ?? 0)}</span>
+                        </div>
+                      )}
+                    </motion.div>
+                  </motion.div>
+                  <div className="mt-1 mb-1 flex cursor-default items-start">
+                    {(item.chapters || []).length > 0 && (
+                      <div className="mr-2 shrink-0">
+                        <ChaptersMenu vod={toVodListItem(item)} />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <CustomWidthTooltip title={item.title || ''}>
+                        <span className="truncate text-xs font-medium text-[#6366f1]">{item.title}</span>
+                      </CustomWidthTooltip>
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

@@ -174,14 +174,6 @@ export interface UserBadge {
   version: string;
 }
 
-// Badges types
-export interface BadgesResponse {
-  data: {
-    channel: Badge[];
-    global: Badge[];
-  };
-}
-
 export interface Badge {
   set_id: string;
   versions: BadgeVersion[];
@@ -217,15 +209,6 @@ export interface EmoteEntry {
 }
 
 export type PlayerSource = string | { src: string; type: string; objectUrl: string } | undefined;
-
-export interface ChatSettings {
-  chatWidth?: number;
-  showTimestamp?: boolean;
-  filterWords?: string[];
-  fontFamily?: string;
-  messageFontSize?: number;
-  chatOnLeft?: boolean;
-}
 
 export interface PlayerSettings {
   volume: number;
@@ -265,35 +248,10 @@ export interface Tenant {
   banner_image_url: string | null;
 }
 
-export interface ChapterEntry {
-  game_id: string;
-  name: string;
-  image?: string;
-  count: number;
-}
-
-export interface ChaptersResponse {
-  data: ChapterEntry[];
-  meta: { total: number };
-}
-
-export interface Game {
-  game_id: string;
-  game_name: string;
-  chapter_image?: string;
-  count: number;
-  last_played?: string;
-}
-
 export interface PaginatedMeta {
   page: number;
   limit: number;
   total: number;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: PaginatedMeta;
 }
 
 export interface ApiResponse<T> {
@@ -303,11 +261,6 @@ export interface ApiResponse<T> {
 
 export interface PaginatedApiResponse<T> {
   data: T[];
-  meta: PaginatedMeta;
-}
-
-export interface PaginatedTenantsResponse {
-  data: Tenant[];
   meta: PaginatedMeta;
 }
 
