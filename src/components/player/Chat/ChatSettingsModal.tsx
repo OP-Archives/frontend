@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Plus, Trash2, Type, RotateCcw } from 'lucide-react';
+import { X, Plus, Trash2, Type, RotateCcw, AlertTriangle } from 'lucide-react';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useDebouncedCallback } from '@/hooks/debounceHelper';
 import { modalBackdrop, modalContainer } from '@/motion/variants';
@@ -65,6 +65,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   const [filterWords, setFilterWords] = useState<string[]>([]);
   const [customFont, setCustomFont] = useState('');
   const [showCustomFont, setShowCustomFont] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [rawDelay, setRawDelay] = useState(String(userChatDelay));
 
   useEffect(() => {
@@ -217,6 +218,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
     document.documentElement.style.removeProperty('--chat-font-family');
     document.documentElement.style.removeProperty('--chat-font-size-message');
     document.documentElement.style.removeProperty('--chat-font-size-timestamp');
+    setShowResetConfirm(false);
   };
 
   const sliderMin = 150;
@@ -227,7 +229,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   return (
     <AnimatePresence>
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2">
           <motion.div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             variants={modalBackdrop}
@@ -246,9 +248,9 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
             style={{ maxHeight: 'calc(100dvh - 2rem)' }}
           >
             {/* Fixed Header */}
-            <div className="flex shrink-0 items-center justify-between border-b border-[#222230] bg-[#16161e] px-4 py-3 sm:px-6 sm:py-4">
+            <div className="flex shrink-0 items-center justify-between border-b border-[#222230] bg-[#16161e] px-3 py-2 sm:px-4 sm:py-2">
               <button
-                onClick={handleResetAll}
+                onClick={() => setShowResetConfirm(true)}
                 className="text-[#9ca3af] hover:text-[#f0f0f5]"
                 title="Reset all settings to defaults"
               >
@@ -266,8 +268,8 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
             </div>
 
             {/* Scrollable Content */}
-            <div className="chat-scrollbar flex-1 overflow-y-auto p-4 sm:p-6">
-              <div className="space-y-6">
+            <div className="chat-scrollbar flex-1 overflow-y-auto p-3 sm:p-4">
+              <div className="space-y-3">
                 <div>
                   <p className="mb-2 text-sm font-medium text-[#9ca3af]">Font Family</p>
                   <div className="flex gap-2">
@@ -464,7 +466,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                       <Plus size={18} />
                     </button>
                   </div>
-                  <div className="chat-scrollbar max-h-[160px] overflow-y-auto rounded-lg border border-[#222230] bg-[#0c0c14] p-3">
+                  <div className="chat-scrollbar max-h-[120px] overflow-y-auto rounded-lg border border-[#222230] bg-[#0c0c14] p-3">
                     {filterWords.length > 0 ? (
                       <div className="flex flex-col gap-2">
                         {filterWords.map((word, index) => (
@@ -546,6 +548,40 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
               </div>
             </div>
           </motion.div>
+
+          {showResetConfirm && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+              <div
+                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                onClick={() => setShowResetConfirm(false)}
+              />
+              <div className="relative z-[61] w-full max-w-[340px] rounded-xl border border-[#222230] bg-[#16161e] p-6 shadow-2xl">
+                <div className="mb-4 flex justify-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-400">
+                    <AlertTriangle size={24} />
+                  </div>
+                </div>
+                <h3 className="mb-2 text-center text-lg font-semibold text-[#f0f0f5]">Reset All Settings?</h3>
+                <p className="mb-6 text-center text-sm text-[#9ca3af]">
+                  This will reset all your personalized chat settings back to their default values.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowResetConfirm(false)}
+                    className="flex-1 rounded-lg border border-[#222230] bg-[#222230] px-4 py-2.5 text-sm font-medium text-[#f0f0f5] transition-colors hover:bg-[#2c2c3d]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleResetAll}
+                    className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-500"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </AnimatePresence>
