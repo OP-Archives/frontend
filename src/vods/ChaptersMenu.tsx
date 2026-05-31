@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import humanize from 'humanize-duration';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropdown } from '@/hooks/useDropdown';
 import { useTypedParams } from '@/hooks/useTypedParams';
 import { dropdownMenu, menuItem } from '@/motion/variants';
 import type { VodListItem, ChapterItem } from '@/types';
-import { toHHMMSS, toHMS, getImage } from '@/utils/helpers';
+import { toHMS, getImage } from '@/utils/helpers';
 
 interface ChaptersProps {
   vod: VodListItem;
@@ -97,7 +98,9 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
                       {data.name}
                     </span>
                     {data.end !== undefined && data.duration !== undefined && (
-                      <span className="mt-0.5 text-xs text-[#9ca3af]">{toHHMMSS(data.duration)}</span>
+                      <span className="mt-0.5 text-xs text-[#9ca3af]">
+                        {humanize(data.duration * 1000, { largest: 2 })}
+                      </span>
                     )}
                   </div>
                 </a>
