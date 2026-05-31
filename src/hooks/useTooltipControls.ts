@@ -1,8 +1,6 @@
 import { useRef, useCallback } from 'react';
+import { PROGRESS_TOOLTIP_HALF_WIDTH, VOLUME_TOOLTIP_HALF_WIDTH, THUMB_WIDTH } from '@/utils/constants';
 import { formatTime } from '@/utils/helpers';
-
-const PROGRESS_TOOLTIP_HALF_WIDTH = 30;
-const VOLUME_TOOLTIP_HALF_WIDTH = 20;
 
 interface UseTooltipControlsOptions {
   duration: number;
@@ -35,7 +33,9 @@ export function useTooltipControls({ duration }: UseTooltipControlsOptions): Use
       const rect = (e.target as HTMLInputElement).getBoundingClientRect();
       const pos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
 
-      const percentage = pos / rect.width;
+      const trackWidth = Math.max(1, rect.width - THUMB_WIDTH);
+      const adjustedPos = Math.max(0, Math.min(pos - THUMB_WIDTH / 2, trackWidth));
+      const percentage = adjustedPos / trackWidth;
       const clampedPos = Math.max(PROGRESS_TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - PROGRESS_TOOLTIP_HALF_WIDTH));
 
       progressTooltipRef.current.style.left = `${clampedPos}px`;
@@ -52,7 +52,9 @@ export function useTooltipControls({ duration }: UseTooltipControlsOptions): Use
       const rect = (e.target as HTMLInputElement).getBoundingClientRect();
       const pos = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width));
 
-      const percentage = pos / rect.width;
+      const trackWidth = Math.max(1, rect.width - THUMB_WIDTH);
+      const adjustedPos = Math.max(0, Math.min(pos - THUMB_WIDTH / 2, trackWidth));
+      const percentage = adjustedPos / trackWidth;
       const clampedPos = Math.max(PROGRESS_TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - PROGRESS_TOOLTIP_HALF_WIDTH));
 
       progressTooltipRef.current.style.left = `${clampedPos}px`;
@@ -76,7 +78,9 @@ export function useTooltipControls({ duration }: UseTooltipControlsOptions): Use
     const rect = (e.target as HTMLInputElement).getBoundingClientRect();
     const pos = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
 
-    const percentage = pos / rect.width;
+    const trackWidth = Math.max(1, rect.width - THUMB_WIDTH);
+    const adjustedPos = Math.max(0, Math.min(pos - THUMB_WIDTH / 2, trackWidth));
+    const percentage = adjustedPos / trackWidth;
     const clampedPos = Math.max(VOLUME_TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - VOLUME_TOOLTIP_HALF_WIDTH));
 
     volumeTooltipRef.current.style.left = `${clampedPos}px`;
@@ -90,7 +94,9 @@ export function useTooltipControls({ duration }: UseTooltipControlsOptions): Use
     const rect = (e.target as HTMLInputElement).getBoundingClientRect();
     const pos = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width));
 
-    const percentage = pos / rect.width;
+    const trackWidth = Math.max(1, rect.width - THUMB_WIDTH);
+    const adjustedPos = Math.max(0, Math.min(pos - THUMB_WIDTH / 2, trackWidth));
+    const percentage = adjustedPos / trackWidth;
     const clampedPos = Math.max(VOLUME_TOOLTIP_HALF_WIDTH, Math.min(pos, rect.width - VOLUME_TOOLTIP_HALF_WIDTH));
 
     volumeTooltipRef.current.style.left = `${clampedPos}px`;

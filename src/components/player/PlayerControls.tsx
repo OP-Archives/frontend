@@ -128,6 +128,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
             min={0}
             max={duration || 1}
             value={currentTime}
+            step="any"
             onChange={(e) => {
               const val = parseFloat(e.target.value);
               onSeekChange(e.nativeEvent, val);
@@ -175,6 +176,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
                   min={0}
                   max={100}
                   value={isMuted ? 0 : volume}
+                  step="any"
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
                     onVolumeChange(e.nativeEvent, val);
