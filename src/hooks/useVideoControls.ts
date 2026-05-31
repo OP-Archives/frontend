@@ -2,7 +2,7 @@ import canAutoplay from 'can-autoplay';
 import { useEffect, useCallback } from 'react';
 import type { PlayerSource, PlayerSettings, PlayerState } from '@/types';
 import { sleep } from '@/utils/helpers';
-import { hasWebkitRequestFullscreen } from '@/utils/typeGuards';
+import { hasWebkitRequestFullscreen, hasWebkitEnterFullscreen } from '@/utils/typeGuards';
 
 interface UseVideoControlsOptions {
   type?: string;
@@ -77,6 +77,8 @@ export function useVideoControls({
         target.requestFullscreen();
       } else if (target && hasWebkitRequestFullscreen(target)) {
         target.webkitRequestFullscreen?.();
+      } else if (playerRef.current && hasWebkitEnterFullscreen(playerRef.current)) {
+        playerRef.current.webkitEnterFullscreen?.();
       }
 
       if (isTouchDevice) {

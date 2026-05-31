@@ -29,3 +29,7 @@ export function hasWebkitRequestFullscreen(
 ): el is HTMLElement & { webkitRequestFullscreen?: () => Promise<void> } {
   return typeof (el as { webkitRequestFullscreen?: () => void })?.webkitRequestFullscreen === 'function';
 }
+
+export function hasWebkitEnterFullscreen(el: unknown): el is HTMLVideoElement & { webkitEnterFullscreen?: () => void } {
+  return typeof (el as { webkitEnterFullscreen?: () => void })?.webkitEnterFullscreen === 'function';
+}
