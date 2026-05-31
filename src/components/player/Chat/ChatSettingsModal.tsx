@@ -65,6 +65,11 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   const [filterWords, setFilterWords] = useState<string[]>([]);
   const [customFont, setCustomFont] = useState('');
   const [showCustomFont, setShowCustomFont] = useState(false);
+  const [rawDelay, setRawDelay] = useState(String(userChatDelay));
+
+  useEffect(() => {
+    setRawDelay(String(userChatDelay));
+  }, [userChatDelay]);
 
   useEffect(() => {
     if (showModal) {
@@ -93,8 +98,9 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   }, [showModal, setFontFamily, setMessageFontSize, setChatOnLeft]);
 
   const debouncedDelayChange = useDebouncedCallback((value: unknown) => {
-    if (!isNaN(Number(value))) {
-      setUserChatDelay(Number(value));
+    const num = Number(value);
+    if (!isNaN(num)) {
+      setUserChatDelay(num);
     }
   }, 300);
 
@@ -171,7 +177,6 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
 
   const handleResetDelay = () => {
     setUserChatDelay(0);
-    saveSetting('userChatDelay', 0);
   };
 
   const handleResetWidth = () => {
@@ -385,10 +390,13 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
                   <p className="mb-2 text-sm font-medium text-[#9ca3af]">Chat Delay</p>
                   <div className="flex items-center gap-2">
                     <input
-                      type="number"
+                      type="text"
                       className="flex-1 rounded-lg border border-[#222230] bg-[#222230] px-3 py-2.5 text-sm text-[#f0f0f5] transition-all focus:border-[#6366f1] focus:outline-none"
-                      value={userChatDelay}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => debouncedDelayChange(e.target.value)}
+                      value={rawDelay}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        setRawDelay(e.target.value);
+                        debouncedDelayChange(e.target.value);
+                      }}
                       onFocus={(e: React.FocusEvent<HTMLInputElement>) => e.target.select()}
                     />
                     <span className="text-sm font-medium whitespace-nowrap text-[#9ca3af]">secs</span>

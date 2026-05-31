@@ -84,9 +84,6 @@ export function useChatSettings(): UseChatSettingsReturn {
         if (settings.chatOnLeft !== undefined) {
           setChatOnLeft(Boolean(settings.chatOnLeft));
         }
-        if (settings.userChatDelay !== undefined) {
-          setUserChatDelay(Number(settings.userChatDelay));
-        }
 
         const words = (settings.filterWords as string[]) || [];
         if (words.length > 0) {
