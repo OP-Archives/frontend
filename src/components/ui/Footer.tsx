@@ -46,6 +46,12 @@ export function Footer({ className }: FooterProps) {
           <Link to="/about" className="text-sm text-[#9ca3af] transition-colors hover:text-[#6366f1]">
             About
           </Link>
+          <Link to="/privacy" className="text-sm text-[#9ca3af] transition-colors hover:text-[#6366f1]">
+            Privacy
+          </Link>
+          <Link to="/tos" className="text-sm text-[#9ca3af] transition-colors hover:text-[#6366f1]">
+            TOS
+          </Link>
           <a
             href={`${GITHUB_REPO}/issues`}
             target="_blank"
