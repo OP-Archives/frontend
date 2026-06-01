@@ -192,3 +192,24 @@ body.theatre-mode #root > div {
 body.theatre-mode .theatre-hide {
   display: none !important;
 }
+
+/* Hide footer on mobile player routes */
+@media (max-width: 767px) and (min-height: 601px) {
+  body.player-route footer {
+    display: none !important;
+  }
+
+  body.player-route .player-wrapper {
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-height: 600px) and (min-width: 601px) {
+  body.player-route footer {
+    display: none !important;
+  }
+
+  body.player-route .player-wrapper {
+    padding-bottom: 0 !important;
+  }
+}
