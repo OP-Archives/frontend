@@ -120,5 +120,7 @@ export const archiveClient = {
   badges: {
     twitch: (slug: string) =>
       fetchJson<ApiResponse<{ channel: Badge[]; global: Badge[] }>>(`${getApiBase()}/${slug}/badges/twitch`),
+    kick: (slug: string) =>
+      fetchJson<ApiResponse<{ subscriber: Record<string, string> }>>(`${getApiBase()}/${slug}/badges/kick`),
   },
 };
