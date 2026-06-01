@@ -480,9 +480,9 @@ export function useEmoteRendering({ emotes, badgesRef, platform }: UseEmoteRende
                   />
                   <p className="block text-xs">
                     {badgeId === 'subscriber'
-                      ? version !== '1'
-                        ? `${version}-Month Subscriber`
-                        : 'Subscriber'
+                      ? version === '0' || version === '1'
+                        ? 'Subscriber'
+                        : `${version}-Month Subscriber`
                       : version !== '1'
                         ? `${badgeId} ${version}`
                         : badgeId}
