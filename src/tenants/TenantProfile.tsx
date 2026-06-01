@@ -18,7 +18,7 @@ export function TenantProfile() {
     { label: 'Library', path: `/${tenant}/library`, visible: !!hasContent },
   ];
 
-  const isPlayerRoute = /^\/[^/]+\/(vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
+  const isPlayerRoute = /^\/[^/]+\/(youtube|vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
 
   if (isLoading || !tenantData) {
     return (

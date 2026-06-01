@@ -25,6 +25,7 @@ export const AppRoutes = (
       <Route path="library" element={<Library />} />
       <Route path="vods" element={<Vods />} />
       <Route path="vods/:vodId" element={<Vod />} />
+      <Route path="youtube/:vodId" element={<Vod />} />
       <Route path="cdn/:vodId" element={<Vod />} />
       <Route path="manual/:vodId" element={<Vod />} />
     </Route>

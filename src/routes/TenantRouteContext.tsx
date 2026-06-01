@@ -8,7 +8,7 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const location = useLocation();
   const isTenantRoute = location.pathname.split('/')[1] !== undefined && location.pathname.split('/')[1] !== '';
   const currentTenant = isTenantRoute ? location.pathname.split('/')[1] : '';
-  const isPlayerRoute = /^\/[^/]+\/(vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
+  const isPlayerRoute = /^\/[^/]+\/(youtube|vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
 
   const { data: tenantRes, isLoading } = useQuery({
     queryKey: ['tenant', currentTenant],

@@ -24,7 +24,7 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
 
   const DEFAULT_VOD =
     vod.vod_uploads.length > 0
-      ? `/${tenantParam}/vods/${vod.id}`
+      ? `/${tenantParam}/youtube/${vod.id}`
       : vod.games.length > 0
         ? `/${tenantParam}/games/${vod.id}`
         : `/${tenantParam}/manual/${vod.id}`;

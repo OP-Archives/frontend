@@ -9,7 +9,7 @@ import { Navbar } from '@/navbar/navbar';
 
 function AppLayout() {
   const location = useLocation();
-  const isPlayerRoute = /^\/[^/]+\/(vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
+  const isPlayerRoute = /^\/[^/]+\/(youtube|vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
 
   return (
     <div

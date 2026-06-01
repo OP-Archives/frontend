@@ -27,7 +27,7 @@ export function TenantContent({ tenantData }: { tenantData: Tenant }) {
     return <NoContent tenantData={tenantData} />;
   }
 
-  const isPlayerRoute = /^\/[^/]+\/(vods|cdn|manual|games)\/[^/]+$/.test(currentPath);
+  const isPlayerRoute = /^\/[^/]+\/(youtube|vods|cdn|manual|games)\/[^/]+$/.test(currentPath);
 
   if (isPlayerRoute) {
     return (

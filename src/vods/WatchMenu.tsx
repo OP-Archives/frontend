@@ -20,7 +20,7 @@ export default function WatchMenu({ vod, cdnEnabled }: WatchMenuProps) {
   const isRecent = Date.now() - new Date(vod.created_at).getTime() <= 14 * 24 * 60 * 60 * 1000;
   const hasVodUploads = vod.vod_uploads.length > 0;
 
-  const youtubeUrl = `/${tenantParam}/vods/${vod.id}`;
+  const youtubeUrl = `/${tenantParam}/youtube/${vod.id}`;
   const cdnUrl = cdnEnabled && isRecent ? `/${tenantParam}/cdn/${vod.id}` : null;
   const manualUrl = `/${tenantParam}/manual/${vod.id}`;
   const gamesUrl = vod.games.length !== 0 ? `/${tenantParam}/games/${vod.id}` : null;

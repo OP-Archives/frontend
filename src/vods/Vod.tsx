@@ -14,7 +14,7 @@ export function Vod() {
   const vodId = params.vodId;
   const location = useLocation();
   const navigate = useNavigate();
-  const routeType = location.pathname.match(/\/(vods|cdn|manual|games)\//)?.[1] ?? 'vods';
+  const routeType = location.pathname.match(/\/(youtube|vods|cdn|manual|games)\//)?.[1] ?? 'youtube';
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,7 +68,7 @@ export function Vod() {
 
   const renderPlayer = () => {
     switch (routeType) {
-      case 'vods':
+      case 'youtube':
         return <YoutubeVod twitchId={twitchId} />;
       case 'cdn':
         return <CustomVod type="cdn" cdnBase={cdnBaseUrl} twitchId={twitchId} />;

@@ -19,7 +19,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
 
 const getVodLink = (vod: VodListItem, tenant: string) => {
   if (vod.is_live) return '';
-  if (vod.vod_uploads?.length > 0) return `/${tenant}/vods/${vod.id}`;
+  if (vod.vod_uploads?.length > 0) return `/${tenant}/youtube/${vod.id}`;
   if (vod.games?.length > 0) return `/${tenant}/games/${vod.id}`;
   return `/${tenant}/manual/${vod.id}`;
 };
