@@ -8,7 +8,7 @@ export function About() {
           <span className="text-[#6366f1]">op</span> <span>archive</span>
         </>
       }
-      subtitle="A platform for watching your favorite streamers' archived VODs"
+      subtitle="Watch your favorite streamers' archived VODs"
       sections={[
         {
           heading: 'What is op archive?',
