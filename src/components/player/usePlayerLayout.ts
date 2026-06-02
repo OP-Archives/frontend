@@ -14,7 +14,7 @@ export function usePlayerLayout(_vodId: string) {
   }, []);
 
   useEffect(() => {
-    const savedSettings = safeLocalStorage.getItem('chatSettings');
+    const savedSettings = safeLocalStorage.getItem('chat-settings');
     if (savedSettings) {
       try {
         const settings = JSON.parse(savedSettings) || {};

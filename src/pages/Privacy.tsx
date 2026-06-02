@@ -59,6 +59,11 @@ export function Privacy() {
                   <strong>player-settings</strong> — The viewer&apos;s player preferences, specifically volume level and
                   muted state.
                 </li>
+                <li>
+                  <strong>chat-settings</strong> — The viewer&apos;s chat preferences, including chat panel width, chat
+                  side (left/right), timestamp visibility, font family, font size, and any personal word filters the
+                  viewer has set.
+                </li>
               </ul>
               <p>
                 This data never leaves the viewer&apos;s browser and is not accessible to us. Viewers can clear this

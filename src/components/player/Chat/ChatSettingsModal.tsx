@@ -74,7 +74,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
 
   useEffect(() => {
     if (showModal) {
-      const savedSettings = safeLocalStorage.getItem('chatSettings');
+      const savedSettings = safeLocalStorage.getItem('chat-settings');
       if (savedSettings) {
         try {
           const parsed = JSON.parse(savedSettings) || {};
@@ -107,17 +107,17 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
 
   const saveSetting = (key: string, value: unknown) => {
     if (value === undefined) {
-      const savedSettings = safeLocalStorage.getItem('chatSettings');
+      const savedSettings = safeLocalStorage.getItem('chat-settings');
       if (savedSettings) {
         try {
           const settings = JSON.parse(savedSettings) || {};
           delete settings[key];
-          safeLocalStorage.setItem('chatSettings', JSON.stringify(settings));
+          safeLocalStorage.setItem('chat-settings', JSON.stringify(settings));
         } catch {}
       }
       return;
     }
-    const savedSettings = safeLocalStorage.getItem('chatSettings');
+    const savedSettings = safeLocalStorage.getItem('chat-settings');
     let settings: Record<string, unknown> = {};
     if (savedSettings) {
       try {
@@ -127,7 +127,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
       }
     }
     settings[key] = value;
-    safeLocalStorage.setItem('chatSettings', JSON.stringify(settings));
+    safeLocalStorage.setItem('chat-settings', JSON.stringify(settings));
 
     if (key === 'filterWords') {
       window.dispatchEvent(new Event('chat-settings-updated'));
@@ -208,7 +208,7 @@ export default function ChatSettingsModal(props: ChatSettingsModalProps) {
   };
 
   const handleResetAll = () => {
-    safeLocalStorage.removeItem('chatSettings');
+    safeLocalStorage.removeItem('chat-settings');
     setFilterWords([]);
     setChatWidth(DEFAULT_SETTINGS.chatWidth);
     setShowTimestamp(DEFAULT_SETTINGS.showTimestamp);

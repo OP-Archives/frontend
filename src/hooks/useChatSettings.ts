@@ -55,7 +55,7 @@ export function useChatSettings(): UseChatSettingsReturn {
   }, [filterRegex]);
 
   const loadSettings = useCallback(() => {
-    const savedSettings = safeLocalStorage.getItem('chatSettings');
+    const savedSettings = safeLocalStorage.getItem('chat-settings');
     let hasChatWidth = false;
 
     if (savedSettings) {
@@ -123,7 +123,7 @@ export function useChatSettings(): UseChatSettingsReturn {
 
   useEffect(() => {
     const loadFilterRegex = () => {
-      const savedSettings = safeLocalStorage.getItem('chatSettings');
+      const savedSettings = safeLocalStorage.getItem('chat-settings');
       if (savedSettings) {
         try {
           const settings = JSON.parse(savedSettings);
@@ -146,7 +146,7 @@ export function useChatSettings(): UseChatSettingsReturn {
   }, []);
 
   const saveSetting = useCallback((key: string, value: unknown) => {
-    const savedSettings = safeLocalStorage.getItem('chatSettings');
+    const savedSettings = safeLocalStorage.getItem('chat-settings');
     let settings: Record<string, unknown> = {};
     if (savedSettings) {
       try {
@@ -156,7 +156,7 @@ export function useChatSettings(): UseChatSettingsReturn {
       }
     }
     settings[key] = value;
-    safeLocalStorage.setItem('chatSettings', JSON.stringify(settings));
+    safeLocalStorage.setItem('chat-settings', JSON.stringify(settings));
 
     if (key === 'filterWords') {
       window.dispatchEvent(new Event('chat-settings-updated'));
@@ -170,7 +170,7 @@ export function useChatSettings(): UseChatSettingsReturn {
   }, 300);
 
   const resetAll = useCallback(() => {
-    safeLocalStorage.removeItem('chatSettings');
+    safeLocalStorage.removeItem('chat-settings');
     setChatWidth(DEFAULT_SETTINGS.chatWidth);
     setShowTimestamp(DEFAULT_SETTINGS.showTimestamp);
     setFontFamily(DEFAULT_SETTINGS.fontFamily);
