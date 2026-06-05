@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 //import heroImage from '@/assets/shigure-ui.gif';
+import { AdsenseBanner } from '@/components/AdsenseBanner';
 import { Background } from '@/components/Background';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useTenants } from '@/hooks/useTenants';
@@ -155,6 +156,8 @@ export function Landing() {
           <div className="py-6">
             <PaginationControls page={meta?.page || 1} totalPages={totalPages} />
           </div>
+
+          <AdsenseBanner />
         </div>
       </div>
     </div>

@@ -213,3 +213,7 @@ body.theatre-mode .theatre-hide {
     padding-bottom: 0 !important;
   }
 }
+
+ins.adsbygoogle[data-ad-status='unfilled'] {
+  display: none !important;
+}

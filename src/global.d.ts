@@ -66,3 +66,8 @@ interface CSSStyleSheet {
 }
 
 declare const __GIT_HASH__: string;
+
+interface Window {
+  __GIT_HASH__: string;
+  adsbygoogle: unknown[];
+}
