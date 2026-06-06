@@ -56,7 +56,7 @@ export default function CustomWidthTooltip({ title, placement = 'top', children 
 
   return (
     <div className="group relative inline-flex max-w-full min-w-0 items-center" ref={containerRef}>
-      <span onMouseEnter={handleMouseEnter} onMouseLeave={() => setIsHovered(false)}>
+      <span className="contents" onMouseEnter={handleMouseEnter} onMouseLeave={() => setIsHovered(false)}>
         {children}
       </span>
 
