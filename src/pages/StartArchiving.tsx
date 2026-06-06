@@ -15,6 +15,9 @@ import {
   Library,
   Clock3,
   Image,
+  Settings,
+  Type,
+  SkipBack,
 } from 'lucide-react';
 import { MailIcon, DiscordIcon, XIcon } from '@/assets/icons';
 
@@ -140,6 +143,18 @@ const CATEGORIES: FeatureCategory[] = [
       {
         icon: Library,
         text: 'Games library — browseable index of every game ever streamed, sortable by most streamed or most recent',
+      },
+      {
+        icon: SkipBack,
+        text: 'Resume playback — automatically continues from where you left off in previous sessions',
+      },
+      {
+        icon: Settings,
+        text: 'Player settings — volume, mute, and playback speed persist across sessions',
+      },
+      {
+        icon: Type,
+        text: 'Chat settings — customize font family, font size, chat width, delay sync, filter words, timestamps, and chat position',
       },
     ],
   },

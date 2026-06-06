@@ -11,6 +11,8 @@ import {
   Zap,
   Globe,
   Film,
+  Settings,
+  Type,
 } from 'lucide-react';
 import { ContentPage } from '@/pages/ContentPage';
 
@@ -80,6 +82,16 @@ const HIGHLIGHTS: FeatureBadge[] = [
     icon: Zap,
     label: 'Live Stream Upload',
     description: 'Direct upload of live streams separate from VOD archiving, it can handle multi-audio track.',
+  },
+  {
+    icon: Settings,
+    label: 'Player Settings',
+    description: 'Volume, mute, and playback speed persist across sessions',
+  },
+  {
+    icon: Type,
+    label: 'Chat Settings',
+    description: 'Customize font family, font size, chat width, delay sync, filter words, timestamps, and layout',
   },
 ];
 
