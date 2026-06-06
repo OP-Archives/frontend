@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Menu, ArrowRight, Info, MessageSquareIcon, HomeIcon, Shield, FileText } from 'lucide-react';
+import { X, Menu, ArrowRight, Info, MessageSquareIcon, HomeIcon, Shield, FileText, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
@@ -104,6 +104,17 @@ export function Drawer() {
                       <FileText className="h-4 w-4" />
                       Terms of Service
                     </Link>
+                  </motion.div>
+                  <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
+                    <a
+                      href="https://ko-fi.com/overpoweredgg"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                    >
+                      <Heart className="h-4 w-4" />
+                      Support Me
+                    </a>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <a

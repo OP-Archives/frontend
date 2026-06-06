@@ -53,6 +53,14 @@ export function Footer({ className }: FooterProps) {
             TOS
           </Link>
           <a
+            href="https://ko-fi.com/overpoweredgg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-[#9ca3af] transition-colors hover:text-[#6366f1]"
+          >
+            Support Me
+          </a>
+          <a
             href={`${GITHUB_REPO}/issues`}
             target="_blank"
             rel="noopener noreferrer"
