@@ -1,5 +1,6 @@
 import {
   Check,
+  Copy,
   Info,
   Video,
   MessageSquare,
@@ -19,6 +20,7 @@ import {
   Type,
   SkipBack,
 } from 'lucide-react';
+import { useState } from 'react';
 import { MailIcon, DiscordIcon, XIcon } from '@/assets/icons';
 import { Background } from '@/components/Background';
 
@@ -166,21 +168,85 @@ const CONTACT_LINKS = [
     icon: MailIcon,
     label: 'Email',
     href: 'mailto:op@overpowered.tv',
-    username: 'op@overpowered.tv',
+    copyable: 'op@overpowered.tv',
   },
   {
     icon: DiscordIcon,
     label: 'Discord',
-    href: '',
-    username: 'Overpowered',
+    href: 'https://discord.com/users/60493609325047808',
+    copyable: 'Overpowered',
   },
   {
     icon: XIcon,
     label: 'X',
     href: 'https://x.com/Overpowered',
-    username: 'Overpowered',
+    copyable: 'https://x.com/Overpowered',
   },
 ];
+
+interface ContactLink {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  href: string;
+  copyable: string;
+}
+
+function ContactCard({ contact, isLink }: { contact: ContactLink; isLink: boolean }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(contact.copyable);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const Icon = contact.icon;
+
+  const content = (
+    <div className="flex items-center gap-4">
+      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-[#222230] text-[#6366f1] transition-colors group-hover:bg-[#6366f1]/20">
+        <Icon className="h-6 w-6" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold text-[#f0f0f5] group-hover:text-[#6366f1]">{contact.label}</p>
+        <p className="mt-1 text-sm text-[#f0f0f5]">{contact.copyable}</p>
+      </div>
+      <button
+        onClick={handleCopy}
+        className="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md text-[#9ca3af] transition-colors hover:bg-[#222230] hover:text-[#6366f1]"
+        title="Copy to clipboard"
+      >
+        <Copy className="h-4 w-4" />
+        {copied && (
+          <span className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-[#222230] px-2 py-1 text-xs whitespace-nowrap text-[#f0f0f5]">
+            Copied!
+          </span>
+        )}
+      </button>
+    </div>
+  );
+
+  if (isLink) {
+    return (
+      <a
+        href={contact.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group rounded-lg border border-[#222230] bg-[#16161e]/80 p-6 backdrop-blur-sm transition-all hover:border-[#6366f1]/50 hover:bg-[#16161e]"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="group rounded-lg border border-[#222230] bg-[#16161e]/80 p-6 backdrop-blur-sm transition-all hover:border-[#6366f1]/50 hover:bg-[#16161e]">
+      {content}
+    </div>
+  );
+}
 
 function FeatureCard({ category }: { category: FeatureCategory }) {
   return (
@@ -243,44 +309,9 @@ export function StartArchiving() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {CONTACT_LINKS.map((contact) => {
-            const Icon = contact.icon;
-            const isLink = contact.href !== '';
-            const content = (
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-[#222230] text-[#6366f1] transition-colors group-hover:bg-[#6366f1]/20">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-[#f0f0f5] group-hover:text-[#6366f1]">{contact.label}</p>
-                  {contact.username ? <p className="mt-1 text-sm text-[#f0f0f5]">{contact.username}</p> : null}
-                </div>
-              </div>
-            );
-
-            if (isLink) {
-              return (
-                <a
-                  key={contact.label}
-                  href={contact.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group rounded-lg border border-[#222230] bg-[#16161e]/80 p-6 backdrop-blur-sm transition-all hover:border-[#6366f1]/50 hover:bg-[#16161e]"
-                >
-                  {content}
-                </a>
-              );
-            }
-
-            return (
-              <div
-                key={contact.label}
-                className="group rounded-lg border border-[#222230] bg-[#16161e]/80 p-6 backdrop-blur-sm transition-all hover:border-[#6366f1]/50 hover:bg-[#16161e]"
-              >
-                {content}
-              </div>
-            );
-          })}
+          {CONTACT_LINKS.map((contact) => (
+            <ContactCard key={contact.label} contact={contact} isLink={contact.href !== ''} />
+          ))}
         </div>
       </div>
     </div>
