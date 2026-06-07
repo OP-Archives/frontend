@@ -17,7 +17,7 @@ interface PricingTier {
 const TIERS: PricingTier[] = [
   {
     name: 'Starter',
-    price: '$50',
+    price: '$100',
     description: 'Perfect for small and indie streamers getting started.',
     target: 'Small / Indie Streamers',
     features: [
