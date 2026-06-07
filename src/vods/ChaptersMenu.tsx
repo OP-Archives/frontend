@@ -43,7 +43,7 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
           src={getImage(vod.chapters?.[0]?.image)}
           width={40}
           height={53}
-          className="h-[53px] w-[40px] object-cover"
+          className="h-[53px] w-[40px] cursor-pointer object-cover transition-shadow hover:shadow-lg hover:shadow-[#6366f1]/30"
           loading="lazy"
           decoding="async"
         />
