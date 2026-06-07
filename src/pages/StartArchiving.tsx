@@ -183,13 +183,10 @@ const CONTACT_LINKS = [
 
 function FeatureCard({ category }: { category: FeatureCategory }) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-[#222230] bg-[#16161e] p-6 transition-all hover:border-[#6366f1]/40">
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 transition-opacity group-hover:opacity-100`}
-      />
-      <div className="relative">
+    <div className="rounded-xl border border-[#222230] bg-[#16161e] p-6">
+      <div>
         <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#222230] text-[#6366f1] transition-colors group-hover:bg-[#6366f1]/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#222230] text-[#6366f1]">
             <category.icon className="h-5 w-5" />
           </div>
           <div>
