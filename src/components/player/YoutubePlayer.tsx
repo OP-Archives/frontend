@@ -1,7 +1,8 @@
 import canAutoplay from 'can-autoplay';
-import { Copy, Maximize2, Minimize2, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Youtube from 'react-youtube';
+import { TheatreModeIcon } from '@/assets/icons';
 import type { VODUpload, GameEntry, PartInfo, PlayerState } from '@/types';
 import { getResumePosition } from '@/utils/positionStorage';
 
@@ -249,7 +250,7 @@ export default function YoutubePlayer(props: YoutubePlayerProps) {
           style={{ height: 32, width: 32 }}
           title={theatreMode ? 'Exit Theatre Mode' : 'Theatre Mode'}
         >
-          {theatreMode ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          <TheatreModeIcon width={20} height={20} />
         </button>
         {!games && (
           <button
@@ -259,7 +260,7 @@ export default function YoutubePlayer(props: YoutubePlayerProps) {
             title={copied ? 'Copied!' : 'Copy Current Timestamp'}
             aria-label="Copy Current Timestamp"
           >
-            {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
+            {copied ? <Check width={20} height={20} className="text-green-400" /> : <Copy width={20} height={20} />}
           </button>
         )}
       </div>

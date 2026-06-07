@@ -3,9 +3,7 @@ import {
   ChevronRight,
   Copy,
   Maximize,
-  Maximize2,
   Minimize,
-  Minimize2,
   Pause,
   PictureInPicture2,
   Play,
@@ -15,6 +13,7 @@ import {
   Check,
 } from 'lucide-react';
 import { useState } from 'react';
+import { TheatreModeIcon } from '@/assets/icons';
 import { usePlayerControls } from '@/hooks/usePlayerControls';
 import { formatTime, toHMS } from '@/utils/helpers';
 
@@ -232,11 +231,7 @@ export default function PlayerControls(props: PlayerControlsProps) {
               className="flex items-center justify-center text-[#f0f0f5] transition-colors hover:text-[#6366f1]"
               title={theatreMode ? 'Exit Theatre Mode' : 'Theatre Mode'}
             >
-              {theatreMode ? (
-                <Minimize2 className="h-5 w-5 sm:h-6 sm:w-6" />
-              ) : (
-                <Maximize2 className="h-5 w-5 sm:h-6 sm:w-6" />
-              )}
+              <TheatreModeIcon className="h-5 w-5 sm:h-6 sm:w-6" />
             </button>
 
             <button
