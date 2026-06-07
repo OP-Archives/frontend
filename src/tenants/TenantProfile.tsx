@@ -3,12 +3,13 @@ import { TenantContent } from './TenantContent';
 import { TenantProfileCard } from './TenantProfileCard';
 import { TenantTabs } from './TenantTabs';
 import { Loading } from '@/components/ui/Loading';
+import { NotFound } from '@/components/ui/NotFound';
 import { useTenantContext } from '@/contexts/TenantContext';
 
 export function TenantProfile() {
   const { tenant } = useParams<{ tenant: string }>();
   const location = useLocation();
-  const { tenant: tenantData, isLoading } = useTenantContext();
+  const { tenant: tenantData, isLoading, isTenantNotFound } = useTenantContext();
 
   const hasContent = tenantData?.vods || tenantData?.games;
 
@@ -19,6 +20,16 @@ export function TenantProfile() {
   ];
 
   const isPlayerRoute = /^\/[^/]+\/(youtube|vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
+
+  if (isTenantNotFound && !tenantData) {
+    return (
+      <div className="flex min-h-0 w-full flex-1 flex-col">
+        <div className="mx-auto w-full max-w-7xl py-8">
+          <NotFound message="Tenant not found" backToHome />
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading || !tenantData) {
     return (

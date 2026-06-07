@@ -6,6 +6,7 @@ interface TenantContextValue {
   cdnEnabled: boolean;
   cdnBaseUrl: string;
   isLoading: boolean;
+  isTenantNotFound: boolean;
 }
 
 export const TenantContext = createContext<TenantContextValue>({
@@ -13,6 +14,7 @@ export const TenantContext = createContext<TenantContextValue>({
   cdnEnabled: false,
   cdnBaseUrl: '',
   isLoading: false,
+  isTenantNotFound: false,
 });
 
 export function useTenantContext(): TenantContextValue {

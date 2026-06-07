@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useMemo, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import CustomVod from '@/components/player/CustomVod';
 import Games from '@/components/player/Games';
 import YoutubeVod from '@/components/player/YoutubeVod';
@@ -13,7 +13,6 @@ export function Vod() {
   const tenant = params.tenant;
   const vodId = params.vodId;
   const location = useLocation();
-  const navigate = useNavigate();
   const routeType = location.pathname.match(/\/(youtube|vods|cdn|manual|games)\//)?.[1] ?? 'youtube';
 
   useEffect(() => {
@@ -34,8 +33,7 @@ export function Vod() {
     if (!p || !p.id) return undefined;
     return parseInt(p.id, 10);
   }, [tenantData]);
-  const { data: vod, isLoading, error } = useVod(tenant!, vodId!);
-  const [errorShown, setErrorShown] = useState(false);
+  const { data: vod, isLoading } = useVod(tenant!, vodId!);
 
   if (!tenant || !vodId) {
     return <NotFound />;
@@ -49,21 +47,8 @@ export function Vod() {
     );
   }
 
-  if (error && !errorShown) {
-    setErrorShown(true);
-    setTimeout(() => navigate(`/${tenant}`, { replace: true }), 2000);
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-500">Failed to load VOD</h2>
-          <p className="mt-2 text-[#9ca3af]">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (!vod) {
-    return <NotFound />;
+    return <NotFound message="VOD not found" />;
   }
 
   const renderPlayer = () => {

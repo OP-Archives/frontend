@@ -70,5 +70,6 @@ export function useVod(slug: string, vodId: string) {
     queryKey: ['vods', slug, vodId],
     queryFn: async ({ signal }) => unwrap(archiveClient.vods.get(slug, vodId, { signal })),
     enabled: !!(slug && vodId),
+    retry: 0,
   });
 }

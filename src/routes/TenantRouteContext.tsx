@@ -10,7 +10,11 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const currentTenant = isTenantRoute ? location.pathname.split('/')[1] : '';
   const isPlayerRoute = /^\/[^/]+\/(youtube|vods|cdn|manual|games)\/[^/]+$/.test(location.pathname);
 
-  const { data: tenantRes, isLoading } = useQuery({
+  const {
+    data: tenantRes,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['tenant', currentTenant],
     queryFn: () => archiveClient.tenants.get(currentTenant),
     enabled: !!currentTenant,
@@ -28,7 +32,9 @@ export function TenantRouteContext({ children }: { children: React.ReactNode }) 
   const routeKey = isPlayerRouteInTenant ? 'player' : isListRoute ? 'list' : 'tenant';
 
   return (
-    <TenantContext.Provider value={{ tenant: currentTenantData ?? null, cdnEnabled, cdnBaseUrl, isLoading }}>
+    <TenantContext.Provider
+      value={{ tenant: currentTenantData ?? null, cdnEnabled, cdnBaseUrl, isLoading, isTenantNotFound: isError }}
+    >
       <div key={routeKey} className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {isTenantRoute && <Background imageUrl={currentTenantData?.background_image_url || null} />}
         <div className="flex min-h-0 flex-1 flex-col">
