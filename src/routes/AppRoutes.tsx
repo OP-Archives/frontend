@@ -10,12 +10,14 @@ import { StartArchiving } from '@/pages/StartArchiving';
 import { TermsOfService } from '@/pages/TermsOfService';
 import { TenantIndex } from '@/tenants/TenantIndex';
 import { TenantProfile } from '@/tenants/TenantProfile';
+import { Tenants } from '@/tenants/Tenants';
 import { Vod } from '@/vods/Vod';
 import { Vods } from '@/vods/Vods';
 
 export const AppRoutes = (
   <>
     <Route path="/" element={<Landing />} />
+    <Route path="tenants" element={<Tenants />} />
     <Route path="about" element={<About />} />
     <Route path="archive" element={<StartArchiving />} />
     <Route path="start" element={<StartArchiving />} />

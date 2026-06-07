@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Menu, ArrowRight, Info, MessageSquareIcon, HomeIcon, Shield, FileText, Heart } from 'lucide-react';
+import { X, Menu, ArrowRight, Info, MessageSquareIcon, HomeIcon, Shield, FileText, Heart, Users } from 'lucide-react';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
@@ -58,51 +58,61 @@ export function Drawer() {
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <Link
                       to="/"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                       onClick={() => setOpen(false)}
                     >
-                      <HomeIcon className="h-4 w-4" />
-                      Home
+                      <HomeIcon className="h-4 w-4 shrink-0" />
+                      <span>Home</span>
+                    </Link>
+                  </motion.div>
+                  <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
+                    <Link
+                      to="/tenants"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
+                      onClick={() => setOpen(false)}
+                    >
+                      <Users className="h-4 w-4 shrink-0" />
+                      <span>Browse</span>
                     </Link>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <Link
                       to="/archive"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                       onClick={() => setOpen(false)}
                     >
-                      <ArrowRight className="h-4 w-4" />
-                      Start Archiving
+                      <ArrowRight className="h-4 w-4 shrink-0" />
+                      <span>Start Archiving</span>
                     </Link>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <Link
                       to="/about"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                       onClick={() => setOpen(false)}
                     >
-                      <Info className="h-4 w-4" />
-                      About
+                      <Info className="h-4 w-4 shrink-0" />
+                      <span>About</span>
                     </Link>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <Link
                       to="/privacy"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                       onClick={() => setOpen(false)}
                     >
-                      <Shield className="h-4 w-4" />
-                      Privacy
+                      <Shield className="h-4 w-4 shrink-0" />
+                      <span>Privacy</span>
                     </Link>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <Link
                       to="/tos"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                       onClick={() => setOpen(false)}
                     >
-                      <FileText className="h-4 w-4" />
-                      Terms of Service
+                      <FileText className="h-4 w-4 shrink-0" />
+                      <span>Terms of Service</span>
                     </Link>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
@@ -110,10 +120,10 @@ export function Drawer() {
                       href="https://ko-fi.com/overpoweredgg"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                     >
-                      <Heart className="h-4 w-4" />
-                      Support Me
+                      <Heart className="h-4 w-4 shrink-0" />
+                      <span>Support Me</span>
                     </a>
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
@@ -121,10 +131,10 @@ export function Drawer() {
                       href="https://github.com/OP-Archives/frontend/issues"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-[#9ca3af] hover:text-[#f0f0f5]"
+                      className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                     >
-                      <MessageSquareIcon className="h-4 w-4" />
-                      Issues
+                      <MessageSquareIcon className="h-4 w-4 shrink-0" />
+                      <span>Issues</span>
                     </a>
                   </motion.div>
                 </div>

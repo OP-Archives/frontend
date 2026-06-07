@@ -23,18 +23,26 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[#222230] bg-[#16161e] backdrop-blur-sm">
-      <div className="flex h-16 items-center justify-between px-4">
-        <Link to="/" className="text-xl font-extrabold tracking-tight">
-          <span className="mr-1 text-[#6366f1] drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">op</span>
-          <span className="text-[#f0f0f5]">archive</span>
-        </Link>
+      <div className="flex h-16 w-full items-center justify-between px-4">
+        <div className="flex flex-1 basis-0 items-center justify-start gap-3">
+          <Link to="/" className="text-xl font-extrabold tracking-tight">
+            <span className="mr-1 text-[#6366f1] drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">op</span>
+            <span className="text-[#f0f0f5]">archive</span>
+          </Link>
+          <Link
+            to="/tenants"
+            className="hidden items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-[#9ca3af] transition-colors hover:text-[#f0f0f5] sm:flex"
+          >
+            Browse
+          </Link>
+        </div>
 
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSearchSubmit();
           }}
-          className="mx-2 mr-4 max-w-xs min-w-0 flex-1 sm:mx-4"
+          className="mx-2 w-full max-w-[200px] shrink sm:mx-4 sm:max-w-xs"
         >
           <div className="relative">
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#9ca3af]" />
@@ -87,7 +95,7 @@ export function Navbar() {
           </div>
         </form>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-1 basis-0 items-center justify-end gap-3">
           <Link
             to="/archive"
             className="hidden items-center gap-1.5 rounded-md bg-[#6366f1] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#5558ea] sm:flex"
