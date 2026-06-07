@@ -121,7 +121,7 @@ export function About() {
             heading: 'What We Do',
             content: (
               <p>
-                We automated the entire pipeline — from detecting when a stream ends, to capturing the VOD, splitting it
+                We automated the entire pipeline - from detecting when a stream ends, to capturing the VOD, splitting it
                 into per-game segments, uploading to YouTube, and syncing the full chat replay with emotes. Every step
                 is handled so streamers can focus on streaming.
               </p>

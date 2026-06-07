@@ -57,11 +57,11 @@ const CATEGORIES: FeatureCategory[] = [
       },
       {
         icon: Scissors,
-        text: "Long VOD splitting — automatically splits videos that exceed YouTube's duration limits",
+        text: "Long VOD splitting - automatically splits videos that exceed YouTube's duration limits",
       },
       {
         icon: Film,
-        text: 'Per-game uploads — individual game/category segments as separate YouTube videos',
+        text: 'Per-game uploads - individual game/category segments as separate YouTube videos',
       },
       {
         icon: Music,
@@ -73,7 +73,7 @@ const CATEGORIES: FeatureCategory[] = [
       },
       {
         icon: Shield,
-        text: 'DMCA handling — detects and processes copyright claims automatically',
+        text: 'DMCA handling - detects and processes copyright claims automatically',
         note: 'Protects against music and licensed content issues',
       },
       {
@@ -123,7 +123,7 @@ const CATEGORIES: FeatureCategory[] = [
       },
       {
         icon: Film,
-        text: 'Chapter/game markers — browse a VOD by which game was being played',
+        text: 'Chapter/game markers - browse a VOD by which game was being played',
       },
       {
         icon: Clock3,
@@ -139,23 +139,23 @@ const CATEGORIES: FeatureCategory[] = [
       },
       {
         icon: ListFilter,
-        text: 'Full search and filtering — search VODs by title, game name, chapter, date range, and platform',
+        text: 'Full search and filtering - search VODs by title, game name, chapter, date range, and platform',
       },
       {
         icon: Library,
-        text: 'Games library — browseable index of every game ever streamed, sortable by most streamed or most recent',
+        text: 'Games library - browseable index of every game ever streamed, sortable by most streamed or most recent',
       },
       {
         icon: SkipBack,
-        text: 'Resume playback — automatically continues from where you left off in previous sessions',
+        text: 'Resume playback - automatically continues from where you left off in previous sessions',
       },
       {
         icon: Settings,
-        text: 'Player settings — volume, mute, and playback speed persist across sessions',
+        text: 'Player settings - volume, mute, and playback speed persist across sessions',
       },
       {
         icon: Type,
-        text: 'Chat settings — customize font family, font size, chat width, delay sync, filter words, timestamps, and chat position',
+        text: 'Chat settings - customize font family, font size, chat width, delay sync, filter words, timestamps, and chat position',
       },
     ],
   },
@@ -223,8 +223,8 @@ export function StartArchiving() {
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-5xl">Start Archiving Today!</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-[#9ca3af]">
-            Everything you need to preserve, organize, and share your streams — automatically.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-[#f0f0f5]">
+            Everything you need to preserve, organize, and share your streams - automatically.
           </p>
           <div className="mx-auto mt-4 h-[1.5px] w-48 bg-[#6366f1]/40" />
         </div>
@@ -239,7 +239,7 @@ export function StartArchiving() {
           <p className="text-lg text-[#f0f0f5]">
             Have questions or ready to get started? Reach out through any of these channels.
           </p>
-          <p className="mt-2 text-sm text-[#9ca3af]">I typically respond within 24 hours</p>
+          <p className="mt-2 text-sm text-[#f0f0f5]">I typically respond within 24 hours</p>
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -48,7 +48,7 @@ export function Tenants() {
               <span className="mr-3 text-[#6366f1] md:mr-4">op</span>
               <span className="text-[#f0f0f5]">archive</span>
             </h1>
-            <p className="mt-3 text-sm text-[#9ca3af]">Browse all streamers</p>
+            <p className="mt-3 text-sm text-[#f0f0f5]">Browse all streamers</p>
             <div className="mx-auto mt-4 h-[1.5px] w-48 bg-[#6366f1]/40" />
           </div>
 

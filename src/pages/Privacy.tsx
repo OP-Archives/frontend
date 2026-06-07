@@ -14,7 +14,7 @@ export function Privacy() {
             content: (
               <p>
                 This project ("archive") is a multi-platform VOD archiving and upload service for commercial use. The
-                platform automatically archives live stream VODs from streaming platforms — including Twitch and KICK —
+                platform automatically archives live stream VODs from streaming platforms - including Twitch and KICK -
                 and uploads them to YouTube channels on behalf of content creators. It includes a frontend web
                 application at overpowered.tv for viewers to watch archived VODs with chat replay.
               </p>
@@ -55,15 +55,15 @@ export function Privacy() {
                 </p>
                 <ul className="list-inside list-disc space-y-1.5 leading-relaxed">
                   <li>
-                    <strong>lastPlayed</strong> — The resume position (timestamp) for VODs the viewer has watched,
+                    <strong>lastPlayed</strong> - The resume position (timestamp) for VODs the viewer has watched,
                     stored locally so playback can resume where the viewer left off. Keyed per creator and VOD ID.
                   </li>
                   <li>
-                    <strong>player-settings</strong> — The viewer&apos;s player preferences, specifically volume level
+                    <strong>player-settings</strong> - The viewer&apos;s player preferences, specifically volume level
                     and muted state.
                   </li>
                   <li>
-                    <strong>chat-settings</strong> — The viewer&apos;s chat preferences, including chat panel width,
+                    <strong>chat-settings</strong> - The viewer&apos;s chat preferences, including chat panel width,
                     chat side (left/right), timestamp visibility, font family, font size, and any personal word filters
                     the viewer has set.
                   </li>
@@ -83,15 +83,15 @@ export function Privacy() {
                 <p>This application collects and stores the following data solely to perform its function:</p>
                 <ul className="list-inside list-disc space-y-1.5 leading-relaxed">
                   <li>
-                    <strong>YouTube OAuth tokens</strong> — Used to authenticate with the YouTube API and upload videos
+                    <strong>YouTube OAuth tokens</strong> - Used to authenticate with the YouTube API and upload videos
                     on behalf of each connected creator. Stored in a PostgreSQL database on the operator&apos;s server.
                   </li>
                   <li>
-                    <strong>Stream VOD metadata</strong> — Video titles, descriptions, and timestamps sourced from
+                    <strong>Stream VOD metadata</strong> - Video titles, descriptions, and timestamps sourced from
                     Twitch or KICK, used to populate YouTube upload details. Stored for upload logging purposes.
                   </li>
                   <li>
-                    <strong>Upload logs</strong> — Records of upload activity (video ID, timestamp, status) stored for
+                    <strong>Upload logs</strong> - Records of upload activity (video ID, timestamp, status) stored for
                     operational logging.
                   </li>
                 </ul>
@@ -123,7 +123,7 @@ export function Privacy() {
                 </p>
                 <p>
                   Stored YouTube API data is retained until a content creator explicitly requests deletion. Upon
-                  request, all associated YouTube data — including video IDs, metadata, and OAuth tokens — is
+                  request, all associated YouTube data - including video IDs, metadata, and OAuth tokens - is
                   permanently deleted from our database. We do not retain this data after a deletion request is
                   fulfilled.
                 </p>

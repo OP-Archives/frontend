@@ -18,7 +18,7 @@ export function ContentPage({ title, subtitle, sections, cta }: ContentPageProps
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-5xl">{title}</h1>
-          {subtitle && <p className="mt-3 text-lg text-[#9ca3af] sm:text-xl">{subtitle}</p>}
+          {subtitle && <p className="mt-3 text-lg text-[#f0f0f5] sm:text-xl">{subtitle}</p>}
           <div className="mx-auto mt-4 h-[1.5px] w-48 bg-[#6366f1]/40" />
         </div>
 

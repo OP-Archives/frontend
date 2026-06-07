@@ -44,7 +44,7 @@ const FEATURES = [
   {
     icon: LayoutTemplate,
     title: 'Your Brand',
-    description: 'Dedicated archive site that matches your brand identity — no white-label watermarks.',
+    description: 'Dedicated archive site that matches your brand identity - no white-label watermarks.',
   },
   {
     icon: Bookmark,
@@ -83,8 +83,8 @@ export function Landing() {
               <span className="mr-2 text-[#6366f1] sm:mr-3 md:mr-4">op</span>
               <span className="text-[#f0f0f5]">archive</span>
             </h1>
-            <p className="mx-auto mt-3 max-w-xl px-2 text-sm text-[#9ca3af] sm:mt-4 sm:max-w-2xl sm:text-lg">
-              Never lose a stream again. Automated VOD archiving for Twitch &amp; Kick — uploaded to your YouTube
+            <p className="mx-auto mt-3 max-w-xl px-2 text-sm text-[#f0f0f5] sm:mt-4 sm:max-w-2xl sm:text-lg">
+              Never lose a stream again. Automated VOD archiving for Twitch &amp; Kick - uploaded to your YouTube
               channel, with full chat replay synced to playback.
             </p>
             <div className="mx-auto mt-3 h-[1.5px] w-36 bg-[#6366f1]/40 sm:mt-4 sm:w-48" />
@@ -165,8 +165,8 @@ export function Landing() {
               <h2 className="text-2xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-3xl lg:text-4xl">
                 Everything You Need
               </h2>
-              <p className="mx-auto mt-2 max-w-lg px-2 text-sm text-[#9ca3af] sm:mt-3 sm:max-w-2xl sm:text-base">
-                From automatic archiving to chat replay — a complete solution for preserving your streams.
+              <p className="mx-auto mt-2 max-w-lg px-2 text-sm text-[#f0f0f5] sm:mt-3 sm:max-w-2xl sm:text-base">
+                From automatic archiving to chat replay - a complete solution for preserving your streams.
               </p>
               <div className="mx-auto mt-3 h-[1.5px] w-36 bg-[#6366f1]/40 sm:mt-4 sm:w-48" />
             </div>
