@@ -60,6 +60,7 @@ export function Games() {
         page={state.page}
         totalPages={totalPages}
         preserveParams={{
+          ...(state.filter ? { filter: state.filter } : {}),
           ...(state.gameId ? { game_id: state.gameId } : {}),
           ...(state.filter === 'Date' && state.filterStartDate ? { from: state.filterStartDate } : {}),
           ...(state.filter === 'Date' && state.filterEndDate ? { to: state.filterEndDate } : {}),

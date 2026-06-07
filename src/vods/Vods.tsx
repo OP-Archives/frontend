@@ -71,6 +71,7 @@ export function Vods() {
           page={state.page}
           totalPages={totalPages}
           preserveParams={{
+            ...(state.filter ? { filter: state.filter } : {}),
             ...(state.gameId ? { game_id: state.gameId } : {}),
             ...(state.platform !== 'All' ? { platform: state.platform } : {}),
             ...(state.filter === 'Date' && state.filterStartDate ? { from: state.filterStartDate } : {}),
