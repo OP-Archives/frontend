@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useLocation, useParams } from 'react-router-dom';
 import BaseVod from './BaseVod';
 import { PlayerLayout } from './PlayerLayout';
 import { RecentItemsVods } from '@/components/player/RecentItems';
 import { usePlayerLayout } from '@/components/player/usePlayerLayout';
 import Loading from '@/components/ui/Loading';
+import VideoObjectJsonLd from '@/components/ui/VideoObjectJsonLd';
 import { useTenantContext } from '@/contexts/TenantContext';
 import type { VodDetail, PlayerState } from '@/types';
 import { unwrap } from '@/utils/api';
@@ -126,61 +128,90 @@ export default function CustomVod(props: CustomVodProps) {
 
   if (vod === undefined) return <Loading logo={logo} />;
 
+  const displayName = tenantData?.display_name || tenant || '';
+  const thumbnailUrl = vod.vod_uploads?.[0]?.thumbnail_url || vod.thumbnail_url || '';
+  const pageTitle = `${displayName} VOD ${vodId} - op archive`;
+  const formattedDate = new Date(vod.created_at).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
   return (
-    <PlayerLayout
-      isPortrait={isPortrait}
-      chatOnLeft={chatOnLeft}
-      setChatOnLeft={setChatOnLeft}
-      tenantData={tenantData}
-      playerElement={
-        <BaseVod
-          {...props}
-          logo={logo}
-          playerRef={playerRef}
-          vod={vod}
-          timestamp={timestamp}
-          setTimestamp={setTimestamp}
-          setDelay={setDelay}
-          setPlayerState={setPlayerState}
-          cdnBase={cdnBase}
-          type={props.type}
-          isPortrait={isPortrait}
-          tenant={tenant}
-        />
-      }
-      chatProps={{
-        isPortrait,
-        vodId: vodId!,
-        playerRef,
-        delay,
-        userChatDelay,
-        setUserChatDelay,
-        playerState,
-        platform: vod?.platform,
-        twitchId,
-        chatOnLeft,
-        setChatOnLeft,
-      }}
-      recentItems={
-        vod && (
-          <RecentItemsVods
-            currentId={vod.id}
-            prev={vod.prev}
-            next={vod.next}
-            currentVod={{
-              id: vod.id,
-              platform: vod.platform,
-              platform_vod_id: vod.platform_vod_id,
-              title: vod.title,
-              duration: vod.duration,
-              created_at: vod.created_at,
-              thumbnail_url: vod.vod_uploads?.[0]?.thumbnail_url || null,
-              is_live: vod.is_live,
-              chapters: vod.chapters,
-            }}
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={`${vod.title} — archived on ${formattedDate} on op archive`} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={`Watch ${vod.title} archived on ${formattedDate} on op archive`} />
+        {thumbnailUrl && <meta property="og:image" content={thumbnailUrl} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={`Watch ${vod.title} archived on ${formattedDate} on op archive`} />
+        {thumbnailUrl && <meta name="twitter:image" content={thumbnailUrl} />}
+      </Helmet>
+      <VideoObjectJsonLd
+        title={vod.title}
+        thumbnailUrl={thumbnailUrl}
+        uploadDate={vod.created_at}
+        durationSeconds={vod.duration}
+        displayName={displayName}
+      />
+      <PlayerLayout
+        isPortrait={isPortrait}
+        chatOnLeft={chatOnLeft}
+        setChatOnLeft={setChatOnLeft}
+        tenantData={tenantData}
+        playerElement={
+          <BaseVod
+            {...props}
+            logo={logo}
+            playerRef={playerRef}
+            vod={vod}
+            timestamp={timestamp}
+            setTimestamp={setTimestamp}
+            setDelay={setDelay}
+            setPlayerState={setPlayerState}
+            cdnBase={cdnBase}
+            type={props.type}
+            isPortrait={isPortrait}
+            tenant={tenant}
           />
-        )
-      }
-    />
+        }
+        chatProps={{
+          isPortrait,
+          vodId: vodId!,
+          playerRef,
+          delay,
+          userChatDelay,
+          setUserChatDelay,
+          playerState,
+          platform: vod?.platform,
+          twitchId,
+          chatOnLeft,
+          setChatOnLeft,
+        }}
+        recentItems={
+          vod && (
+            <RecentItemsVods
+              currentId={vod.id}
+              prev={vod.prev}
+              next={vod.next}
+              currentVod={{
+                id: vod.id,
+                platform: vod.platform,
+                platform_vod_id: vod.platform_vod_id,
+                title: vod.title,
+                duration: vod.duration,
+                created_at: vod.created_at,
+                thumbnail_url: vod.vod_uploads?.[0]?.thumbnail_url || null,
+                is_live: vod.is_live,
+                chapters: vod.chapters,
+              }}
+            />
+          )
+        }
+      />
+    </>
   );
 }

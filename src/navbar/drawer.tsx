@@ -67,7 +67,7 @@ export function Drawer() {
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <Link
-                      to="/tenants"
+                      to="/browse"
                       className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                       onClick={() => setOpen(false)}
                     >

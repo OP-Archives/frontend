@@ -100,7 +100,7 @@ export function Landing() {
                 <ArrowRight className="h-4 w-4" />
               </button>
               <button
-                onClick={() => navigate('/tenants')}
+                onClick={() => navigate('/browse')}
                 className="cursor-pointer rounded-lg border border-[#222230] bg-[#16161e]/80 px-6 py-3 text-sm font-semibold text-[#f0f0f5] backdrop-blur-sm transition-colors hover:border-[#6366f1]/50 hover:bg-[#16161e]"
               >
                 Browse Streamers
@@ -113,7 +113,7 @@ export function Landing() {
             <div className="mb-4 flex items-center justify-between sm:mb-6">
               <h2 className="text-xl font-bold text-[#f0f0f5] sm:text-2xl">Featured Streamers</h2>
               <button
-                onClick={() => navigate('/tenants')}
+                onClick={() => navigate('/browse')}
                 className="cursor-pointer text-sm text-[#818cf8] transition-colors hover:text-[#6366f1]"
               >
                 View All Streamers →

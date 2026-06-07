@@ -1,7 +1,9 @@
+import { Helmet } from 'react-helmet-async';
 import { useParams, useLocation } from 'react-router-dom';
 import { TenantContent } from './TenantContent';
 import { TenantProfileCard } from './TenantProfileCard';
 import { TenantTabs } from './TenantTabs';
+import { Background } from '@/components/Background';
 import { Loading } from '@/components/ui/Loading';
 import { NotFound } from '@/components/ui/NotFound';
 import { useTenantContext } from '@/contexts/TenantContext';
@@ -25,7 +27,7 @@ export function TenantProfile() {
     return (
       <div className="flex min-h-0 w-full flex-1 flex-col">
         <div className="mx-auto w-full max-w-[1800px] py-8">
-          <NotFound message="Tenant not found" backToHome />
+          <NotFound message="Streamer not found" backToHome />
         </div>
       </div>
     );
@@ -84,17 +86,42 @@ export function TenantProfile() {
     );
   }
 
+  const displayName = tenantData.display_name;
+  const profileImage = tenantData.profile_image_url;
+
   return (
-    <div className="flex min-h-0 w-full flex-1 flex-col">
-      <div className={`mx-auto w-full max-w-[1800px] py-8 ${isPlayerRoute ? 'hidden' : ''}`}>
-        <TenantProfileCard tenantData={tenantData} centered={true} />
-        <TenantTabs tabs={tabs} />
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex h-full min-h-0 flex-1 flex-col">
-          <TenantContent tenantData={tenantData} />
+    <>
+      <Background imageUrl={tenantData.background_image_url} />
+      <Helmet>
+        <title>{displayName} - op archive</title>
+        <meta
+          name="description"
+          content={`${displayName}'s archived Twitch & Kick VODs with full chat replay on op archive`}
+        />
+        <meta property="og:title" content={`${displayName} - op archive`} />
+        <meta
+          property="og:description"
+          content={`Watch ${displayName}'s archived Twitch and Kick VODs with full chat replay and emotes on op archive.`}
+        />
+        {profileImage && <meta property="og:image" content={profileImage} />}
+        <meta name="twitter:title" content={`${displayName} - op archive`} />
+        <meta
+          name="twitter:description"
+          content={`Watch ${displayName}'s archived Twitch and Kick VODs with full chat replay and emotes on op archive.`}
+        />
+        {profileImage && <meta name="twitter:image" content={profileImage} />}
+      </Helmet>
+      <div className="flex min-h-0 w-full flex-1 flex-col">
+        <div className={`mx-auto w-full max-w-[1800px] py-8 ${isPlayerRoute ? 'hidden' : ''}`}>
+          <TenantProfileCard tenantData={tenantData} centered={true} />
+          <TenantTabs tabs={tabs} />
+        </div>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex h-full min-h-0 flex-1 flex-col">
+            <TenantContent tenantData={tenantData} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

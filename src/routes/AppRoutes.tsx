@@ -17,7 +17,7 @@ import { Vods } from '@/vods/Vods';
 export const AppRoutes = (
   <>
     <Route path="/" element={<Landing />} />
-    <Route path="tenants" element={<Tenants />} />
+    <Route path="browse" element={<Tenants />} />
     <Route path="about" element={<About />} />
     <Route path="archive" element={<StartArchiving />} />
     <Route path="start" element={<StartArchiving />} />

@@ -30,7 +30,7 @@ export function Navbar() {
             <span className="text-[#f0f0f5]">archive</span>
           </Link>
           <Link
-            to="/tenants"
+            to="/browse"
             className="hidden items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-[#9ca3af] transition-colors hover:text-[#f0f0f5] sm:flex"
           >
             Browse
