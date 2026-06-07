@@ -24,7 +24,7 @@ export function TenantProfile() {
   if (isTenantNotFound && !tenantData) {
     return (
       <div className="flex min-h-0 w-full flex-1 flex-col">
-        <div className="mx-auto w-full max-w-7xl py-8">
+        <div className="mx-auto w-full max-w-[1800px] py-8">
           <NotFound message="Tenant not found" backToHome />
         </div>
       </div>
@@ -34,7 +34,7 @@ export function TenantProfile() {
   if (isLoading || !tenantData) {
     return (
       <div className="flex min-h-0 w-full flex-1 flex-col">
-        <div className={`mx-auto w-full max-w-7xl py-8 ${isPlayerRoute ? 'hidden' : ''}`}>
+        <div className={`mx-auto w-full max-w-[1800px] py-8 ${isPlayerRoute ? 'hidden' : ''}`}>
           <div className="flex w-full flex-col items-center text-center">
             <div className="relative aspect-[6/1] w-full animate-pulse overflow-hidden rounded-lg bg-[#222230]" />
           </div>
@@ -45,7 +45,7 @@ export function TenantProfile() {
         </div>
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex h-full min-h-0 flex-1 flex-col">
-            <div className="mx-auto w-full max-w-7xl">
+            <div className="mx-auto w-full max-w-[1800px]">
               {isPlayerRoute ? (
                 <div className="flex min-h-0 w-full flex-1 flex-col lg:flex-row">
                   <div className="flex w-full flex-1 flex-col">
@@ -86,7 +86,7 @@ export function TenantProfile() {
 
   return (
     <div className="flex min-h-0 w-full flex-1 flex-col">
-      <div className={`mx-auto w-full max-w-7xl py-8 ${isPlayerRoute ? 'hidden' : ''}`}>
+      <div className={`mx-auto w-full max-w-[1800px] py-8 ${isPlayerRoute ? 'hidden' : ''}`}>
         <TenantProfileCard tenantData={tenantData} centered={true} />
         <TenantTabs tabs={tabs} />
       </div>

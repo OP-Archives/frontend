@@ -21,7 +21,7 @@ interface GamesGridProps {
 export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
   if (isLoading) {
     return (
-      <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
         {Array.from({ length: limit }).map((_, i) => (
           <div key={i} className="block w-full min-w-0">
             <div className="overflow-visible rounded-md border border-transparent bg-[#16161e]/80 p-3">
@@ -59,7 +59,7 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
 
   if (games && games.length > 0) {
     return (
-      <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
         {games.map((game: GameData) => (
           <div key={game.id} className="block w-full min-w-0 cursor-pointer">
             <div className="overflow-visible rounded-md border border-transparent bg-[#16161e]/80 p-3 transition-all hover:border-[#222230] hover:bg-[#16161e]">

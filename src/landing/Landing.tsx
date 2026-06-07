@@ -35,7 +35,7 @@ export function Landing() {
     <div className="relative">
       <Background />
 
-      <div className="relative mx-auto max-w-7xl px-4">
+      <div className="relative mx-auto max-w-[1800px] px-4">
         <div className="flex flex-col items-center pt-16 sm:pt-20 md:pt-24">
           {/* Character 
           <img src={heroImage} alt="" className="h-[140px] w-auto object-contain md:h-[200px]" />
@@ -53,7 +53,7 @@ export function Landing() {
 
           {/* Tenant Grid */}
           {isLoading ? (
-            <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid w-full max-w-6xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
@@ -78,7 +78,7 @@ export function Landing() {
               <p className="mt-1 text-sm text-[#9ca3af]">{error instanceof Error ? error.message : 'Unknown error'}</p>
             </div>
           ) : (
-            <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid w-full max-w-6xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {tenants?.map(
                 (tenant: {
                   id: string;

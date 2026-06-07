@@ -76,7 +76,8 @@ export function Library() {
 
   const chaptersResult = useChapters(tenant!, queryKeyParams);
   const gamesResult = useGamesLibrary(tenant!, queryKeyParams);
-  const { data, isLoading } = isChaptersMode ? chaptersResult : gamesResult;
+  const { data, isLoading, isFetching } = isChaptersMode ? chaptersResult : gamesResult;
+  const isBackgroundFetching = isFetching && !isLoading;
 
   const items = data?.data ?? [];
   const total = data?.meta?.total ?? 0;
@@ -111,50 +112,55 @@ export function Library() {
       <div className="mt-2 flex flex-col items-center justify-center">
         {total !== null && <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{heading}</h4>}
       </div>
-      <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
-        <div className="relative ml-1">
-          <input
-            type="text"
-            placeholder="Search by Game"
-            onChange={(e) => {
-              setInputSearch(e.target.value);
-              debouncedSetSearchTerm(e.target.value);
-            }}
-            value={inputSearch}
-            className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-44 rounded-md border px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
-          />
-          {inputSearch && (
-            <button
-              onClick={handleClearSearch}
-              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
-            >
-              <X size={16} />
-            </button>
-          )}
+      <div className="mx-auto max-w-full">
+        <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
+          <div className="relative ml-1">
+            <input
+              type="text"
+              placeholder="Search by Game"
+              onChange={(e) => {
+                setInputSearch(e.target.value);
+                debouncedSetSearchTerm(e.target.value);
+              }}
+              value={inputSearch}
+              className="border-border bg-bg-surface text-text-primary placeholder-text-secondary hover:border-border/80 focus:border-primary focus:ring-primary/30 h-9 w-44 rounded-md border px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
+            />
+            {inputSearch && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          <select
+            value={sort}
+            onChange={changeSort}
+            className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 ml-auto h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
+          >
+            {SORTS.map((data) => (
+              <option key={data} value={data}>
+                {data}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={sort}
-          onChange={changeSort}
-          className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 ml-auto h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
-        >
-          {SORTS.map((data) => (
-            <option key={data} value={data}>
-              {data}
-            </option>
-          ))}
-        </select>
       </div>
       {isLoading && (
-        <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div
+          className="mt-2 grid gap-3"
+          style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? 100 : 230}px, 1fr))` }}
+        >
           {Array.from({ length: limit }).map((_, i) => (
-            <div key={i} className="block w-full min-w-0 rounded">
+            <div key={i} className="block min-w-0 rounded">
               <div
                 className="relative w-full overflow-hidden rounded-t bg-[#16161e]"
                 style={{ aspectRatio: '400/530' }}
               >
                 <div className="absolute inset-0 animate-pulse bg-[#222230]" />
               </div>
-              <div className="w-full min-w-0 px-1 py-0.5 text-center">
+              <div className="px-1 py-0.5 text-center">
                 <span className="mx-auto block h-[16px] w-3/4 animate-pulse rounded bg-[#6366f1]/30" />
                 <span className="mx-auto mt-0.5 block h-[16px] w-1/2 animate-pulse rounded bg-[#222230]" />
               </div>
@@ -166,7 +172,10 @@ export function Library() {
       {!isLoading && items.length === 0 && <p className="mt-12 text-center text-sm text-[#9ca3af]">{emptyMessage}</p>}
 
       {!isLoading && items.length > 0 && (
-        <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div
+          className={`mt-2 grid gap-3 transition-opacity duration-200 ${isBackgroundFetching ? 'pointer-events-none opacity-50' : 'opacity-100'}`}
+          style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? 100 : 230}px, 1fr))` }}
+        >
           {items.map((item: LibraryGameItem | LibraryChapterItem) => (
             <div key={(item as LibraryGameItem).game_id || item.game_id}>
               <Card
