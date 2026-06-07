@@ -67,7 +67,7 @@ export function Vod() {
   };
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-[1920px] flex-1 flex-col">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-full flex-1 flex-col">
       <div className="relative flex h-full min-h-0 flex-1 flex-col">{renderPlayer()}</div>
     </div>
   );
