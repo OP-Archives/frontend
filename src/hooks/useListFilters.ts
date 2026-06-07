@@ -11,7 +11,6 @@ interface UseListFiltersOptions<TFilter extends string> {
   defaultFilter?: TFilter;
   preserveParams?: Record<string, string | null>;
   todayString?: string;
-  isMobile?: boolean;
 }
 
 export interface ListFiltersState<TFilter extends string> {
@@ -32,7 +31,6 @@ export function useListFilters<TFilter extends string>({
   defaultFilter,
   preserveParams = {},
   todayString,
-  isMobile: _isMobile,
 }: UseListFiltersOptions<TFilter>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const today = todayString || new Date().toISOString().split('T')[0];
@@ -42,7 +40,7 @@ export function useListFilters<TFilter extends string>({
   const searchInput = searchParams.get(searchParamKey.search) || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
   const gameId = searchParams.get('game_id');
-  const limit = 21;
+  const limit = 20;
 
   const memoizedDateRange = (() => {
     if (filter !== 'Date' || !filterStartDate || !filterEndDate) return null;

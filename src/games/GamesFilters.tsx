@@ -3,7 +3,6 @@ import FilterBar from '@/components/ui/FilterBar';
 import { useDebouncedSetter } from '@/hooks/debounceHelper';
 import type { GamesQueryParams } from '@/hooks/useGames';
 import { useListFilters } from '@/hooks/useListFilters';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTypedParams } from '@/hooks/useTypedParams';
 
 const FILTERS = ['Default', 'Date', 'Game'];
@@ -23,8 +22,6 @@ export interface GamesFiltersState {
 
 export function useGamesFilters() {
   const { tenant } = useTypedParams<{ tenant: string }>();
-  const isMobile = useMediaQuery('(max-width: 900px)');
-
   const {
     state,
     updateParams,
@@ -34,7 +31,6 @@ export function useGamesFilters() {
     filterOptions: FILTERS,
     searchParamKey: { search: 'game', from: 'from', to: 'to' },
     defaultFilter: 'Default',
-    isMobile,
   });
 
   const [inputGame, setInputGame] = useState(state.inputSearch);

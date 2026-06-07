@@ -131,9 +131,9 @@ export function Library() {
       <div className="mt-2 flex flex-col items-center justify-center">
         {total !== null && <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{heading}</h4>}
       </div>
-      <div className="mx-auto max-w-full">
+      <div className="max-w-full">
         <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
-          <div className="relative ml-1">
+          <div className="relative">
             <input
               type="text"
               placeholder="Search by Game"

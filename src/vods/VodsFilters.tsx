@@ -3,7 +3,6 @@ import FilterBar from '@/components/ui/FilterBar';
 import { useTenantContext } from '@/contexts/TenantContext';
 import { useDebouncedSetter } from '@/hooks/debounceHelper';
 import { useListFilters } from '@/hooks/useListFilters';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTypedParams } from '@/hooks/useTypedParams';
 import type { VodsQueryParams } from '@/hooks/useVods';
 import type { Tenant } from '@/types';
@@ -29,8 +28,6 @@ export interface VodsFiltersState {
 
 export function useVodsFilters() {
   const { tenant } = useTypedParams<{ tenant: string }>();
-  const isMobile = useMediaQuery('(max-width: 900px)');
-
   const {
     state,
     updateParams,
@@ -41,7 +38,6 @@ export function useVodsFilters() {
     filterOptions: FILTERS,
     searchParamKey: { search: 'title', from: 'from', to: 'to' },
     defaultFilter: 'Default',
-    isMobile: isMobile,
   });
 
   const [platformState, setPlatformState] = useState(PLATFORMS[0]);
