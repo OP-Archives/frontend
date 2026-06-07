@@ -2,6 +2,7 @@ import { ArrowRight, Video, MessageSquare, LayoutTemplate, Bookmark, Library, Se
 import { useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import { Background } from '@/components/Background';
+import { PricingTiers } from '@/components/ui/PricingTiers';
 
 const FEATURED_TENANTS = [
   {
@@ -184,6 +185,11 @@ export function Landing() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Pricing */}
+          <div className="mt-20 w-full max-w-7xl sm:mt-24">
+            <PricingTiers />
           </div>
 
           {/* CTA */}
