@@ -24,7 +24,7 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
       <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {Array.from({ length: limit }).map((_, i) => (
           <div key={i} className="block w-full min-w-0">
-            <div className="rounded-md border border-transparent bg-[#16161e]/80 p-3 backdrop-blur-sm">
+            <div className="overflow-visible rounded-md border border-transparent bg-[#16161e]/80 p-3">
               <div className="relative aspect-video w-full overflow-hidden bg-[#222230]">
                 <div className="absolute inset-0 animate-pulse bg-[#16161e]" />
                 <div className="absolute bottom-0 left-0">
@@ -62,7 +62,7 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
       <div className="mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {games.map((game: GameData) => (
           <div key={game.id} className="block w-full min-w-0 cursor-pointer">
-            <div className="rounded-md border border-transparent bg-[#16161e]/80 p-3 backdrop-blur-sm transition-all hover:border-[#222230] hover:bg-[#16161e]">
+            <div className="overflow-visible rounded-md border border-transparent bg-[#16161e]/80 p-3 transition-all hover:border-[#222230] hover:bg-[#16161e]">
               <motion.div
                 className="group relative aspect-video w-full bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
                 variants={cardHover}
