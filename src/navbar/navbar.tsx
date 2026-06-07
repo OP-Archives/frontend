@@ -48,7 +48,7 @@ export function Navbar() {
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#9ca3af]" />
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search a streamer"
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);

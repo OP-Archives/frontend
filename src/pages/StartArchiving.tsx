@@ -180,7 +180,7 @@ const CONTACT_LINKS = [
     icon: XIcon,
     label: 'X',
     href: 'https://x.com/Overpowered',
-    copyable: 'https://x.com/Overpowered',
+    copyable: '@overpowered',
   },
 ];
 
