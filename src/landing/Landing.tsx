@@ -114,9 +114,9 @@ export function Landing() {
               <h2 className="text-xl font-bold text-[#f0f0f5] sm:text-2xl">Featured Streamers</h2>
               <button
                 onClick={() => navigate('/browse')}
-                className="cursor-pointer text-sm text-[#818cf8] transition-colors hover:text-[#6366f1]"
+                className="flex cursor-pointer items-center gap-1 rounded-lg bg-[#6366f1] px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-[#4f46e5]"
               >
-                View All Streamers →
+                View All
               </button>
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
