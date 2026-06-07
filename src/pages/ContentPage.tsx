@@ -24,7 +24,10 @@ export function ContentPage({ title, subtitle, sections, cta }: ContentPageProps
 
         <div className="mt-12 space-y-16">
           {sections.map((section, i) => (
-            <div key={i} className="mx-auto max-w-3xl">
+            <div
+              key={i}
+              className="mx-auto max-w-3xl rounded-xl border border-[#222230] bg-[#16161e]/60 p-6 backdrop-blur-sm"
+            >
               <h2 className="text-2xl font-bold text-[#6366f1]">{section.heading}</h2>
               <div className="mt-3 space-y-3 leading-relaxed text-[#f0f0f5]">{section.content}</div>
             </div>
