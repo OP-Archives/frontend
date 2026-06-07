@@ -38,99 +38,106 @@ const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListIte
 
   return (
     <div className="mb-2 block w-full min-w-0">
-      <motion.div
-        className="group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
-        variants={cardHover}
-        initial="initial"
-        whileHover="whileHover"
-        whileTap="whileTap"
-      >
-        <motion.div className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
-          {DEFAULT_VOD ? (
-            <Link to={DEFAULT_VOD} className="absolute inset-0 block">
-              {DEFAULT_THUMBNAIL ? (
-                <img
-                  className="thumbnail h-full w-full object-cover"
-                  alt=""
-                  src={DEFAULT_THUMBNAIL}
-                  width={640}
-                  height={360}
-                  loading={priority ? 'eager' : 'lazy'}
-                  fetchPriority={priority ? 'high' : 'auto'}
-                  decoding="async"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
-              )}
-            </Link>
-          ) : DEFAULT_THUMBNAIL ? (
-            <img
-              className="thumbnail h-full w-full object-cover"
-              alt=""
-              src={DEFAULT_THUMBNAIL}
-              width={640}
-              height={360}
-              loading={priority ? 'eager' : 'lazy'}
-              fetchPriority={priority ? 'high' : 'auto'}
-              decoding="async"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
-          )}
+      <div className="rounded-md border border-transparent bg-[#16161e]/80 p-3 backdrop-blur-sm transition-all hover:border-[#222230] hover:bg-[#16161e]">
+        <motion.div
+          className="group relative flex aspect-video w-full overflow-hidden bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
+          variants={cardHover}
+          initial="initial"
+          whileHover="whileHover"
+          whileTap="whileTap"
+        >
           <motion.div
-            className="shadow-glow pointer-events-none absolute inset-0"
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-          />
-          {vod.is_live && (
-            <div className="absolute top-2 left-2 z-10">
-              <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                LIVE
+            className="absolute inset-0 overflow-hidden rounded-md bg-[#222230]"
+            whileHover={{ x: -6, y: -6 }}
+          >
+            {DEFAULT_VOD ? (
+              <Link to={DEFAULT_VOD} className="absolute inset-0 block">
+                {DEFAULT_THUMBNAIL ? (
+                  <img
+                    className="thumbnail h-full w-full object-cover"
+                    alt=""
+                    src={DEFAULT_THUMBNAIL}
+                    width={640}
+                    height={360}
+                    loading={priority ? 'eager' : 'lazy'}
+                    fetchPriority={priority ? 'high' : 'auto'}
+                    decoding="async"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
+                )}
+              </Link>
+            ) : DEFAULT_THUMBNAIL ? (
+              <img
+                className="thumbnail h-full w-full object-cover"
+                alt=""
+                src={DEFAULT_THUMBNAIL}
+                width={640}
+                height={360}
+                loading={priority ? 'eager' : 'lazy'}
+                fetchPriority={priority ? 'high' : 'auto'}
+                decoding="async"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-sm text-[#9ca3af]">?</div>
+            )}
+            <motion.div
+              className="shadow-glow pointer-events-none absolute inset-0"
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+            />
+            {vod.is_live && (
+              <div className="absolute top-2 left-2 z-10">
+                <span className="inline-flex items-center gap-1.5 rounded bg-[#E40005]/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                  LIVE
+                </span>
+              </div>
+            )}
+            {vod.platform && (
+              <div className="absolute top-2 right-2 z-10">
+                <span className="inline-flex items-center justify-center rounded bg-black/60 p-1 backdrop-blur-sm">
+                  {vod.platform === 'twitch' ? (
+                    <TwitchIcon width={14} height={14} className="text-[#9146FF]" />
+                  ) : vod.platform === 'kick' ? (
+                    <KickIcon width={14} height={14} className="text-[#53fc18]" />
+                  ) : null}
+                </span>
+              </div>
+            )}
+            <div className="absolute bottom-0 left-0">
+              <span className="bg-black/60 p-1.5 text-xs text-white">
+                {DATE_FORMATTER.format(new Date(vod.created_at)).replace(',', '')}
               </span>
             </div>
-          )}
-          {vod.platform && (
-            <div className="absolute top-2 right-2 z-10">
-              <span className="inline-flex items-center justify-center rounded bg-black/60 p-1 backdrop-blur-sm">
-                {vod.platform === 'twitch' ? (
-                  <TwitchIcon width={14} height={14} className="text-[#9146FF]" />
-                ) : vod.platform === 'kick' ? (
-                  <KickIcon width={14} height={14} className="text-[#53fc18]" />
-                ) : null}
-              </span>
+            <div className="absolute right-0 bottom-0">
+              <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration)}</span>
             </div>
-          )}
-          <div className="absolute bottom-0 left-0">
-            <span className="bg-black/60 p-1.5 text-xs text-white">
-              {DATE_FORMATTER.format(new Date(vod.created_at)).replace(',', '')}
-            </span>
-          </div>
-          <div className="absolute right-0 bottom-0">
-            <span className="bg-black/60 p-1.5 text-xs text-white">{toHHMMSS(vod.duration)}</span>
-          </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-      <div className="mt-1 mb-1 flex cursor-default items-center">
-        {chapterCount > 0 && (
-          <div className="mr-2 shrink-0">
-            <ChaptersMenu vod={vod} />
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          {DEFAULT_VOD ? (
-            <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline">
-              <CustomWidthTooltip title={vod.title}>
-                <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">{vod.title}</span>
-              </CustomWidthTooltip>
-            </Link>
-          ) : (
-            <CustomWidthTooltip title={vod.title}>
-              <span className="truncate text-xs font-medium text-[#6366f1]">{vod.title}</span>
-            </CustomWidthTooltip>
+        <div className="mt-1 mb-1 flex cursor-default items-center">
+          {chapterCount > 0 && (
+            <div className="mr-2 shrink-0">
+              <ChaptersMenu vod={vod} />
+            </div>
           )}
-          <div className="mt-1 flex justify-center">
-            <WatchMenu vod={vod} cdnEnabled={cdnEnabled} />
+          <div className="min-w-0 flex-1">
+            {DEFAULT_VOD ? (
+              <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline">
+                <CustomWidthTooltip title={vod.title}>
+                  <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">
+                    {vod.title}
+                  </span>
+                </CustomWidthTooltip>
+              </Link>
+            ) : (
+              <CustomWidthTooltip title={vod.title}>
+                <span className="truncate text-xs font-medium text-[#6366f1]">{vod.title}</span>
+              </CustomWidthTooltip>
+            )}
+            <div className="mt-1 flex justify-center">
+              <WatchMenu vod={vod} cdnEnabled={cdnEnabled} />
+            </div>
           </div>
         </div>
       </div>
