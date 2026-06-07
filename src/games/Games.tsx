@@ -1,8 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useGamesFilters, GamesFiltersBar } from './GamesFilters';
 import { GamesGrid } from './GamesGrid';
 import { PaginationControls } from '@/components/ui/PaginationControls';
+import { useTenantContext } from '@/contexts/TenantContext';
 import { useGames, prefetchNextPageGames } from '@/hooks/useGames';
 
 export function Games() {
@@ -17,6 +19,7 @@ export function Games() {
     debouncedSetGame,
   } = useGamesFilters();
   const queryClient = useQueryClient();
+  const tenantCtx = useTenantContext();
 
   const { data, isLoading } = useGames(tenant, queryKeyParams);
   const games = data?.data ?? null;
@@ -31,6 +34,14 @@ export function Games() {
 
   return (
     <div className="w-full">
+      <Helmet>
+        <title>{`${tenantCtx.tenant?.display_name || tenant} Games - op archive`}</title>
+        <meta
+          name="description"
+          content={`Browse all games and chapters played by ${tenantCtx.tenant?.display_name || tenant} on Twitch and Kick. Filter by game, date, and chapter.`}
+        />
+      </Helmet>
+
       <div className="mt-2 flex flex-col items-center justify-center">
         <h4 className="text-3xl font-medium text-[#6366f1] uppercase">
           {totalGames !== null ? `${totalGames} GAMES ARCHIVED` : 'GAMES ARCHIVED'}

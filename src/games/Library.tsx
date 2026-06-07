@@ -1,6 +1,7 @@
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useSearchParams, useParams } from 'react-router-dom';
 import { PaginationControls } from '@/components/ui/PaginationControls';
 import { useDebouncedSetter } from '@/hooks/debounceHelper';
@@ -119,6 +120,14 @@ export function Library() {
 
   return (
     <div className="w-full py-1">
+      <Helmet>
+        <title>{`${tenantData?.data?.display_name || tenant} Library - op archive`}</title>
+        <meta
+          name="description"
+          content={`Browse played games for ${tenantData?.data?.display_name || tenant} on op archive.`}
+        />
+      </Helmet>
+
       <div className="mt-2 flex flex-col items-center justify-center">
         {total !== null && <h4 className="text-3xl font-medium text-[#6366f1] uppercase">{heading}</h4>}
       </div>

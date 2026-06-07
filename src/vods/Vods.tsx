@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useVodsFilters, VodsFiltersBar } from './VodsFilters';
 import { VodsGrid } from './VodsGrid';
 import { PaginationControls } from '@/components/ui/PaginationControls';
@@ -37,6 +38,14 @@ export function Vods() {
 
   return (
     <div className="w-full">
+      <Helmet>
+        <title>{`${tenantCtx?.display_name || tenant} VODs - op archive`}</title>
+        <meta
+          name="description"
+          content={`Browse all archived Twitch and Kick VODs for ${tenantCtx?.display_name || tenant}. Filter by game, date, and title.`}
+        />
+      </Helmet>
+
       <div className="mt-2 flex flex-col items-center justify-center">
         <h4 className="text-3xl font-medium text-[#6366f1] uppercase">
           {totalVods !== null ? `${totalVods} VODS ARCHIVED` : 'VODS ARCHIVED'}

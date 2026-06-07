@@ -200,6 +200,7 @@ export default function YoutubeVod(props: YoutubeVodProps) {
     <>
       <Helmet>
         <title>{pageTitle}</title>
+        <link rel="canonical" href={`https://overpowered.tv/${tenant}/youtube/${vodId}`} />
         <meta name="description" content={`${vod.title} — archived on ${formattedDate} on op archive`} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={`Watch ${vod.title} archived on ${formattedDate} on op archive`} />

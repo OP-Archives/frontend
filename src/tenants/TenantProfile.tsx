@@ -94,6 +94,7 @@ export function TenantProfile() {
       <Background imageUrl={tenantData.background_image_url} />
       <Helmet>
         <title>{displayName} - op archive</title>
+        <link rel="canonical" href={`https://overpowered.tv/${tenant}`} />
         <meta
           name="description"
           content={`${displayName}'s archived Twitch & Kick VODs with full chat replay on op archive`}

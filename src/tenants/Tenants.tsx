@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import { Background } from '@/components/Background';
@@ -31,6 +32,13 @@ export function Tenants() {
 
   return (
     <div className="relative">
+      <Helmet>
+        <title>Browse Streamers - op archive</title>
+        <meta
+          name="description"
+          content="Discover and browse streamers on op archive. Find archived Twitch and Kick VODs with full chat replay."
+        />
+      </Helmet>
       <Background />
 
       <div className="relative mx-auto max-w-[1800px] px-4">
