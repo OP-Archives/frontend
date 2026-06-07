@@ -33,7 +33,7 @@ export function Library() {
   const searchTerm = searchParams.get('search') || '';
   const sort = searchParams.get('sort') || 'recent';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = isMobile ? 10 : 20;
+  const limit = 21;
 
   const [inputSearch, setInputSearch] = useState(searchTerm);
 

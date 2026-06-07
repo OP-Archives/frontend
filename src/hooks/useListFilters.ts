@@ -32,19 +32,17 @@ export function useListFilters<TFilter extends string>({
   defaultFilter,
   preserveParams = {},
   todayString,
-  isMobile,
+  isMobile: _isMobile,
 }: UseListFiltersOptions<TFilter>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const today = todayString || new Date().toISOString().split('T')[0];
-  const mobile = isMobile ?? false;
-
   const filter = (searchParams.get('filter') || defaultFilter || filterOptions[0]) as TFilter;
   const filterStartDate = searchParams.get(searchParamKey.from) || '';
   const filterEndDate = searchParams.get(searchParamKey.to) || today;
   const searchInput = searchParams.get(searchParamKey.search) || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
   const gameId = searchParams.get('game_id');
-  const limit = mobile ? 10 : 20;
+  const limit = 21;
 
   const memoizedDateRange = (() => {
     if (filter !== 'Date' || !filterStartDate || !filterEndDate) return null;

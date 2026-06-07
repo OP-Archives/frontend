@@ -10,7 +10,7 @@ interface VodsGridProps {
 export function VodsGrid({ vods, isLoading, limit }: VodsGridProps) {
   if (isLoading) {
     return (
-      <div className="mx-auto mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mx-auto mt-2 grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {Array.from({ length: limit }).map((_, i) => (
           <div key={i} className="block w-full min-w-0">
             <div className="relative aspect-video w-full overflow-hidden bg-[#16161e]">
@@ -65,7 +65,7 @@ export function VodsGrid({ vods, isLoading, limit }: VodsGridProps) {
 
   if (vods && vods.length > 0) {
     return (
-      <div className="mx-auto mt-2 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mx-auto mt-2 grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {vods.map((vod: VodListItem, index: number) => (
           <div key={vod.id}>
             <VodCard vod={vod} priority={index < 10} />
