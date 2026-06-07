@@ -94,9 +94,7 @@ export function Library() {
   }, [page, totalPages, queryKeyParams, queryClient, isChaptersMode]);
 
   const changeSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSort = e.target.value;
-    const apiValue = newSort === 'Recently Played' ? 'recent' : newSort === 'Game Name' ? 'game_name' : 'count';
-    updateUrlParams({ sort: apiValue, page: '1' });
+    updateUrlParams({ sort: e.target.value, page: '1' });
   };
 
   const handleClearSearch = () => {
@@ -140,7 +138,10 @@ export function Library() {
             className="border-border bg-bg-surface text-text-primary hover:border-border/80 focus:border-primary focus:ring-primary/30 ml-auto h-9 w-max rounded-md border px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
           >
             {SORTS.map((data) => (
-              <option key={data} value={data}>
+              <option
+                key={data}
+                value={data === 'Recently Played' ? 'recent' : data === 'Game Name' ? 'game_name' : 'count'}
+              >
                 {data}
               </option>
             ))}
