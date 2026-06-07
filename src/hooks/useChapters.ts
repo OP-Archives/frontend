@@ -6,7 +6,7 @@ export interface ChaptersParams {
   page: number;
   limit: number;
   chapter_name?: string;
-  sort: 'recent' | 'game_name' | 'count';
+  sort: 'recent' | 'chapter_name' | 'count';
   order: 'asc' | 'desc';
 }
 

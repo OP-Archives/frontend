@@ -58,24 +58,36 @@ export function Library() {
     updateUrlParams({ search: val, page: '1' });
   }, 500);
 
-  const apiSort = sort === 'recent' ? 'recent' : sort === 'game_name' ? 'game_name' : 'count';
-  const apiOrder = sort === 'game_name' ? 'asc' : 'desc';
-
-  const searchParamKey = isChaptersMode ? 'chapter_name' : 'game_name';
-
-  const queryKeyParams = useMemo(
+  const chaptersQueryKeyParams = useMemo(
     () => ({
       page,
       limit,
-      ...(searchTerm.length > 0 ? { [searchParamKey]: searchTerm } : {}),
-      sort: apiSort as 'recent' | 'game_name' | 'count',
-      order: apiOrder as 'asc' | 'desc',
+      ...(searchTerm.length > 0 ? { chapter_name: searchTerm } : {}),
+      sort: (sort === 'recent' ? 'recent' : sort === 'count' ? 'count' : 'chapter_name') as
+        | 'recent'
+        | 'count'
+        | 'chapter_name',
+      order: (sort === 'game_name' ? 'asc' : 'desc') as 'asc' | 'desc',
     }),
-    [page, limit, searchTerm, searchParamKey, apiSort, apiOrder]
+    [page, limit, searchTerm, sort]
   );
 
-  const chaptersResult = useChapters(tenant!, queryKeyParams);
-  const gamesResult = useGamesLibrary(tenant!, queryKeyParams);
+  const gamesQueryKeyParams = useMemo(
+    () => ({
+      page,
+      limit,
+      ...(searchTerm.length > 0 ? { game_name: searchTerm } : {}),
+      sort: (sort === 'recent' ? 'recent' : sort === 'count' ? 'count' : 'game_name') as
+        | 'recent'
+        | 'count'
+        | 'game_name',
+      order: (sort === 'game_name' ? 'asc' : 'desc') as 'asc' | 'desc',
+    }),
+    [page, limit, searchTerm, sort]
+  );
+
+  const chaptersResult = useChapters(tenant!, chaptersQueryKeyParams);
+  const gamesResult = useGamesLibrary(tenant!, gamesQueryKeyParams);
   const { data, isLoading, isFetching } = isChaptersMode ? chaptersResult : gamesResult;
   const isBackgroundFetching = isFetching && !isLoading;
 
@@ -86,12 +98,12 @@ export function Library() {
   useEffect(() => {
     if (totalPages !== null && page < totalPages) {
       if (isChaptersMode) {
-        prefetchNextPageChapters(queryClient, { ...queryKeyParams, slug: tenant! });
+        prefetchNextPageChapters(queryClient, { ...chaptersQueryKeyParams, slug: tenant! });
       } else {
-        prefetchNextPageGamesLibrary(queryClient, { ...queryKeyParams, slug: tenant! });
+        prefetchNextPageGamesLibrary(queryClient, { ...gamesQueryKeyParams, slug: tenant! });
       }
     }
-  }, [page, totalPages, queryKeyParams, queryClient, isChaptersMode]);
+  }, [page, totalPages, chaptersQueryKeyParams, gamesQueryKeyParams, queryClient, isChaptersMode]);
 
   const changeSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateUrlParams({ sort: e.target.value, page: '1' });
@@ -204,12 +216,12 @@ export function Library() {
         onHoverPage={(targetPage) =>
           isChaptersMode
             ? prefetchNextPageChapters(queryClient, {
-                ...queryKeyParams,
+                ...chaptersQueryKeyParams,
                 slug: tenant!,
                 page: targetPage,
               })
             : prefetchNextPageGamesLibrary(queryClient, {
-                ...queryKeyParams,
+                ...gamesQueryKeyParams,
                 slug: tenant!,
                 page: targetPage,
               })
