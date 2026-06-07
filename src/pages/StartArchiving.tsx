@@ -20,6 +20,7 @@ import {
   SkipBack,
 } from 'lucide-react';
 import { MailIcon, DiscordIcon, XIcon } from '@/assets/icons';
+import { Background } from '@/components/Background';
 
 interface FeatureItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -218,6 +219,7 @@ function FeatureCard({ category }: { category: FeatureCategory }) {
 export function StartArchiving() {
   return (
     <div className="relative">
+      <Background />
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-5xl">Start Archiving Today!</h1>
