@@ -17,8 +17,8 @@ interface PricingTier {
 const TIERS: PricingTier[] = [
   {
     name: 'Starter',
-    price: '$75',
-    description: 'Perfect for small and indie streamers getting started.',
+    price: '$100',
+    description: 'Your VODs live on your own YouTube channel. Yours to own and monetize.',
     target: 'Small / Indie Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
@@ -32,7 +32,7 @@ const TIERS: PricingTier[] = [
       { text: 'Smart search & filtering', included: true },
       { text: 'BTTV / FFZ / 7TV emotes', included: true },
       { text: '1 platform (Twitch OR Kick)', included: true },
-      { text: 'Backfill all VODs available as paid add-on', included: true },
+      { text: 'Backfill VODs (add-on)', included: true },
       { text: 'Standard support', included: true },
     ],
     highlighted: false,
@@ -40,7 +40,7 @@ const TIERS: PricingTier[] = [
   {
     name: 'Pro',
     price: '$150',
-    description: 'Built for established streamers.',
+    description: 'Own your archive on YouTube. Turn every past stream into revenue.',
     target: 'Medium / Larger Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
@@ -54,7 +54,7 @@ const TIERS: PricingTier[] = [
       { text: 'Smart search & filtering', included: true },
       { text: 'BTTV / FFZ / 7TV emotes', included: true },
       { text: 'Unlimited platforms (Twitch/Kick)', included: true },
-      { text: 'Backfill all VODs included', included: true },
+      { text: 'Backfill VODs included', included: true },
       { text: 'Priority support', included: true },
       { text: 'Per-game uploads', included: true },
       { text: 'Multi-track audio', included: true },
@@ -79,7 +79,7 @@ const TIERS: PricingTier[] = [
       { text: 'Smart search & filtering', included: true },
       { text: 'BTTV / FFZ / 7TV emotes', included: true },
       { text: 'Unlimited platforms (Twitch/Kick)', included: true },
-      { text: 'Backfill all VODs included', included: true },
+      { text: 'Backfill VODs included', included: true },
       { text: 'Priority support', included: true },
       { text: 'Per-game uploads', included: true },
       { text: 'Multi-track audio', included: true },
@@ -143,7 +143,13 @@ export function PricingTiers() {
         <div className="mx-auto mt-3 h-[1.5px] w-36 bg-[#6366f1]/40 sm:mt-4 sm:w-48" />
       </div>
 
-      <div className="mt-8 grid gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 text-center">
+        <p className="text-base font-bold text-[#f0f0f5] sm:text-lg">
+          Your archive. Your revenue. Every VOD uploads to your own YouTube channel. You own it, you monetize it.
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
         {TIERS.map((tier) => (
           <TierCard key={tier.name} tier={tier} />
         ))}
