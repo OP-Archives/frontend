@@ -18,7 +18,8 @@ const TIERS: PricingTier[] = [
   {
     name: 'Starter',
     price: '$100',
-    description: 'Your VODs live on your own YouTube channel. Yours to own and monetize.',
+    description:
+      'Single-platform archiving with full YouTube uploads, chat replay, and your own dedicated archive site.',
     target: 'Small / Indie Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
@@ -40,7 +41,8 @@ const TIERS: PricingTier[] = [
   {
     name: 'Pro',
     price: '$150',
-    description: 'Own your archive on YouTube. Turn every past stream into revenue.',
+    description:
+      'Multi-platform coverage, DMCA handling, per-game YouTube uploads, and priority support for serious streamers.',
     target: 'Medium / Larger Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
