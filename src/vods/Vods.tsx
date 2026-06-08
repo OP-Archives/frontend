@@ -47,9 +47,11 @@ export function Vods() {
       </Helmet>
 
       <div className="mt-2 flex flex-col items-center justify-center">
-        <h4 className="text-3xl font-medium text-[#6366f1] uppercase">
-          {totalVods !== null ? `${totalVods} VODS ARCHIVED` : 'VODS ARCHIVED'}
-        </h4>
+        <div className="rounded-lg border border-[#222230] bg-[#16161e]/80 px-6 py-3">
+          <h4 className="text-3xl font-medium text-[#6366f1] uppercase">
+            {totalVods !== null ? `${totalVods} VODS ARCHIVED` : 'VODS ARCHIVED'}
+          </h4>
+        </div>
       </div>
       <VodsFiltersBar
         state={state}

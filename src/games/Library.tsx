@@ -191,7 +191,13 @@ export function Library() {
         </div>
       )}
 
-      {!isLoading && items.length === 0 && <p className="mt-12 text-center text-sm text-[#9ca3af]">{emptyMessage}</p>}
+      {!isLoading && items.length === 0 && (
+        <div className="mt-12 flex justify-center">
+          <div className="rounded-lg border border-[#222230] bg-[#16161e]/80 px-6 py-3">
+            <p className="text-center text-sm text-[#9ca3af]">{emptyMessage}</p>
+          </div>
+        </div>
+      )}
 
       {!isLoading && items.length > 0 && (
         <div

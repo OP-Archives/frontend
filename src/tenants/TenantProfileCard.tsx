@@ -75,7 +75,7 @@ export function TenantProfileCard({ tenantData, centered = true }: { tenantData:
               </span>
 
               {socials.length > 0 && (
-                <div className={`mt-3 flex flex-wrap items-center gap-3`}>
+                <div className={`mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3`}>
                   {socials.map(({ name, url }) => {
                     const key = normalizePlatformName(name);
                     const Icon = platformIcons[key];

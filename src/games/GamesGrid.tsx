@@ -54,7 +54,13 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
   }
 
   if (games && games.length === 0) {
-    return <p className="mt-12 text-center text-sm text-[#9ca3af]">No games found matching your search filters.</p>;
+    return (
+      <div className="mt-12 flex justify-center">
+        <div className="rounded-lg border border-[#222230] bg-[#16161e]/80 px-6 py-3">
+          <p className="text-center text-sm text-[#9ca3af]">No games found matching your search filters.</p>
+        </div>
+      </div>
+    );
   }
 
   if (games && games.length > 0) {

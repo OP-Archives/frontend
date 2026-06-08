@@ -12,8 +12,10 @@ function NoContent({ tenantData }: NoContentProps) {
     return <Vods />;
   }
   return (
-    <div className="mt-12 text-center">
-      <p className="text-sm text-[#9ca3af]">No content available for this tenant.</p>
+    <div className="mt-12 flex justify-center">
+      <div className="rounded-lg border border-[#222230] bg-[#16161e]/80 px-6 py-3">
+        <p className="text-center text-sm text-[#9ca3af]">No content available for this tenant.</p>
+      </div>
     </div>
   );
 }

@@ -165,7 +165,9 @@ export default function Games(props: GamesProps) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
         {logo && <img src={logo} alt="" className="h-auto max-w-[200px]" />}
-        <p className="text-lg text-[#9ca3af]">No games found</p>
+        <div className="rounded-lg border border-[#222230] bg-[#16161e]/80 px-6 py-3">
+          <p className="text-lg text-[#9ca3af]">No games found</p>
+        </div>
       </div>
     );
   }
