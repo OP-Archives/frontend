@@ -11,6 +11,7 @@ import {
   SoundCloudIcon,
 } from '@/assets/icons';
 import type { Tenant } from '@/types';
+import { normalizePlatformName } from '@/utils/helpers';
 
 const platformIcons: Record<string, typeof TwitchIcon> = {
   twitch: TwitchIcon,
@@ -72,11 +73,12 @@ export function PlayerTenantProfile({ tenantData }: { tenantData: Tenant }) {
           {socials.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-3">
               {socials.map(({ name, url }) => {
-                const Icon = platformIcons[name];
+                const key = normalizePlatformName(name);
+                const Icon = platformIcons[key];
                 if (!Icon || !url) return null;
                 return (
                   <a
-                    key={name}
+                    key={url}
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -86,10 +88,10 @@ export function PlayerTenantProfile({ tenantData }: { tenantData: Tenant }) {
                     <span
                       className="flex h-8 w-8 items-center justify-center rounded-full"
                       style={{
-                        backgroundColor: name === 'kick' ? '#222230' : platformColors[name],
+                        backgroundColor: key === 'kick' ? '#222230' : platformColors[key],
                       }}
                     >
-                      <Icon className={name === 'kick' ? 'h-5 w-5 text-[#53fc18]' : 'h-5 w-5 text-white'} />
+                      <Icon className={key === 'kick' ? 'h-5 w-5 text-[#53fc18]' : 'h-5 w-5 text-white'} />
                     </span>
                   </a>
                 );

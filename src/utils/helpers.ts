@@ -56,6 +56,10 @@ export function toHHMMSS(secs: number | string): string {
     .join(':');
 }
 
+export function normalizePlatformName(name: string): string {
+  return name.replace(/\d+$/, '');
+}
+
 export function getImage(link: string | undefined, width = 40, height = 53, gameId?: string): string {
   if (!link) {
     if (gameId) return `https://static-cdn.jtvnw.net/ttv-boxart/${gameId}_IGDB-${width}x${height}.jpg`;
