@@ -13,8 +13,8 @@ export function TenantTabs({ tabs }: { tabs: Tab[] }) {
   const activeTab = tabs.find((t) => location.pathname === t.path)?.path || tabs[0]?.path;
 
   return (
-    <div className="mt-6 w-full border-b border-[#222230]">
-      <div className="relative flex items-center gap-1">
+    <div className="mt-6 w-full">
+      <div className="relative inline-flex items-center gap-1 rounded-t-lg bg-[#16161e]/95 px-4 py-1 backdrop-blur-sm">
         {tabs.map((tab) => (
           <button
             key={tab.path}
