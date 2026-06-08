@@ -9,6 +9,7 @@ import {
   TikTokIcon,
   InstagramIcon,
   SoundCloudIcon,
+  GamersuppsIcon,
 } from '@/assets/icons';
 import type { Tenant } from '@/types';
 import { normalizePlatformName } from '@/utils/helpers';
@@ -23,6 +24,7 @@ const platformIcons: Record<string, typeof TwitchIcon> = {
   tiktok: TikTokIcon,
   instagram: InstagramIcon,
   soundcloud: SoundCloudIcon,
+  gamersupps: GamersuppsIcon,
 };
 
 const platformColors: Record<string, string> = {
@@ -35,6 +37,7 @@ const platformColors: Record<string, string> = {
   tiktok: '#000000',
   instagram: '#E4405F',
   soundcloud: '#FF5500',
+  gamersupps: '#000000',
 };
 
 export function PlayerTenantProfile({ tenantData }: { tenantData: Tenant }) {
@@ -76,6 +79,22 @@ export function PlayerTenantProfile({ tenantData }: { tenantData: Tenant }) {
                 const key = normalizePlatformName(name);
                 const Icon = platformIcons[key];
                 if (!Icon || !url) return null;
+                if (key === 'gamersupps') {
+                  return (
+                    <a
+                      key={url}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-opacity hover:opacity-80"
+                      aria-label={name}
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#000000]">
+                        <Icon />
+                      </span>
+                    </a>
+                  );
+                }
                 return (
                   <a
                     key={url}

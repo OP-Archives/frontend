@@ -31,7 +31,7 @@ export function Navbar() {
           </Link>
           <Link
             to="/browse"
-            className="hidden items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1] sm:flex"
+            className="hidden items-center gap-1.5 rounded-md bg-[#6366f1] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#5558ea] sm:flex"
           >
             Browse
           </Link>
