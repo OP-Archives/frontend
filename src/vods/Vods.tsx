@@ -68,7 +68,7 @@ export function Vods() {
         debouncedSetGame={debouncedSetGame}
       />
       <VodsGrid vods={vods} isLoading={isLoading} limit={state.limit} />
-      <div className="mt-6 mb-6">
+      <div className="mt-6">
         <PaginationControls
           page={state.page}
           totalPages={totalPages}

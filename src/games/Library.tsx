@@ -221,27 +221,29 @@ export function Library() {
           ))}
         </div>
       )}
-      <PaginationControls
-        page={page}
-        totalPages={totalPages}
-        preserveParams={{
-          ...(searchTerm ? { search: searchTerm } : {}),
-          sort,
-        }}
-        onHoverPage={(targetPage) =>
-          isChaptersMode
-            ? prefetchNextPageChapters(queryClient, {
-                ...chaptersQueryKeyParams,
-                slug: tenant!,
-                page: targetPage,
-              })
-            : prefetchNextPageGamesLibrary(queryClient, {
-                ...gamesQueryKeyParams,
-                slug: tenant!,
-                page: targetPage,
-              })
-        }
-      />
+      <div className="mt-6">
+        <PaginationControls
+          page={page}
+          totalPages={totalPages}
+          preserveParams={{
+            ...(searchTerm ? { search: searchTerm } : {}),
+            sort,
+          }}
+          onHoverPage={(targetPage) =>
+            isChaptersMode
+              ? prefetchNextPageChapters(queryClient, {
+                  ...chaptersQueryKeyParams,
+                  slug: tenant!,
+                  page: targetPage,
+                })
+              : prefetchNextPageGamesLibrary(queryClient, {
+                  ...gamesQueryKeyParams,
+                  slug: tenant!,
+                  page: targetPage,
+                })
+          }
+        />
+      </div>
     </div>
   );
 }

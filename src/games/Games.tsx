@@ -56,24 +56,26 @@ export function Games() {
         debouncedSetGame={debouncedSetGame}
       />
       <GamesGrid games={games} isLoading={isLoading} tenant={tenant} limit={state.limit} />
-      <PaginationControls
-        page={state.page}
-        totalPages={totalPages}
-        preserveParams={{
-          ...(state.filter ? { filter: state.filter } : {}),
-          ...(state.gameId ? { game_id: state.gameId } : {}),
-          ...(state.filter === 'Date' && state.filterStartDate ? { from: state.filterStartDate } : {}),
-          ...(state.filter === 'Date' && state.filterEndDate ? { to: state.filterEndDate } : {}),
-          ...(state.filter === 'Game' && state.filterGame ? { game: state.filterGame } : {}),
-        }}
-        onHoverPage={(targetPage) =>
-          prefetchNextPageGames(queryClient, {
-            ...queryKeyParams,
-            slug: tenant,
-            page: targetPage,
-          })
-        }
-      />
+      <div className="mt-6">
+        <PaginationControls
+          page={state.page}
+          totalPages={totalPages}
+          preserveParams={{
+            ...(state.filter ? { filter: state.filter } : {}),
+            ...(state.gameId ? { game_id: state.gameId } : {}),
+            ...(state.filter === 'Date' && state.filterStartDate ? { from: state.filterStartDate } : {}),
+            ...(state.filter === 'Date' && state.filterEndDate ? { to: state.filterEndDate } : {}),
+            ...(state.filter === 'Game' && state.filterGame ? { game: state.filterGame } : {}),
+          }}
+          onHoverPage={(targetPage) =>
+            prefetchNextPageGames(queryClient, {
+              ...queryKeyParams,
+              slug: tenant,
+              page: targetPage,
+            })
+          }
+        />
+      </div>
     </div>
   );
 }

@@ -117,7 +117,7 @@ export function TenantProfile() {
           <TenantProfileCard tenantData={tenantData} centered={true} />
           <TenantTabs tabs={tabs} />
         </div>
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col pb-12">
           <div className="flex h-full min-h-0 flex-1 flex-col">
             <TenantContent tenantData={tenantData} />
           </div>
