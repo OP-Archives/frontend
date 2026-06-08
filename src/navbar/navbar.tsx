@@ -29,12 +29,6 @@ export function Navbar() {
             <span className="mr-1 text-[#6366f1] drop-shadow-[0_0_10px_rgba(99,102,241,0.4)]">op</span>
             <span className="text-[#f0f0f5]">archive</span>
           </Link>
-          <Link
-            to="/browse"
-            className="hidden items-center gap-1.5 rounded-md bg-[#6366f1] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#5558ea] sm:flex"
-          >
-            Browse
-          </Link>
         </div>
 
         <form
@@ -97,10 +91,16 @@ export function Navbar() {
 
         <div className="flex flex-1 basis-0 items-center justify-end gap-3">
           <Link
+            to="/browse"
+            className="hidden items-center gap-1.5 rounded-md bg-[#6366f1] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#5558ea] sm:flex"
+          >
+            Browse
+          </Link>
+          <Link
             to="/archive"
             className="hidden items-center gap-1.5 rounded-md bg-[#6366f1] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#5558ea] sm:flex"
           >
-            <span>Start Archiving Today!</span>
+            <span>Start Archiving</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <div className="md:hidden">
