@@ -1,12 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { Comment, MessageFragment } from '@/types';
 import { archiveClient } from '@/utils/archive-client';
-import {
-  SCROLL_TOLERANCE,
-  MAX_CHAT_MESSAGES,
-  CHAT_LOOP_INTERVAL_MS,
-  CHAT_STATE_CHANGE_DELAY_MS,
-} from '@/utils/constants';
+import { MAX_CHAT_MESSAGES, CHAT_LOOP_INTERVAL_MS, CHAT_STATE_CHANGE_DELAY_MS } from '@/utils/constants';
 
 interface UseChatEngineOptions {
   channel: string;
@@ -26,6 +21,7 @@ interface UseChatEngineReturn {
   setIsLoading: (v: boolean) => void;
   commentsCount: number;
   chatRef: React.RefObject<HTMLElement | null>;
+  bottomAnchorRef: React.RefObject<HTMLDivElement | null>;
   handleScroll: () => void;
   scrollToBottom: () => void;
 }
@@ -55,11 +51,11 @@ export function useChatEngine({
   const paginationAbortRef = useRef<AbortController | null>(null);
   const isFetchingNextRef = useRef(false);
   const lastFetchedCursorRef = useRef<string | null>(null);
-  const lastScrollHeightRef = useRef(0);
   const isAutoScrollingRef = useRef(false);
   const isAtBottomRef = useRef(true);
   const lastScrollTopRef = useRef(0);
-  const lastClientHeightRef = useRef(0);
+  const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
+  const scrollRAFRef = useRef<number | null>(null);
   const scrollingRef = useRef(scrolling);
   const hasFetchedRef = useRef(false);
 
@@ -171,8 +167,10 @@ export function useChatEngine({
 
         const concatMessages = prevMessages.concat(uniqueNewMessages);
 
-        if (concatMessages.length > MAX_CHAT_MESSAGES) {
-          concatMessages.splice(0, concatMessages.length - MAX_CHAT_MESSAGES);
+        const maxLimit = isAtBottomRef.current ? MAX_CHAT_MESSAGES : 2000;
+
+        if (concatMessages.length > maxLimit) {
+          concatMessages.splice(0, concatMessages.length - maxLimit);
         }
         return concatMessages;
       });
@@ -208,45 +206,34 @@ export function useChatEngine({
 
   const handleScroll = useCallback(() => {
     if (!chatRef.current) return;
+    if (isAutoScrollingRef.current) return;
 
-    if (isAutoScrollingRef.current) {
-      lastScrollHeightRef.current = chatRef.current.scrollHeight;
-      lastScrollTopRef.current = chatRef.current.scrollTop;
-      lastClientHeightRef.current = chatRef.current.clientHeight;
-      return;
-    }
+    if (scrollRAFRef.current) cancelAnimationFrame(scrollRAFRef.current);
 
-    const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
+    scrollRAFRef.current = requestAnimationFrame(() => {
+      if (!chatRef.current) return;
 
-    if (scrollHeight !== lastScrollHeightRef.current || clientHeight !== lastClientHeightRef.current) {
-      lastScrollHeightRef.current = scrollHeight;
-      lastScrollTopRef.current = scrollTop;
-      lastClientHeightRef.current = clientHeight;
+      const { scrollTop, scrollHeight, clientHeight } = chatRef.current;
 
-      if (isAtBottomRef.current) {
-        scrollToBottom();
+      const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+      const isAtBottom = distanceFromBottom <= 50;
+
+      if (isAtBottom) {
+        isAtBottomRef.current = true;
+        setScrolling(false);
+        scrollingRef.current = false;
+      } else {
+        if (scrollTop < lastScrollTopRef.current - 25) {
+          isAtBottomRef.current = false;
+          setScrolling(true);
+          scrollingRef.current = true;
+        }
       }
-      return;
-    }
 
-    const isScrollingUp = scrollTop < lastScrollTopRef.current - 10;
-    const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-    const isAtBottom = distanceFromBottom <= SCROLL_TOLERANCE;
-
-    if (isScrollingUp) {
-      isAtBottomRef.current = false;
-      setScrolling(true);
-      scrollingRef.current = true;
-    } else if (isAtBottom) {
-      isAtBottomRef.current = true;
-      setScrolling(false);
-      scrollingRef.current = false;
-    }
-
-    lastScrollHeightRef.current = scrollHeight;
-    lastScrollTopRef.current = scrollTop;
-    lastClientHeightRef.current = clientHeight;
-  }, [scrollToBottom]);
+      lastScrollTopRef.current = scrollTop;
+    });
+  }, []);
 
   const startLoop = useCallback(() => {
     if (loopRef.current !== null) clearInterval(loopRef.current);
@@ -310,7 +297,6 @@ export function useChatEngine({
     const resizeObserver = new ResizeObserver(() => {
       if (isAtBottomRef.current && !scrollingRef.current && chatRef.current) {
         chatRef.current.scrollTop = chatRef.current.scrollHeight;
-        lastScrollHeightRef.current = chatRef.current.scrollHeight;
         lastScrollTopRef.current = chatRef.current.scrollTop;
       }
     });
@@ -319,6 +305,33 @@ export function useChatEngine({
 
     return () => resizeObserver.disconnect();
   }, []);
+
+  useEffect(() => {
+    const anchor = bottomAnchorRef.current;
+    if (!anchor || !chatRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isAutoScrollingRef.current) {
+          isAtBottomRef.current = true;
+          setScrolling(false);
+          scrollingRef.current = false;
+        }
+      },
+      {
+        root: chatRef.current,
+        rootMargin: '0px 0px 100px 0px',
+        threshold: 0,
+      }
+    );
+
+    observer.observe(anchor);
+
+    return () => {
+      observer.disconnect();
+      if (scrollRAFRef.current) cancelAnimationFrame(scrollRAFRef.current);
+    };
+  }, [chatRef]);
 
   useEffect(() => {
     return () => {
@@ -375,6 +388,7 @@ export function useChatEngine({
     setIsLoading,
     commentsCount,
     chatRef,
+    bottomAnchorRef,
     handleScroll,
     scrollToBottom,
   };

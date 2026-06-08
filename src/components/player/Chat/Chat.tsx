@@ -47,7 +47,7 @@ const MemoizedComment = memo(function MemoizedComment({
 }: MemoizedCommentProps) {
   return (
     <div
-      className="chat-message-highlight flex w-full shrink-0 items-baseline px-2 py-1 transition-colors hover:bg-white/5"
+      className="chat-message-optimize chat-message-highlight flex w-full shrink-0 items-baseline px-2 py-1 transition-colors hover:bg-white/5"
       style={{ '--highlight-color': adjustUsernameColor(comment.user_color) } as React.CSSProperties}
     >
       {showTimestamp && (
@@ -199,15 +199,16 @@ export default function Chat(props: ChatProps) {
     [filterRegex]
   );
 
-  const { messages, scrolling, isLoading, commentsCount, chatRef, handleScroll, scrollToBottom } = useChatEngine({
-    channel: channel!,
-    vodId,
-    playerRef,
-    getCurrentTime,
-    isPlaying,
-    shouldFilterMessage,
-    playerState,
-  });
+  const { messages, scrolling, isLoading, commentsCount, chatRef, bottomAnchorRef, handleScroll, scrollToBottom } =
+    useChatEngine({
+      channel: channel!,
+      vodId,
+      playerRef,
+      getCurrentTime,
+      isPlaying,
+      shouldFilterMessage,
+      playerState,
+    });
 
   const { transformMessage, transformBadges } = useEmoteRendering({
     emotes,
@@ -456,6 +457,7 @@ export default function Chat(props: ChatProps) {
               scrolling={scrolling}
               scrollToBottom={scrollToBottom}
               chatRef={chatRef as React.MutableRefObject<HTMLElement | null>}
+              bottomAnchorRef={bottomAnchorRef}
               handleScroll={handleScroll}
             />
           </div>
