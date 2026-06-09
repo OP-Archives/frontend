@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { cardHover } from '@/motion/variants';
 import type { GameData } from '@/types';
 import { toHHMMSS, getImage } from '@/utils/helpers';
@@ -113,7 +112,7 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
                     src={getImage(game.chapter_image, 40, 53, game.game_id)}
                     width={40}
                     height={53}
-                    className="pointer-events-none h-[53px] w-[40px] shrink-0 object-cover"
+                    className="h-[53px] w-[40px] shrink-0 object-cover"
                     loading="lazy"
                   />
                 </div>
@@ -122,11 +121,9 @@ export function GamesGrid({ games, isLoading, tenant, limit }: GamesGridProps) {
                     to={`/${tenant}/games/${game.vod_id}?game_id=${game.id}`}
                     className="inline-flex max-w-full min-w-0 no-underline"
                   >
-                    <CustomWidthTooltip title={game.title || game.game_name || ''}>
-                      <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">
-                        {game.title || game.game_name || ''}
-                      </span>
-                    </CustomWidthTooltip>
+                    <span className="truncate text-xs font-medium text-[#6366f1]">
+                      {game.title || game.game_name || ''}
+                    </span>
                   </Link>
                 </div>
               </div>

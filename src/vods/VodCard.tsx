@@ -9,7 +9,7 @@ import { useTenantContext } from '@/contexts/TenantContext';
 import { useTypedParams } from '@/hooks/useTypedParams';
 import { cardHover } from '@/motion/variants';
 import type { VodListItem } from '@/types';
-import { toHHMMSS } from '@/utils/helpers';
+import { toHHMMSS, getImage } from '@/utils/helpers';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
@@ -115,28 +115,41 @@ const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListIte
             </div>
           </motion.div>
         </motion.div>
-        <div className="mt-1 mb-1 flex cursor-default items-center">
+        <div className="mt-2.5 mb-1 flex items-center gap-2.5 px-0.5">
           {chapterCount > 0 && (
-            <div className="mr-2 shrink-0">
-              <ChaptersMenu vod={vod} />
+            <div className="shrink-0 overflow-hidden rounded-sm ring-1 ring-[#222230]">
+              <img
+                src={getImage(vod.chapters?.[0]?.image, 40, 53)}
+                className="block h-[53px] w-[40px] object-cover"
+                alt={vod.chapters?.[0]?.name || 'Category'}
+                loading="lazy"
+              />
             </div>
           )}
-          <div className="min-w-0 flex-1">
-            {DEFAULT_VOD ? (
-              <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline">
+
+          <div className="flex min-w-0 flex-1 flex-col justify-center">
+            <div className="w-full min-w-0">
+              {DEFAULT_VOD ? (
+                <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline">
+                  <CustomWidthTooltip title={vod.title}>
+                    <span className="truncate text-sm font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]/80">
+                      {vod.title}
+                    </span>
+                  </CustomWidthTooltip>
+                </Link>
+              ) : (
                 <CustomWidthTooltip title={vod.title}>
-                  <span className="truncate text-xs font-medium text-[#6366f1] hover:text-[#6366f1]/80">
-                    {vod.title}
-                  </span>
+                  <span className="truncate text-sm font-medium text-[#f0f0f5]">{vod.title}</span>
                 </CustomWidthTooltip>
-              </Link>
-            ) : (
-              <CustomWidthTooltip title={vod.title}>
-                <span className="truncate text-xs font-medium text-[#6366f1]">{vod.title}</span>
-              </CustomWidthTooltip>
-            )}
-            <div className="mt-1 flex justify-center">
-              <WatchMenu vod={vod} cdnEnabled={cdnEnabled} />
+              )}
+            </div>
+
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+              {chapterCount > 0 && <ChaptersMenu vod={vod} />}
+
+              <div className="ml-auto">
+                <WatchMenu vod={vod} cdnEnabled={cdnEnabled} />
+              </div>
             </div>
           </div>
         </div>

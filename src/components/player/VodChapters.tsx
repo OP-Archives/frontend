@@ -1,6 +1,7 @@
 import humanize from 'humanize-duration';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import type { Chapter, VODUpload, PartInfo } from '@/types';
 import { toSeconds, getImage } from '@/utils/helpers';
 
@@ -127,22 +128,23 @@ function VodChapters({
 
   return (
     <div className="relative pr-2">
-      <button
-        ref={buttonRef}
-        onClick={handleClick}
-        className="flex cursor-pointer text-[#f0f0f5] opacity-80 transition-all hover:text-[#6366f1] hover:opacity-100"
-        title={chapter!.name}
-      >
-        <img
-          alt=""
-          src={getImage(chapter!.image)}
-          width={40}
-          height={53}
-          decoding="async"
-          loading="lazy"
-          className="block h-[40px] w-[30px] rounded-sm transition-shadow hover:shadow-lg hover:shadow-[#6366f1]/30 sm:h-[53px] sm:w-[40px]"
-        />
-      </button>
+      <CustomWidthTooltip title={`View Chapters • ${chapter!.name}`}>
+        <button
+          ref={buttonRef}
+          onClick={handleClick}
+          className="flex cursor-pointer overflow-hidden rounded-sm opacity-80 ring-1 ring-[#222230] transition-all hover:opacity-100 hover:shadow-lg hover:shadow-[#6366f1]/30 hover:ring-[#6366f1]"
+        >
+          <img
+            alt="View Chapters"
+            src={getImage(chapter!.image)}
+            width={40}
+            height={53}
+            decoding="async"
+            loading="lazy"
+            className="block h-[40px] w-[30px] object-cover sm:h-[53px] sm:w-[40px]"
+          />
+        </button>
+      </CustomWidthTooltip>
 
       {menuOpen &&
         createPortal(

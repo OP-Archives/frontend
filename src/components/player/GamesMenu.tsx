@@ -2,6 +2,7 @@ import humanize from 'humanize-duration';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import type { GameEntry, PartInfo } from '@/types';
 import { getImage } from '@/utils/helpers';
 
@@ -104,22 +105,23 @@ function GamesMenu({ games, part, setPart }: GamesMenuProps) {
 
   return (
     <div className="relative pr-2">
-      <button
-        ref={buttonRef}
-        onClick={handleClick}
-        className="flex cursor-pointer text-[#f0f0f5] opacity-80 transition-all hover:text-[#6366f1] hover:opacity-100"
-        title={currentGame?.game_name || ''}
-      >
-        <img
-          alt=""
-          src={getImage(currentGame?.chapter_image, 40, 53, currentGame?.game_id)}
-          width={40}
-          height={53}
-          decoding="async"
-          loading="lazy"
-          className="block h-[40px] w-[30px] rounded-sm sm:h-[53px] sm:w-[40px]"
-        />
-      </button>
+      <CustomWidthTooltip title={`View Games • ${currentGame?.game_name || ''}`}>
+        <button
+          ref={buttonRef}
+          onClick={handleClick}
+          className="flex cursor-pointer overflow-hidden rounded-sm opacity-80 ring-1 ring-[#222230] transition-all hover:opacity-100 hover:shadow-lg hover:shadow-[#6366f1]/30 hover:ring-[#6366f1]"
+        >
+          <img
+            alt="View Games"
+            src={getImage(currentGame?.chapter_image, 40, 53, currentGame?.game_id)}
+            width={40}
+            height={53}
+            decoding="async"
+            loading="lazy"
+            className="block h-[40px] w-[30px] object-cover sm:h-[53px] sm:w-[40px]"
+          />
+        </button>
+      </CustomWidthTooltip>
 
       {menuOpen &&
         createPortal(

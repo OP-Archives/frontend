@@ -173,16 +173,31 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
                       )}
                     </motion.div>
                   </motion.div>
-                  <div className="mt-1 mb-1 flex cursor-default items-start">
+                  <div className="mt-2 mb-1 flex cursor-default items-center gap-2.5 px-0.5">
                     {(item.chapters || []).length > 0 && (
-                      <div className="mr-2 shrink-0">
-                        <ChaptersMenu vod={toVodListItem(item)} />
+                      <div className="shrink-0 overflow-hidden rounded-sm ring-1 ring-[#222230]">
+                        <img
+                          src={getImage(item.chapters?.[0]?.image, 40, 53)}
+                          className="block h-[53px] w-[40px] object-cover"
+                          alt="Category"
+                          loading="lazy"
+                        />
                       </div>
                     )}
-                    <div className="min-w-0 flex-1">
-                      <CustomWidthTooltip title={item.title || ''}>
-                        <span className="truncate text-xs font-medium text-[#6366f1]">{item.title}</span>
-                      </CustomWidthTooltip>
+
+                    <div className="flex min-w-0 flex-1 flex-col justify-center">
+                      <div className="w-full min-w-0">
+                        <CustomWidthTooltip title={item.title || ''}>
+                          <span className="truncate text-xs font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]/80">
+                            {item.title}
+                          </span>
+                        </CustomWidthTooltip>
+                      </div>
+                      {(item.chapters || []).length > 0 && (
+                        <div className="mt-1.5 flex items-center">
+                          <ChaptersMenu vod={toVodListItem(item)} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
