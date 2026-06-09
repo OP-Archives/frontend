@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { DiscordIcon } from '@/assets/icons';
 
 interface FooterProps {
   className?: string;
@@ -62,12 +63,13 @@ export function Footer({ className }: FooterProps) {
               Support Me
             </a>
             <a
-              href={`${GITHUB_REPO}/issues`}
+              href="https://discord.gg/MMkrjWkCmS"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-[#9ca3af] transition-colors hover:text-[#6366f1]"
+              className="inline-flex items-center gap-1.5 text-sm text-[#9ca3af] transition-colors hover:text-[#6366f1]"
             >
-              Issues
+              <DiscordIcon className="h-3.5 w-3.5" />
+              Discord
             </a>
           </div>
 

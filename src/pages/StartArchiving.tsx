@@ -14,7 +14,7 @@ const CONTACT_LINKS = [
   {
     icon: DiscordIcon,
     label: 'Discord',
-    href: 'https://discord.com/users/60493609325047808',
+    href: 'https://discord.gg/MMkrjWkCmS',
     copyable: 'Overpowered',
   },
   {

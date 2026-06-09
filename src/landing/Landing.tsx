@@ -1,6 +1,6 @@
 import { ArrowRight, Video, MessageSquare, LayoutTemplate, Bookmark, Library, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { TwitchIcon, KickIcon } from '@/assets/icons';
+import { TwitchIcon, KickIcon, DiscordIcon } from '@/assets/icons';
 import { Background } from '@/components/Background';
 import { PricingTiers } from '@/components/ui/PricingTiers';
 
@@ -205,19 +205,24 @@ export function Landing() {
             <PricingTiers />
           </div>
 
-          {/* CTA */}
+          {/* Discord CTA */}
           <div className="mt-12 w-full max-w-2xl text-center sm:mt-16 sm:max-w-3xl">
             <h2 className="text-2xl font-extrabold tracking-tight text-[#f0f0f5] sm:text-3xl lg:text-4xl">
-              Ready to Preserve Your Streams?
+              Join Our Community
             </h2>
+            <p className="mx-auto mt-2 max-w-lg text-sm text-[#9ca3af] sm:mt-3 sm:max-w-2xl sm:text-base">
+              Have a feature request, bug report, or any questions? Join us on Discord for support and updates.
+            </p>
             <div className="mt-6 sm:mt-8">
-              <button
-                onClick={() => navigate('/archive')}
+              <a
+                href="https://discord.gg/MMkrjWkCmS"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-[#6366f1] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4f46e5]"
               >
-                Get Started
-                <ArrowRight className="h-4 w-4" />
-              </button>
+                <DiscordIcon className="h-4 w-4" />
+                Join the Discord
+              </a>
             </div>
           </div>
         </div>

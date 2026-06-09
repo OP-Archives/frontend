@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Menu, ArrowRight, Info, MessageSquareIcon, HomeIcon, Shield, FileText, Heart, Users } from 'lucide-react';
+import { X, Menu, ArrowRight, Info, HomeIcon, Shield, FileText, Heart, Users } from 'lucide-react';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
+import { DiscordIcon } from '@/assets/icons';
 import { drawerBackdrop, drawerPanel, menuItem } from '@/motion/variants';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -128,13 +129,13 @@ export function Drawer() {
                   </motion.div>
                   <motion.div variants={menuItem} initial="hidden" animate="visible" exit="hidden">
                     <a
-                      href="https://github.com/OP-Archives/frontend/issues"
+                      href="https://discord.gg/MMkrjWkCmS"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 text-sm font-medium text-[#9ca3af] hover:text-[#f0f0f5]"
                     >
-                      <MessageSquareIcon className="h-4 w-4 shrink-0" />
-                      <span>Issues</span>
+                      <DiscordIcon className="h-4 w-4 shrink-0" />
+                      <span>Discord</span>
                     </a>
                   </motion.div>
                 </div>

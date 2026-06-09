@@ -170,17 +170,17 @@ export function About() {
             ),
           },
           {
-            heading: 'Issues & Feature Requests',
+            heading: 'Join the Discord',
             content: (
               <p>
-                Found a bug or have an idea? Open an issue on{' '}
+                Have a feature request, bug report, or any questions? Join us on{' '}
                 <a
-                  href="https://github.com/OP-Archives/frontend/issues"
+                  href="https://discord.gg/MMkrjWkCmS"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#6366f1] hover:underline"
                 >
-                  GitHub
+                  Discord
                 </a>
               </p>
             ),
