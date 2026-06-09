@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import VodGamesMenu from './VodGamesMenu';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
 import { useScrollCarousel } from '@/hooks/useScrollCarousel';
@@ -22,6 +23,7 @@ interface RecentItemsVodsProps {
   next: VODNavigation[] | undefined;
   currentVod?: VODNavigation;
   hasGames?: boolean;
+  isGamesRoute?: boolean;
 }
 
 interface RecentItemsGamesProps {
@@ -51,11 +53,11 @@ function toVodListItem(item: VODNavigation): VodListItem {
       end: ch.end,
     })),
     vod_uploads: [],
-    games: [],
+    games: item.games || [],
   };
 }
 
-export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }: RecentItemsVodsProps) {
+export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames, isGamesRoute }: RecentItemsVodsProps) {
   const { tenant } = useTypedParams<{ tenant: string }>();
   const location = useLocation();
 
@@ -187,13 +189,20 @@ export function RecentItemsVods({ currentId, prev, next, currentVod, hasGames }:
 
                     <div className="flex min-w-0 flex-1 flex-col justify-center">
                       <div className="w-full min-w-0">
-                        <CustomWidthTooltip title={item.title || ''}>
-                          <span className="truncate text-xs font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]/80">
-                            {item.title}
-                          </span>
-                        </CustomWidthTooltip>
+                        <Link to={location.pathname.replace(String(currentId), String(item.id))}>
+                          <CustomWidthTooltip title={item.title || ''}>
+                            <span className="truncate text-xs font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]/80">
+                              {item.title}
+                            </span>
+                          </CustomWidthTooltip>
+                        </Link>
                       </div>
-                      {(item.chapters || []).length > 0 && (
+                      {isGamesRoute && item.games && item.games.length > 0 && (
+                        <div className="mt-1.5 flex items-center">
+                          <VodGamesMenu games={item.games!} vodId={item.id} is_live={item.is_live} />
+                        </div>
+                      )}
+                      {!isGamesRoute && (item.chapters || []).length > 0 && (
                         <div className="mt-1.5 flex items-center">
                           <ChaptersMenu vod={toVodListItem(item)} />
                         </div>
@@ -364,6 +373,7 @@ export function RecentItemsGames({
             next={nextVods || []}
             currentVod={currentVod}
             hasGames
+            isGamesRoute={true}
           />
         </div>
       )}

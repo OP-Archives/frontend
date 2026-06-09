@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import humanize from 'humanize-duration';
 import { List } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useDropdown } from '@/hooks/useDropdown';
 import { useTypedParams } from '@/hooks/useTypedParams';
 import { dropdownMenu, menuItem } from '@/motion/variants';
@@ -20,15 +20,11 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
   const [expanded, setExpanded] = useState(false);
   const chaptersArray = vod.chapters || EMPTY_CHAPTERS;
   const visibleChapters = expanded ? chaptersArray : chaptersArray.slice(0, 15);
-  const navigate = useNavigate();
+  const location = useLocation();
   const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
 
-  const DEFAULT_VOD =
-    vod.vod_uploads.length > 0
-      ? `/${tenantParam}/youtube/${vod.id}`
-      : vod.games.length > 0
-        ? `/${tenantParam}/games/${vod.id}`
-        : `/${tenantParam}/manual/${vod.id}`;
+  const routeType = location.pathname.match(/\/(youtube|vods|cdn|manual|games)\//)?.[1] ?? 'youtube';
+  const DEFAULT_VOD = `/${tenantParam}/${routeType}/${vod.id}`;
 
   return (
     <div className="relative">
@@ -101,13 +97,10 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
                     </div>
                   </div>
                 ) : (
-                  <a
-                    href={`${DEFAULT_VOD}?t=${toHMS(data?.start as number)}`}
-                    onClick={() => {
-                      close();
-                      navigate(`${DEFAULT_VOD}?t=${toHMS(data?.start as number)}`);
-                    }}
-                    className="flex cursor-pointer items-start border-b border-[#222230] px-3 py-2 last:border-0 hover:bg-[#222230]"
+                  <Link
+                    to={`${DEFAULT_VOD}?t=${toHMS(data?.start as number)}`}
+                    onClick={() => close()}
+                    className="flex w-full cursor-pointer items-start border-b border-[#222230] px-3 py-2 text-left last:border-0 hover:bg-[#222230]"
                   >
                     <div className="mr-2 shrink-0">
                       <img
@@ -130,7 +123,7 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
                         </span>
                       )}
                     </div>
-                  </a>
+                  </Link>
                 )}
               </motion.div>
             ))}
