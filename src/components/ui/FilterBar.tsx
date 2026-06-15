@@ -59,7 +59,7 @@ export default function FilterBar({
         {hasBackButton && (
           <button
             onClick={onBack}
-            className="bg-[#6366f1] text-white hover:bg-[#4f46e5] flex h-9 w-fit items-center gap-1 rounded-md border border-transparent px-3 text-sm font-medium transition-all duration-200"
+            className="flex h-9 w-fit items-center gap-1 rounded-md border border-transparent bg-[#6366f1] px-3 text-sm font-medium text-white transition-all duration-200 hover:bg-[#4f46e5]"
           >
             <ArrowLeft size={16} /> Back
           </button>
