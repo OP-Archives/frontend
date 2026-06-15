@@ -7,7 +7,7 @@ export function Privacy() {
       <Background />
       <ContentPage
         title="Privacy Policy"
-        subtitle="Last updated: June 2, 2026"
+        subtitle="Last updated: June 15, 2026"
         sections={[
           {
             heading: 'Overview',
@@ -109,6 +109,43 @@ export function Privacy() {
                   <li>Log upload activity for operational record-keeping</li>
                 </ul>
                 <p className="mt-3 font-medium">No data is sold, shared, or transmitted to any third party.</p>
+              </>
+            ),
+          },
+          {
+            heading: 'Data Protection and Security',
+            content: (
+              <>
+                <p>We take the security of Google user data seriously and have implemented the following safeguards:</p>
+                <ul className="list-inside list-disc space-y-1.5 leading-relaxed">
+                  <li>
+                    <strong>Encryption in transit:</strong> All communication with the YouTube Data API and Google OAuth
+                    endpoints occurs exclusively over HTTPS/TLS.
+                  </li>
+                  <li>
+                    <strong>Encryption at rest:</strong> OAuth access tokens and refresh tokens are encrypted before
+                    being stored in our PostgreSQL database.
+                  </li>
+                  <li>
+                    <strong>Access controls:</strong> Access to the production database and stored credentials is
+                    restricted to the application&apos;s backend service and authorized administrators only. No third
+                    party has access to this data.
+                  </li>
+                  <li>
+                    <strong>Minimal data retention:</strong> We only store the data necessary to perform uploads on
+                    behalf of each creator (see &quot;Data Retention and Deletion&quot; above), and tokens are deleted
+                    immediately upon a creator&apos;s revocation or deletion request.
+                  </li>
+                  <li>
+                    <strong>Secure infrastructure:</strong> The application and database are hosted on infrastructure
+                    with standard security hardening, including firewall rules limiting access to required services
+                    only.
+                  </li>
+                </ul>
+                <p className="mt-3">
+                  These measures are designed to protect the confidentiality, integrity, and availability of Google user
+                  data accessed through the YouTube API Services.
+                </p>
               </>
             ),
           },
