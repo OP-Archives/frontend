@@ -136,6 +136,8 @@ export interface FfzEmote {
 export interface BttvEmote {
   id: string;
   code: string;
+  width?: number;
+  height?: number;
 }
 
 export interface SevenTVEmote {
@@ -143,6 +145,8 @@ export interface SevenTVEmote {
   code: string;
   name?: string;
   flags: number;
+  width?: number;
+  height?: number;
 }
 
 // Comments types
@@ -208,6 +212,8 @@ export interface EmoteEntry {
   name?: string;
   provider: EmoteProvider;
   flags?: number;
+  width?: number;
+  height?: number;
 }
 
 export type PlayerSource = string | { src: string; type: string; objectUrl: string } | undefined;

@@ -65,9 +65,7 @@ export function Library() {
       limit,
       ...(searchTerm.length > 0 ? { chapter_name: searchTerm } : {}),
       sort: (sort === 'recent' ? 'recent' : sort === 'count' ? 'count' : 'chapter_name') as
-        | 'recent'
-        | 'count'
-        | 'chapter_name',
+        'recent' | 'count' | 'chapter_name',
       order: (sort === 'game_name' ? 'asc' : 'desc') as 'asc' | 'desc',
     }),
     [page, limit, searchTerm, sort]
@@ -79,9 +77,7 @@ export function Library() {
       limit,
       ...(searchTerm.length > 0 ? { game_name: searchTerm } : {}),
       sort: (sort === 'recent' ? 'recent' : sort === 'count' ? 'count' : 'game_name') as
-        | 'recent'
-        | 'count'
-        | 'game_name',
+        'recent' | 'count' | 'game_name',
       order: (sort === 'game_name' ? 'asc' : 'desc') as 'asc' | 'desc',
     }),
     [page, limit, searchTerm, sort]
