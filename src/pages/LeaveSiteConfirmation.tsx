@@ -20,7 +20,7 @@ export default function LeaveSiteConfirmation() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4">
+    <div className="flex min-h-0 flex-1 items-center justify-center bg-[#0a0a0f] px-4">
       <div className="w-full max-w-md rounded-xl border border-[#222230] bg-[#16161e] p-6">
         <div className="mb-4 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-500/10">
