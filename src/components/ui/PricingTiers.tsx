@@ -43,8 +43,7 @@ const TIERS: PricingTier[] = [
   {
     name: 'Pro',
     price: '$100',
-    description:
-      'Single-platform archiving with full YouTube uploads, chat replay, and your own dedicated archive site.',
+    description: 'Multi-platform archiving with YouTube uploads, chat replay, and your own dedicated archive site.',
     target: 'Medium Sized Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
@@ -59,7 +58,7 @@ const TIERS: PricingTier[] = [
       { text: 'Games library', included: true },
       { text: 'Smart search & filtering', included: true },
       { text: 'BTTV / FFZ / 7TV emotes', included: true },
-      { text: '1 platform (Twitch OR Kick)', included: true },
+      { text: 'Unlimited platforms (Twitch/Kick)', included: true },
       { text: 'Backfill VODs (add-on)', included: true },
       { text: 'Standard support', included: true },
     ],
@@ -69,7 +68,7 @@ const TIERS: PricingTier[] = [
     name: 'Pro+',
     price: '$150',
     description:
-      'Multi-platform coverage, DMCA handling, per-game YouTube uploads, and priority support for serious streamers.',
+      'Multi-platform archiving with DMCA handling, per-game YouTube uploads, and priority support for serious streamers.',
     target: 'Medium / Larger Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
