@@ -17,10 +17,33 @@ interface PricingTier {
 const TIERS: PricingTier[] = [
   {
     name: 'Starter',
+    price: '$50',
+    description:
+      'Essential VOD archiving with auto detection, YouTube uploads, and long VOD splitting for growing streamers.',
+    target: 'Small / Indie Streamers',
+    features: [
+      { text: 'Auto VOD detection & archive', included: true },
+      { text: 'YouTube upload (public/private)', included: true },
+      { text: 'Long VOD splitting', included: true },
+      { text: 'Chapter markers', included: true },
+      { text: '1 platform (Twitch OR Kick)', included: true },
+      { text: 'Backfill VODs (add-on)', included: true },
+      { text: 'Standard support', included: true },
+      { text: 'Chat replay', included: false },
+      { text: 'Chat settings', included: false },
+      { text: 'Dedicated archive site', included: false },
+      { text: 'Games library', included: false },
+      { text: 'Smart search & filtering', included: false },
+      { text: 'BTTV / FFZ / 7TV emotes', included: false },
+    ],
+    highlighted: false,
+  },
+  {
+    name: 'Pro',
     price: '$100',
     description:
       'Single-platform archiving with full YouTube uploads, chat replay, and your own dedicated archive site.',
-    target: 'Small / Indie Streamers',
+    target: 'Medium Sized Streamers',
     features: [
       { text: 'Auto VOD detection & archive', included: true },
       { text: 'YouTube upload (public/private)', included: true },
@@ -39,7 +62,7 @@ const TIERS: PricingTier[] = [
     highlighted: false,
   },
   {
-    name: 'Pro',
+    name: 'Pro+',
     price: '$150',
     description:
       'Multi-platform coverage, DMCA handling, per-game YouTube uploads, and priority support for serious streamers.',
@@ -151,7 +174,7 @@ export function PricingTiers() {
         </p>
       </div>
 
-      <div className="mt-6 grid gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 grid gap-6 sm:mt-10 sm:grid-cols-2 lg:grid-cols-4">
         {TIERS.map((tier) => (
           <TierCard key={tier.name} tier={tier} />
         ))}
