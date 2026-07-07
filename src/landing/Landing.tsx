@@ -98,7 +98,10 @@ export function Landing() {
               <span className="mr-2 text-[#6366f1] sm:mr-3 md:mr-4">op</span>
               <span className="text-[#f0f0f5]">archive</span>
             </h1>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-[#f0f0f5] sm:mt-4 sm:max-w-2xl sm:text-base">
+            <p className="mx-auto mt-3 max-w-xl text-xl font-bold text-[#6366f1] sm:mt-4 sm:max-w-2xl sm:text-2xl">
+              Twitch &amp; Kick VOD Archive
+            </p>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-[#f0f0f5] sm:mt-3 sm:max-w-2xl sm:text-base">
               Never lose a stream again. Automated VOD archiving for Twitch &amp; Kick - uploaded to your YouTube
               channel, with full chat replay synced to playback.
             </p>
