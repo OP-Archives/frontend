@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import CustomWidthTooltip from '@/components/ui/CustomToolTip';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useScrollCarousel } from '@/hooks/useScrollCarousel';
 import { cardHover } from '@/motion/variants';
 import type { RecentVod, VodListItem } from '@/types';
@@ -39,7 +40,7 @@ const getThumbnail = (vod: RecentVod) => {
 
 function SkeletonCard() {
   return (
-    <div className="min-w-0 flex-[0_0_calc((100%-32px)/4)]">
+    <div className="min-w-0 flex-[0_0_100%] sm:flex-[0_0_calc((100%-8px)/2)] md:flex-[0_0_calc((100%-16px)/3)] lg:flex-[0_0_calc((100%-32px)/4)]">
       <div className="mb-2 block w-full min-w-0">
         <div className="aspect-video w-full animate-pulse rounded-md bg-[#222230]" />
         <div className="mt-2.5 mb-1 flex items-center gap-2.5 px-0.5">
@@ -54,9 +55,14 @@ function SkeletonCard() {
 }
 
 export function RecentVodsCarousel({ recentVods, isLoading }: RecentVodsCarouselProps) {
+  const isSmall = useMediaQuery('(min-width: 640px)');
+  const isMedium = useMediaQuery('(min-width: 768px)');
+  const isLarge = useMediaQuery('(min-width: 1024px)');
+  const visibleCount = isLarge ? 4 : isMedium ? 3 : isSmall ? 2 : 1;
+
   const { showLeft, showRight, visibleItems, scrollBy, containerRef } = useScrollCarousel({
     itemCount: recentVods.length,
-    visibleCount: 4,
+    visibleCount,
   });
 
   if (isLoading) {
@@ -121,7 +127,10 @@ export function RecentVodsCarousel({ recentVods, isLoading }: RecentVodsCarousel
               };
 
               return (
-                <div key={vod.id} className="min-w-0 flex-[0_0_calc((100%-32px)/4)]">
+                <div
+                  key={vod.id}
+                  className="min-w-0 flex-[0_0_100%] sm:flex-[0_0_calc((100%-8px)/2)] md:flex-[0_0_calc((100%-16px)/3)] lg:flex-[0_0_calc((100%-32px)/4)]"
+                >
                   <div className="mb-2 block w-full min-w-0">
                     <motion.div
                       className="group relative flex aspect-video w-full overflow-hidden rounded-md bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"

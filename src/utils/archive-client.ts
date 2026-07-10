@@ -93,7 +93,10 @@ export const archiveClient = {
         `${getApiBase()}/${slug}/vods/${vodId}/comments${query ? `?${query}` : ''}`
       );
     },
-    recent: () => fetchJson<ApiResponse<RecentVod[]>>(`${getApiBase()}/vods/recent`),
+    recent: (params?: Record<string, string>) => {
+      const query = buildQuery(params || {});
+      return fetchJson<ApiResponse<RecentVod[]>>(`${getApiBase()}/vods/recent${query ? `?${query}` : ''}`);
+    },
   },
   games: {
     list: (slug: string, params?: Record<string, string>, options?: RequestOptions) => {

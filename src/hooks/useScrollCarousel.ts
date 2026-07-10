@@ -42,8 +42,9 @@ export function useScrollCarousel({
       const newOffset = Math.max(0, Math.min(offset + amount, itemCount - visibleCount));
       setOffset(newOffset);
       if (containerRef.current) {
+        const cardWidth = containerRef.current.clientWidth / visibleCount;
         containerRef.current.scrollTo({
-          left: containerRef.current.clientWidth * (amount / visibleCount),
+          left: containerRef.current.scrollLeft + cardWidth * amount,
           behavior: 'smooth',
         });
       }
