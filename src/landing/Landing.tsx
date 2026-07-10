@@ -2,7 +2,9 @@ import { ArrowRight, Video, MessageSquare, LayoutTemplate, Bookmark, Library, Se
 import { useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon, DiscordIcon } from '@/assets/icons';
 import { Background } from '@/components/Background';
+import { RecentVodsCarousel } from '@/components/RecentVodsCarousel';
 import { PricingTiers } from '@/components/ui/PricingTiers';
+import { useRecentVods } from '@/hooks/useRecentVods';
 
 const FEATURED_TENANTS = [
   {
@@ -85,6 +87,7 @@ const FEATURES = [
 
 export function Landing() {
   const navigate = useNavigate();
+  const { data: recentVods, isLoading: recentVodsLoading } = useRecentVods();
 
   return (
     <div className="relative pb-[80px]">
@@ -174,6 +177,11 @@ export function Landing() {
             >
               View All
             </button>
+          </div>
+
+          {/* Recent VODs */}
+          <div className="mt-8 w-full sm:mt-12 sm:max-w-6xl">
+            <RecentVodsCarousel recentVods={recentVods || []} isLoading={recentVodsLoading} />
           </div>
 
           {/* Features */}

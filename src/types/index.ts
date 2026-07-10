@@ -279,3 +279,47 @@ export interface LibraryGameItem {
   count: number;
   last_played?: string;
 }
+
+export interface RecentVod {
+  tenantId: string;
+  displayName: string;
+  id: number;
+  platform_vod_id: string;
+  platform: string;
+  title: string;
+  duration: number;
+  platform_stream_id: string;
+  created_at: string;
+  updated_at: string;
+  is_live: boolean;
+  started_at: string;
+  vod_uploads: {
+    id: number;
+    upload_id: string;
+    type: string;
+    duration: number;
+    part: number;
+    status: string;
+    thumbnail_url: string;
+    created_at: string;
+  }[];
+  chapters: {
+    name: string;
+    image: string;
+    start: number;
+    duration: number;
+    end: number;
+  }[];
+  games: {
+    start: number;
+    duration: number;
+    end: number;
+    video_provider: string;
+    video_id: string;
+    thumbnail_url: string;
+    game_id: string;
+    game_name: string;
+    title: string;
+    chapter_image: string;
+  }[];
+}

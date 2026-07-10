@@ -3,7 +3,9 @@ import { Helmet } from 'react-helmet-async';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TwitchIcon, KickIcon } from '@/assets/icons';
 import { Background } from '@/components/Background';
+import { RecentVodsCarousel } from '@/components/RecentVodsCarousel';
 import { PaginationControls } from '@/components/ui/PaginationControls';
+import { useRecentVods } from '@/hooks/useRecentVods';
 import { useTenants } from '@/hooks/useTenants';
 
 const platformConfig: Record<string, { icon: typeof TwitchIcon; color: string }> = {
@@ -14,6 +16,7 @@ const platformConfig: Record<string, { icon: typeof TwitchIcon; color: string }>
 export function Tenants() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { data: recentVods, isLoading: recentVodsLoading } = useRecentVods();
 
   const page = parseInt(searchParams.get('page') || '1') || 1;
   const pageSize = 20;
@@ -150,6 +153,10 @@ export function Tenants() {
               <p className="text-[#9ca3af]">No streamers found</p>
             </div>
           )}
+
+          <div className="mt-12 w-full max-w-6xl">
+            <RecentVodsCarousel recentVods={recentVods || []} isLoading={recentVodsLoading} />
+          </div>
 
           <div className="py-6">
             <PaginationControls page={meta?.page || 1} totalPages={totalPages} />

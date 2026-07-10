@@ -11,11 +11,13 @@ import { toHMS, getImage } from '@/utils/helpers';
 
 interface ChaptersProps {
   vod: VodListItem;
+  tenant?: string;
+  routeType?: string;
 }
 
 const EMPTY_CHAPTERS: ChapterItem[] = [];
 
-export default function ChaptersMenu({ vod }: ChaptersProps) {
+export default function ChaptersMenu({ vod, tenant: tenantProp, routeType: routeTypeProp }: ChaptersProps) {
   const { position, isOpen, close, toggle, setMenuRef } = useDropdown(400);
   const [expanded, setExpanded] = useState(false);
   const chaptersArray = vod.chapters || EMPTY_CHAPTERS;
@@ -23,8 +25,10 @@ export default function ChaptersMenu({ vod }: ChaptersProps) {
   const location = useLocation();
   const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
 
-  const routeType = location.pathname.match(/\/(youtube|vods|cdn|manual|games)\//)?.[1] ?? 'youtube';
-  const DEFAULT_VOD = `/${tenantParam}/${routeType}/${vod.id}`;
+  const resolvedTenant = tenantParam || tenantProp;
+  const detectedRoute = location.pathname.match(/\/(youtube|vods|cdn|manual|games)\//)?.[1];
+  const resolvedRoute = routeTypeProp || detectedRoute || 'youtube';
+  const DEFAULT_VOD = `/${resolvedTenant}/${resolvedRoute}/${vod.id}`;
 
   return (
     <div className="relative">

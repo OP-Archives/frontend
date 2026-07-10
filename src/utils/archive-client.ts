@@ -11,6 +11,7 @@ import type {
   EmotesResponse,
   CommentsResponse,
   Badge,
+  RecentVod,
 } from '@/types';
 
 interface FetchOptions extends RequestInit {
@@ -92,6 +93,7 @@ export const archiveClient = {
         `${getApiBase()}/${slug}/vods/${vodId}/comments${query ? `?${query}` : ''}`
       );
     },
+    recent: () => fetchJson<ApiResponse<RecentVod[]>>(`${getApiBase()}/vods/recent`),
   },
   games: {
     list: (slug: string, params?: Record<string, string>, options?: RequestOptions) => {

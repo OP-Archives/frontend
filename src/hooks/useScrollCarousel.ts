@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseScrollCarouselOptions {
   itemCount: number;
@@ -24,6 +24,8 @@ export function useScrollCarousel({
 }: UseScrollCarouselOptions): UseScrollCarouselReturn {
   const [offset, setOffset] = useState(initialOffset);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const offsetRef = useRef(offset);
+  offsetRef.current = offset;
 
   const showLeft = offset > 0;
   const showRight = offset + visibleCount < itemCount;
@@ -48,6 +50,47 @@ export function useScrollCarousel({
     },
     [offset, itemCount, visibleCount]
   );
+
+  // Sync internal offset with native scroll position (drag/trackpad/keyboard)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let rafId: number;
+    const onScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const scrollRatio = el.scrollLeft / el.clientWidth;
+        const newOffset = Math.max(0, Math.round(scrollRatio * visibleCount));
+        if (newOffset !== offsetRef.current) {
+          setOffset(newOffset);
+        }
+      });
+    };
+
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [visibleCount]);
+
+  // Keep arrows in sync when container resizes (responsive breakpoints)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(() => {
+      const scrollRatio = el.scrollLeft / el.clientWidth;
+      const newOffset = Math.max(0, Math.round(scrollRatio * visibleCount));
+      if (newOffset !== offsetRef.current) {
+        setOffset(newOffset);
+      }
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [visibleCount]);
 
   if (autoCenterIndex !== undefined && autoCenterIndex >= 0) {
     const newOffset = Math.max(0, Math.min(autoCenterIndex - 2, itemCount - visibleCount));
