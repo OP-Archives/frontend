@@ -1,5 +1,4 @@
 import { useLocation, Outlet } from 'react-router-dom';
-import { AdsenseBanner } from '@/components/AdsenseBanner';
 import type { Tenant } from '@/types';
 import { Vods } from '@/vods/Vods';
 
@@ -42,7 +41,6 @@ export function TenantContent({ tenantData }: { tenantData: Tenant }) {
 
   return (
     <>
-      <AdsenseBanner />
       <Outlet />
     </>
   );
