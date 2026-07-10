@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from 'react';
+import { useEffect, useState, ChangeEvent, useMemo } from 'react';
 import CustomPlayer from './CustomPlayer';
 import GamesMenu from './GamesMenu';
 import VodChapters from './VodChapters';
@@ -64,20 +64,33 @@ export default function BaseVod(props: BaseVodProps) {
   const [currentTime, setCurrentTime] = useState<number | undefined>(undefined);
   const [playerSettings, setPlayerSettings] = useState<PlayerSettings>(() => loadPlayerSettings());
 
+  const normalizedChapters = useMemo(() => {
+    if (!vod?.chapters || vod.chapters.length === 0) return [];
+    const newChapters = [...vod.chapters];
+    if (newChapters[0].start > 0) {
+      newChapters[0] = {
+        ...newChapters[0],
+        duration: newChapters[0].duration + newChapters[0].start,
+        start: 0,
+      };
+    }
+    return newChapters;
+  }, [vod?.chapters]);
+
   useEffect(() => {
     if (!vod) return;
-    setChapter(vod.chapters.length > 0 ? vod.chapters[0] : null);
-  }, [vod]);
+    setChapter(normalizedChapters.length > 0 ? normalizedChapters[0] : null);
+  }, [normalizedChapters]);
 
   useEffect(() => {
     savePlayerSettings(playerSettings);
   }, [playerSettings]);
 
   useEffect(() => {
-    if (!playerRef.current || !vod?.chapters?.length || currentTime === undefined) return;
+    if (!playerRef.current || !normalizedChapters.length || currentTime === undefined) return;
 
     if (!games) {
-      const currentChapter = vod.chapters.find(
+      const currentChapter = normalizedChapters.find(
         (chapter: Chapter) => currentTime >= chapter.start && currentTime < chapter.end
       );
 
@@ -85,7 +98,7 @@ export default function BaseVod(props: BaseVodProps) {
         setChapter(currentChapter);
       }
     }
-  }, [currentTime, vod, playerRef, games, part]);
+  }, [currentTime, normalizedChapters, playerRef, games, part]);
 
   useEffect(() => {
     if (theatreMode) {
@@ -185,6 +198,8 @@ export default function BaseVod(props: BaseVodProps) {
               theatreMode={theatreMode}
               setTheatreMode={setTheatreMode}
               copyTimestamp={copyTimestamp}
+              chapters={normalizedChapters}
+              currentChapter={chapter}
             />
           )}
         </div>
@@ -194,7 +209,7 @@ export default function BaseVod(props: BaseVodProps) {
         <div className="flex items-center overflow-hidden">
           {chapter && !games && (
             <VodChapters
-              chapters={vod.chapters}
+              chapters={normalizedChapters}
               chapter={chapter}
               setChapter={setChapter}
               setTimestamp={setTimestamp}
