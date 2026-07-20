@@ -72,7 +72,7 @@ export default function WatchMenu({ vod, cdnEnabled }: WatchMenuProps) {
                       close();
                       navigate(cdnUrl);
                     }}
-                    className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-[#f0f0f5] hover:bg-[#222230] ${hasVodUploads ? 'cursor-pointer' : 'cursor-not-allowed opacity-40'}`}
+                    className={`flex w-full items-center gap-2 rounded px-3 py-2 text-left text-[#f0f0f5] hover:bg-[#222230] ${!vod.is_live ? 'cursor-pointer' : 'cursor-not-allowed opacity-40'}`}
                   >
                     <Film size={20} /> CDN
                   </a>
