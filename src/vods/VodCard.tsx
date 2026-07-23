@@ -17,13 +17,6 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 });
 
-const getVodLink = (vod: VodListItem, tenant: string) => {
-  if (vod.is_live) return '';
-  if (vod.vod_uploads?.length > 0) return `/${tenant}/youtube/${vod.id}`;
-  if (vod.games?.length > 0) return `/${tenant}/games/${vod.id}`;
-  return `/${tenant}/manual/${vod.id}`;
-};
-
 const getThumbnail = (vod: VodListItem) => {
   return vod.vod_uploads?.[0]?.thumbnail_url || vod.games?.[0]?.thumbnail_url || vod.thumbnail_url || '';
 };
@@ -31,7 +24,19 @@ const getThumbnail = (vod: VodListItem) => {
 const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListItem; priority?: boolean }) {
   const { tenant: tenantParam } = useTypedParams<{ tenant: string }>();
   const { cdnEnabled } = useTenantContext();
-  const DEFAULT_VOD = getVodLink(vod, tenantParam);
+  const isRecent = Date.now() - new Date(vod.created_at).getTime() <= 14 * 24 * 60 * 60 * 1000;
+
+  let defaultRoute = 'manual';
+  if (!vod.is_live) {
+    if (vod.vod_uploads?.length > 0) {
+      defaultRoute = 'youtube';
+    } else if (cdnEnabled && isRecent) {
+      defaultRoute = 'cdn';
+    } else if (vod.games?.length > 0) {
+      defaultRoute = 'games';
+    }
+  }
+  const DEFAULT_VOD = vod.is_live ? '' : `/${tenantParam}/${defaultRoute}/${vod.id}`;
   const DEFAULT_THUMBNAIL = getThumbnail(vod);
 
   const chapterCount = vod.chapters?.length ?? 0;
@@ -145,7 +150,7 @@ const VodCard = React.memo(function VodCard({ vod, priority }: { vod: VodListIte
             </div>
 
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
-              {chapterCount > 0 && <ChaptersMenu vod={vod} />}
+              {chapterCount > 0 && <ChaptersMenu vod={vod} routeType={defaultRoute} />}
 
               <div className="ml-auto">
                 <WatchMenu vod={vod} cdnEnabled={cdnEnabled} />

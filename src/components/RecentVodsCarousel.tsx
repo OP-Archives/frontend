@@ -7,7 +7,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useScrollCarousel } from '@/hooks/useScrollCarousel';
 import { cardHover } from '@/motion/variants';
 import type { RecentVod, VodListItem } from '@/types';
-import { toHHMMSS, getImage } from '@/utils/helpers';
+import { toHHMMSS } from '@/utils/helpers';
 import ChaptersMenu from '@/vods/ChaptersMenu';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
@@ -21,19 +21,6 @@ interface RecentVodsCarouselProps {
   isLoading: boolean;
 }
 
-const getVodRouteType = (vod: RecentVod) => {
-  if (vod.games?.length > 0) return 'games';
-  if (vod.vod_uploads?.length > 0) return 'youtube';
-  return 'manual';
-};
-
-const getVodLink = (vod: RecentVod) => {
-  if (vod.is_live) return '';
-  if (vod.vod_uploads?.length > 0) return `/${vod.tenantId}/youtube/${vod.id}`;
-  if (vod.games?.length > 0) return `/${vod.tenantId}/games/${vod.id}`;
-  return `/${vod.tenantId}/manual/${vod.id}`;
-};
-
 const getThumbnail = (vod: RecentVod) => {
   return vod.vod_uploads?.[0]?.thumbnail_url || vod.games?.[0]?.thumbnail_url || '';
 };
@@ -42,12 +29,15 @@ function SkeletonCard() {
   return (
     <div className="min-w-0 flex-[0_0_100%] sm:flex-[0_0_calc((100%-8px)/2)] md:flex-[0_0_calc((100%-16px)/3)] lg:flex-[0_0_calc((100%-32px)/4)]">
       <div className="mb-2 block w-full min-w-0">
-        <div className="aspect-video w-full animate-pulse rounded-md bg-[#222230]" />
-        <div className="mt-2.5 mb-1 flex items-center gap-2.5 px-0.5">
-          <div className="min-w-0 flex-1">
-            <div className="h-3 w-16 animate-pulse rounded bg-[#222230]" />
-            <div className="mt-1 h-4 w-3/4 animate-pulse rounded bg-[#222230]" />
+        <div className="flex items-center gap-2 px-2 pt-2">
+          <div className="h-6 w-6 shrink-0 animate-pulse rounded-full bg-[#222230]" />
+          <div className="flex-1">
+            <div className="h-3 w-20 animate-pulse rounded bg-[#222230]" />
           </div>
+        </div>
+        <div className="aspect-video w-full animate-pulse rounded-md bg-[#222230]" />
+        <div className="mt-2.5 mb-1 px-0.5">
+          <div className="h-4 w-3/4 animate-pulse rounded bg-[#222230]" />
         </div>
       </div>
     </div>
@@ -103,7 +93,18 @@ export function RecentVodsCarousel({ recentVods, isLoading }: RecentVodsCarousel
             className="flex [scrollbar-width:none] gap-2 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {visibleItems(recentVods).map((vod) => {
-              const link = getVodLink(vod);
+              const isRecent = Date.now() - new Date(vod.created_at).getTime() <= 14 * 24 * 60 * 60 * 1000;
+              let defaultRoute = 'manual';
+              if (!vod.is_live) {
+                if (vod.vod_uploads?.length > 0) {
+                  defaultRoute = 'youtube';
+                } else if (vod.cdnEnabled && isRecent) {
+                  defaultRoute = 'cdn';
+                } else if (vod.games?.length > 0) {
+                  defaultRoute = 'games';
+                }
+              }
+              const link = vod.is_live ? '' : `/${vod.tenantId}/${defaultRoute}/${vod.id}`;
               const thumbnail = getThumbnail(vod);
               const chapterCount = vod.chapters?.length ?? 0;
 
@@ -210,32 +211,23 @@ export function RecentVodsCarousel({ recentVods, isLoading }: RecentVodsCarousel
                         </div>
                       </motion.div>
                     </motion.div>
-                    <div className="mt-2.5 mb-1 flex items-center gap-2.5 px-0.5">
-                      {chapterCount > 0 && (
-                        <div className="shrink-0 overflow-hidden rounded-sm ring-1 ring-[#222230]">
+                    <div className="mt-2.5 mb-1 flex items-start gap-1.5 px-0.5">
+                      {vod.profileImageUrl && (
+                        <Link to={`/${vod.tenantId}`}>
                           <img
-                            src={getImage(vod.chapters?.[0]?.image, 40, 53)}
-                            className="block h-[53px] w-[40px] object-cover"
-                            alt={vod.chapters?.[0]?.name || 'Category'}
-                            loading="lazy"
+                            src={vod.profileImageUrl}
+                            alt={vod.displayName}
+                            className="mt-1 h-12 w-12 shrink-0 rounded-full border-2 border-[#222230] object-cover"
                           />
-                        </div>
+                        </Link>
                       )}
 
-                      <div className="flex min-w-0 flex-1 flex-col justify-center">
-                        <div className="mb-0.5">
-                          <Link
-                            to={`/${vod.tenantId}`}
-                            className="truncate text-xs font-semibold text-[#6366f1] transition-colors hover:text-[#6366f1]/80 hover:underline"
-                          >
-                            {vod.displayName}
-                          </Link>
-                        </div>
+                      <div className="flex min-w-0 flex-1 flex-col">
                         <div className="w-full min-w-0">
                           {link ? (
                             <Link to={link}>
                               <CustomWidthTooltip title={vod.title}>
-                                <span className="truncate text-sm font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]/80">
+                                <span className="truncate text-sm leading-tight font-medium text-[#f0f0f5] transition-colors hover:text-[#6366f1]/80">
                                   {vod.title}
                                 </span>
                               </CustomWidthTooltip>
@@ -247,11 +239,20 @@ export function RecentVodsCarousel({ recentVods, isLoading }: RecentVodsCarousel
                           )}
                         </div>
 
-                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                          {chapterCount > 0 && (
-                            <ChaptersMenu vod={vodListItem} tenant={vod.tenantId} routeType={getVodRouteType(vod)} />
-                          )}
+                        <div className="-mt-1">
+                          <Link
+                            to={`/${vod.tenantId}`}
+                            className="text-xs font-semibold text-[#6366f1] transition-colors hover:text-[#6366f1]/80 hover:underline"
+                          >
+                            {vod.displayName}
+                          </Link>
                         </div>
+
+                        {chapterCount > 0 && (
+                          <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                            <ChaptersMenu vod={vodListItem} tenant={vod.tenantId} routeType={defaultRoute} />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

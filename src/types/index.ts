@@ -283,6 +283,8 @@ export interface LibraryGameItem {
 export interface RecentVod {
   tenantId: string;
   displayName: string;
+  profileImageUrl: string;
+  cdnEnabled: boolean;
   id: number;
   platform_vod_id: string;
   platform: string;
