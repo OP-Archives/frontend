@@ -6,7 +6,10 @@ export function usePlayerLayout(_vodId: string) {
   const [chatOnLeft, setChatOnLeft] = useState(false);
 
   useEffect(() => {
-    const mql = window.matchMedia('(orientation: portrait)');
+    // Combined media query: width-based breakpoint for desktop, orientation-based for touch devices
+    const mql = window.matchMedia(
+      '(pointer: fine) and (max-width: 1024px), (pointer: coarse) and (orientation: portrait)'
+    );
     setIsPortrait(mql.matches);
     const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
     mql.addEventListener('change', handler);
